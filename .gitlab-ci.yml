@@ -1,20 +1,23 @@
+
+variables:
+  DOCKER_TLS_CERTDIR: "/certs"
+
+services:
+  - docker:latest-dind
+
+before_script:
+  - docker info
+
 docker-build:
   image: docker:latest
   stage: build
-  services:
-    - docker:dind
-  before_script:
-    - docker info
   script:
     - docker build --pull .
 
 docker-publish:
   image: docker:latest
   stage: deploy
-  services:
-    - docker:dind
   before_script:
-    - docker info
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
   script:
     - |
