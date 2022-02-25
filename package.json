@@ -1,0 +1,28 @@
+{
+  "name": "streaks.json",
+  "version": "0.0.1",
+  "description": "",
+  "main": "dist/server.js",
+  "scripts": {
+    "start": "node dist/server.js",
+    "start-dev": "nodemon --ignore ./streaks/ dist/server.js",
+    "sass": "node-sass -w -r src/styles/ -o dist/public/styles/",
+    "tsc": "tsc -w"
+  },
+  "author": "cestoliv",
+  "license": "MIT",
+  "dependencies": {
+    "@types/bcrypt": "^5.0.0",
+    "@types/express": "^4.17.13",
+    "@types/express-session": "^1.17.4",
+    "@types/node": "^17.0.17",
+    "bcrypt": "^5.0.1",
+    "dotenv": "^16.0.0",
+    "ejs": "^3.1.6",
+    "express": "^4.17.2",
+    "express-session": "^1.17.2"
+  },
+  "devDependencies": {
+    "node-sass": "^7.0.1"
+  }
+}

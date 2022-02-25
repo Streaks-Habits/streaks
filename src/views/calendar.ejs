@@ -1,0 +1,35 @@
+
+<div class="calendar">
+	<div class="calendar_info">
+		<p class="calendar_month"><%= calendar.days[0].date.toLocaleDateString('en-US', {year: 'numeric', month: 'long'}) %></p>
+		<div class="streaksBox">
+			<p><%= calendar.currentStreaks %></p>
+			<svg class="<% if (calendar.streaksExpandedToday) { %>done<% } %>"><use xlink:href="/icons/streak.svg#icon"></use></svg>
+		</div>
+	</div>
+	<div class="calendar_grid">
+		<% if (!calendar.firstDayOfWeek) { %>
+			<div class="day_name"><p>Su</p></div>
+		<% } %>
+		<div class="day_name"><p>M</p></div>
+		<div class="day_name"><p>Tu</p></div>
+		<div class="day_name"><p>W</p></div>
+		<div class="day_name"><p>Th</p></div>
+		<div class="day_name"><p>F</p></div>
+		<div class="day_name"><p>Sa</p></div>
+		<% if (calendar.firstDayOfWeek) { %>
+			<div class="day_name"><p>Su</p></div>
+		<% } %>
+		<% calendar.days.forEach(function(day) { %>
+			<div class="day <%= day.state %> <% if (day.isToday) { %> today <% } %> <% if (!day.isOver) { %> future <% } %>"
+				<% if (day.dayNum == 1) { %>
+					style="grid-column: <%= calendar.first_index + 1 %>;"
+				<% } %>
+				attr-date="<%= day.dateString %>"
+			>
+				<svg><use xlink:href="/icons/circle.svg#icon"></use></svg>
+				<p><%= day.dayNum %></p>
+			</div>
+		<% }); %>
+	</div>
+</div>

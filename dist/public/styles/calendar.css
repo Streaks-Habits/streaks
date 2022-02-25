@@ -1,0 +1,103 @@
+:root {
+  --font-family: monospace, monospace;
+  --c_background: #131f22;
+  --c_caret: #fff;
+  --c_title: #fff;
+  --c_month: #fff;
+  --c_day: #a2c8d3;
+  --c_dayname: #425d64;
+  --c_border: #425d64;
+  --c_fail_background: #ff000030;
+  --c_fail_color: var(--c_day);
+  --c_success_background: #ff9c13;
+  --c_success_color: var(--c_background);
+  --c_freeze_background: #6bcbf9;
+  --c_freeze_color: var(--c_background);
+  --c_breakday_background: #00b7ff54;
+  --c_breakday_color: var(--c_day); }
+
+html {
+  background-color: var(--c_background);
+  font-family: var(--font-family);
+  outline: none;
+  margin: 8px; }
+
+div.calendar {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  width: fit-content;
+  border: solid 2px var(--c_border);
+  border-radius: 15px;
+  padding: 20px; }
+
+div.calendar_info {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  width: 100%; }
+  div.calendar_info p.calendar_month {
+    color: var(--c_month);
+    margin: 0 0 10px 10px;
+    font-size: 1.1em; }
+  div.calendar_info div.streaksBox {
+    display: flex;
+    align-items: center;
+    margin: 0 2px 0 0; }
+    div.calendar_info div.streaksBox p {
+      color: var(--c_day);
+      margin: 0;
+      font-size: 1.3em;
+      margin: 0 2px 0 0; }
+    div.calendar_info div.streaksBox svg {
+      width: 1.7em;
+      height: 1.7em;
+      fill: var(--c_dayname); }
+      div.calendar_info div.streaksBox svg.done {
+        fill: var(--c_success_background); }
+
+div.calendar_grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  width: fit-content;
+  grid-gap: 5px 3px; }
+  div.calendar_grid .day, div.calendar_grid .day_name {
+    padding: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center; }
+    div.calendar_grid .day p, div.calendar_grid .day_name p {
+      margin: 0;
+      color: var(--c_day); }
+  div.calendar_grid .day_name p {
+    font-weight: bold;
+    color: var(--c_dayname); }
+  div.calendar_grid .day {
+    position: relative; }
+    div.calendar_grid .day:not(.future) {
+      cursor: pointer; }
+    div.calendar_grid .day svg {
+      position: absolute;
+      width: 1.7em;
+      height: 1.7em;
+      z-index: -1;
+      fill: transparent; }
+    div.calendar_grid .day.today p {
+      font-weight: bold; }
+    div.calendar_grid .day.success:not(.future) p {
+      color: var(--c_success_color); }
+    div.calendar_grid .day.success:not(.future) svg {
+      fill: var(--c_success_background); }
+    div.calendar_grid .day.fail:not(.future) p {
+      color: var(--c_fail_color); }
+    div.calendar_grid .day.fail:not(.future) svg {
+      fill: var(--c_fail_background); }
+    div.calendar_grid .day.freeze:not(.future) p {
+      color: var(--c_freeze_color); }
+    div.calendar_grid .day.freeze:not(.future) svg {
+      fill: var(--c_freeze_background); }
+    div.calendar_grid .day.breakday:not(.future) p {
+      color: var(--c_breakday_color); }
+    div.calendar_grid .day.breakday:not(.future) svg {
+      fill: var(--c_breakday_background); }

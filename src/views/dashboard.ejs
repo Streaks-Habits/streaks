@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" type="text/css" href="/styles/dashboard.css">
+	<title>Document</title>
+</head>
+<body>
+	<div id="set_state_box">
+		<svg class="spinner"><use xlink:href="/icons/spinner.svg#icon"></use></svg>
+		<div id="set_success_state">
+			<svg><use xlink:href="/icons/circle.svg#icon"></use></svg>
+			<p>SUCCESS</p>
+		</div>
+		<div id="set_freeze_state">
+			<svg><use xlink:href="/icons/circle.svg#icon"></use></svg>
+			<p>FREEZE</p>
+		</div>
+		<div id="set_fail_state">
+			<svg><use xlink:href="/icons/circle.svg#icon"></use></svg>
+			<p>FAIL</p>
+		</div>
+	</div>
+
+	<img id="logo" src="/icons/logo.svg" alt="streaks.json logo">
+
+	<div id="dashboard">
+		<% calendars.forEach(function(cal) { %>
+			<div class="dashboard_calendar" attr-filename="<%= cal.filename %>" attr-date="<%= dateStr %>">
+				<div class="calendar_header">
+					<p class="title"><%= cal.name %></p>
+					<svg class="caret left"><use xlink:href="/icons/caret.svg#icon"></use></svg>
+					<svg class="today"><use xlink:href="/icons/today.svg#icon"></use></svg>
+					<svg class="caret right"><use xlink:href="/icons/caret.svg#icon"></use></svg>
+				</div>
+				<div class="calendar"></div>
+			</div>
+		<% }); %>
+	</div>
+
+	<script src="/js/set_state.js"></script>
+	<script src="/js/load_calendar.js"></script>
+</body>
+</html>

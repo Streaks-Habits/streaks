@@ -1,0 +1,15 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const controller_1 = require("./controller");
+const router = (0, express_1.Router)();
+router.use("/", controller_1.servePublic);
+router.use("/", controller_1.serveStyles);
+router.get("/login", controller_1.loginView);
+router.post("/login", controller_1.loginForm);
+router.use("/", controller_1.checkAuthenticated);
+router.get("/", controller_1.index);
+router.get("/calendar/:filename", controller_1.calendarView);
+router.get("/dashboard", controller_1.dashboardView);
+router.get("/set_state/:filename/:dateString/:state", controller_1.stateSet);
+exports.default = router;

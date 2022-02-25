@@ -1,0 +1,114 @@
+@import "calendar";
+
+div#set_state_box {
+	display: none;
+	background: #2f4044;
+	position: absolute;
+	padding: 13px 10px 10px 10px;
+	border: solid 2px var(--c_border);
+	border-radius: 15px;
+	z-index: 1;
+
+	&.spin div {
+		display: none;
+	}
+	&:not(.spin) > svg {
+		display: none;
+	}
+	div {
+		display: flex;
+		cursor: pointer;
+		--color: #fff;
+
+		&:not(:last-child) {
+			margin-bottom: 5px;
+		}
+		&#set_success_state {
+			--color: var(--c_success_background);
+		}
+		&#set_freeze_state {
+			--color: var(--c_freeze_background);
+		}
+		&#set_fail_state {
+			--color: rgb(224, 35, 35);
+		}
+		p {
+			margin: 0 0 0 5px;
+			color: var(--color);
+		}
+		svg {
+			width: 1.2em;
+			height: 1.2em;
+			fill: var(--color);
+		}
+	}
+	svg.spinner {
+		width: 1.3em;
+		height: 1.3em;
+		fill: var(--c_day);
+		@keyframes spin {
+			from {
+				transform: rotate(0deg);
+			}
+			to {
+				transform: rotate(360deg);
+			}
+		}
+		animation: spin 1s ease-in-out infinite;
+	}
+}
+
+img#logo {
+	margin: 25px auto 45px auto;
+	width: 13em;
+	display: block;
+}
+
+div#dashboard {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 40px;
+	justify-content: center;
+
+	div.dashboard_calendar {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+
+		div.calendar_header {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			margin-bottom: 10px;
+
+			p.title {
+				color: var(--c_title);
+				margin: 0 15px 0 0;
+				font-weight: bold;
+				font-size: 1.2em;
+			}
+
+			svg {
+				fill: var(--c_border);
+				animation: fill .3s ease-in-out;
+
+				:hover {
+					fill: var(--c_day);
+				}
+				&.caret {
+					width: 1.6em;
+					height: 1.6em;
+
+					&.right {
+						transform: rotate(180deg);
+					}
+				}
+				&.today {
+					width: 1.2em;
+					height: 1.2em;
+					margin: 0 15px;
+				}
+			}
+		}
+	}
+}
