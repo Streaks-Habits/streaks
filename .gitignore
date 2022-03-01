@@ -1,6 +1,7 @@
 node_modules/
 package-lock.json
-streaks/
+streaks/*
+!streaks/example.streaks.json
 daemons/*
 !daemons/docker-cron.sh
 .env

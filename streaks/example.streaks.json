@@ -1,0 +1,8 @@
+{
+	"name": "Streaks Example",
+	"firstDayOfWeek": 1,
+	"agenda": [1, 1, 1, 1, 1, 0, 0],
+	"days": [
+		{ "date": "2022-01-01", "state": "fail" }
+	]
+}
