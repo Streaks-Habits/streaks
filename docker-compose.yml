@@ -1,14 +1,14 @@
 version: "3.9"
 services:
   streaks.json:
+    # If you want to build from Dockerfile
     build: .
     # If you want to use image
-    # image: "cestoliv/streaks.json:latest"
+    # image: "registry.chevro.fr/cestoliv/streaks.json:latest"
     container_name: "streaks.json"
-    command: npm run start
     ports:
       - ${PORT}:80
     volumes:
-      - ./streaks:/streaks.json/streaks
-      - ./daemons:/streaks.json/daemons
+      - ./streaks/:/streaks.json/streaks/
+      - ./daemons/:/streaks.json/daemons/
       - ./.env:/streaks.json/.env
