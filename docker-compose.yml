@@ -6,6 +6,8 @@ services:
     # If you want to use image
     # image: "registry.chevro.fr/cestoliv/streaks.json:latest"
     container_name: "streaks.json"
+    environment:
+      - TZ=${TZ}
     ports:
       - ${PORT}:80
     volumes:
