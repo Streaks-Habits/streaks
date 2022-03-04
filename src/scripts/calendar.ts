@@ -57,14 +57,17 @@ export function isOver(date: Date): Boolean {
 function countStreaks(data: Data): number {
 	var date: Date = new Date()
 	var streaks: number = 0
+	var today_done: boolean = false
 
+	today_done = findDayInData(data, dateString(date)).state == "success"
 	while (findDayInData(data, dateString(date)).state != "fail" || isToday(date)) {
 		streaks++;
 		date.setDate(date.getDate() - 1)
 	}
-	date.setDate(date.getDate() + 1)
-	if (streaks == 1 && findDayInData(data, dateString(date)).state == "fail")
+	if (streaks == 1 && !today_done)
 		streaks = 0
+	if (streaks > 1 && !today_done)
+		streaks--
 	return (streaks)
 }
 

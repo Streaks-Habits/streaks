@@ -51,13 +51,16 @@ exports.isOver = isOver;
 function countStreaks(data) {
     var date = new Date();
     var streaks = 0;
+    var today_done = false;
+    today_done = findDayInData(data, dateString(date)).state == "success";
     while (findDayInData(data, dateString(date)).state != "fail" || isToday(date)) {
         streaks++;
         date.setDate(date.getDate() - 1);
     }
-    date.setDate(date.getDate() + 1);
-    if (streaks == 1 && findDayInData(data, dateString(date)).state == "fail")
+    if (streaks == 1 && !today_done)
         streaks = 0;
+    if (streaks > 1 && !today_done)
+        streaks--;
     return (streaks);
 }
 function getCalendar(monthDate, dataPath) {
