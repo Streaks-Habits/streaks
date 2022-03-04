@@ -13,14 +13,18 @@
   "license": "MIT",
   "dependencies": {
     "@types/bcrypt": "^5.0.0",
+    "@types/cookie-parser": "^1.4.2",
     "@types/express": "^4.17.13",
     "@types/express-session": "^1.17.4",
+    "@types/jsonwebtoken": "^8.5.8",
     "@types/node": "^17.0.17",
     "bcrypt": "^5.0.1",
+    "cookie-parser": "^1.4.6",
     "dotenv": "^16.0.0",
     "ejs": "^3.1.6",
     "express": "^4.17.2",
-    "express-session": "^1.17.2"
+    "express-session": "^1.17.2",
+    "jsonwebtoken": "^8.5.1"
   },
   "devDependencies": {
     "node-sass": "^7.0.1"

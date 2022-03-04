@@ -1,10 +1,13 @@
 import express, { RequestHandler } from 'express'
 import path from 'path'
 import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
 
 import { getCalendar } from './scripts/calendar'
 import { getCalendarList } from './scripts/list_calendar'
 import { setState } from './scripts/set_state'
+
+var jwtExpirySeconds: number = 1814400 // three weeks
 
 export const index:RequestHandler = (req, res) => {
 	res.redirect("/dashboard")
@@ -49,15 +52,21 @@ export const loginForm:RequestHandler = (req, res) => {
 		res.render("login", {error: true, errorMessage: "Wrong password"})
 		return
 	}
-	if (process.env.PASSWORD_HASH == undefined || process.env.PASSWORD_HASH == "") {
-		res.render("login", {error: true, errorMessage: "Please add a PASSWORD_HASH in your .env"})
-		return
-	}
+	if (process.env.PASSWORD_HASH == undefined || process.env.PASSWORD_HASH == "")
+		throw "Please add a PASSWORD_HASH in your .env"
+	if (process.env.JWT_KEY == undefined || process.env.JWT_KEY == "")
+		throw "Please add a JWT_KEY in your .env"
 	bcrypt.compare(req.body.password, process.env.PASSWORD_HASH, (err, result) => {
 		if (err) throw err
 		if (result) {
-			req.session.authenticated = true
-			res.redirect("/dashboard")
+			jwt.sign({ authenticated: true }, process.env.JWT_KEY!, {
+				algorithm: "HS256",
+				expiresIn: jwtExpirySeconds,
+			}, (err, token) => {
+				if (err) throw err
+				res.cookie("token", token, { maxAge: jwtExpirySeconds * 1000 })
+				res.redirect("/dashboard")
+			})
 		}
 		else
 			res.render("login", {error: true, errorMessage: "Wrong password"})
@@ -71,10 +80,26 @@ export const stateSet:RequestHandler = (req, res) => {
 }
 
 export const checkAuthenticated:RequestHandler = (req, res, next) => {
-	if (req.session.authenticated == undefined || req.session.authenticated == false)
-	{
+	const token = req.cookies.token
+
+	if (!token)
 		res.redirect('/login')
+	else {
+		if (process.env.JWT_KEY == undefined || process.env.JWT_KEY == "")
+			throw "Please add a JWT_KEY in your .env"
+		jwt.verify(token, process.env.JWT_KEY!, {}, (err, decoded) => {
+			if (err)
+				res.redirect('/login')
+			else {
+				jwt.sign({ authenticated: true }, process.env.JWT_KEY!, {
+					algorithm: "HS256",
+					expiresIn: jwtExpirySeconds,
+				}, (err, token) => {
+					if (err) throw err
+					res.cookie("token", token, { maxAge: jwtExpirySeconds * 1000 })
+					next()
+				})
+			}
+		})
 	}
-	else
-		next()
 }

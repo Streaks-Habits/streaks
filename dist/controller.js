@@ -7,9 +7,11 @@ exports.checkAuthenticated = exports.stateSet = exports.loginForm = exports.logi
 const express_1 = __importDefault(require("express"));
 const path_1 = __importDefault(require("path"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const calendar_1 = require("./scripts/calendar");
 const list_calendar_1 = require("./scripts/list_calendar");
 const set_state_1 = require("./scripts/set_state");
+var jwtExpirySeconds = 1814400; // three weeks
 const index = (req, res) => {
     res.redirect("/dashboard");
 };
@@ -48,16 +50,23 @@ const loginForm = (req, res) => {
         res.render("login", { error: true, errorMessage: "Wrong password" });
         return;
     }
-    if (process.env.PASSWORD_HASH == undefined || process.env.PASSWORD_HASH == "") {
-        res.render("login", { error: true, errorMessage: "Please add a PASSWORD_HASH in your .env" });
-        return;
-    }
+    if (process.env.PASSWORD_HASH == undefined || process.env.PASSWORD_HASH == "")
+        throw "Please add a PASSWORD_HASH in your .env";
+    if (process.env.JWT_KEY == undefined || process.env.JWT_KEY == "")
+        throw "Please add a JWT_KEY in your .env";
     bcrypt_1.default.compare(req.body.password, process.env.PASSWORD_HASH, (err, result) => {
         if (err)
             throw err;
         if (result) {
-            req.session.authenticated = true;
-            res.redirect("/dashboard");
+            jsonwebtoken_1.default.sign({ authenticated: true }, process.env.JWT_KEY, {
+                algorithm: "HS256",
+                expiresIn: jwtExpirySeconds,
+            }, (err, token) => {
+                if (err)
+                    throw err;
+                res.cookie("token", token, { maxAge: jwtExpirySeconds * 1000 });
+                res.redirect("/dashboard");
+            });
         }
         else
             res.render("login", { error: true, errorMessage: "Wrong password" });
@@ -71,10 +80,27 @@ const stateSet = (req, res) => {
 };
 exports.stateSet = stateSet;
 const checkAuthenticated = (req, res, next) => {
-    if (req.session.authenticated == undefined || req.session.authenticated == false) {
+    const token = req.cookies.token;
+    if (!token)
         res.redirect('/login');
+    else {
+        if (process.env.JWT_KEY == undefined || process.env.JWT_KEY == "")
+            throw "Please add a JWT_KEY in your .env";
+        jsonwebtoken_1.default.verify(token, process.env.JWT_KEY, {}, (err, decoded) => {
+            if (err)
+                res.redirect('/login');
+            else {
+                jsonwebtoken_1.default.sign({ authenticated: true }, process.env.JWT_KEY, {
+                    algorithm: "HS256",
+                    expiresIn: jwtExpirySeconds,
+                }, (err, token) => {
+                    if (err)
+                        throw err;
+                    res.cookie("token", token, { maxAge: jwtExpirySeconds * 1000 });
+                    next();
+                });
+            }
+        });
     }
-    else
-        next();
 };
 exports.checkAuthenticated = checkAuthenticated;
