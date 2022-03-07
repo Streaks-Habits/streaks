@@ -16,7 +16,7 @@ declare module 'express-session' {
 
 dotenv.config()
 
-schedule.scheduleJob('* * * * *', runDaemons)
+schedule.scheduleJob('50 * * * *', runDaemons)
 
 const app = express()
 app.set('trust proxy', 1)
