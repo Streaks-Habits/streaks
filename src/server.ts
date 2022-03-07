@@ -3,8 +3,10 @@ import path from 'path'
 import session from 'express-session'
 import cookieParser from "cookie-parser"
 import dotenv from 'dotenv'
+import schedule from 'node-schedule'
 
 import routes from './routes'
+import { runDaemons } from './scripts/daemons'
 
 declare module 'express-session' {
 	export interface SessionData {
@@ -13,6 +15,9 @@ declare module 'express-session' {
 }
 
 dotenv.config()
+
+schedule.scheduleJob('50 * * * *', runDaemons)
+
 const app = express()
 app.set('trust proxy', 1)
 app.set('views', path.join('src', 'views'))

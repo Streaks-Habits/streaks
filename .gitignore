@@ -3,6 +3,6 @@ package-lock.json
 streaks/*
 !streaks/example.streaks.json
 daemons/*
-!daemons/docker-cron.sh
+!daemons/commands.list
 .env
 test.js

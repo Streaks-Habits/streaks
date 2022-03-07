@@ -18,8 +18,4 @@ COPY src src
 EXPOSE 80
 ENV PORT=80
 
-# Cron job
-RUN echo "50 * * * * sh /streaks.json/daemons/docker-cron.sh" >> /etc/crontabs/root
-RUN crontab -l
-
-CMD sh -c "crond && npm start"
+CMD sh -c "npm start"
