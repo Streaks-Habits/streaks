@@ -77,36 +77,46 @@ div#dashboard {
 
 		div.calendar_header {
 			display: flex;
-			justify-content: center;
+			justify-content: space-between;
 			align-items: center;
 			margin-bottom: 10px;
+			width: calc(14em + 20px);
 
 			p.title {
 				color: var(--c_title);
-				margin: 0 15px 0 0;
+				margin: 0 5px 0 0;
 				font-weight: bold;
 				font-size: 1.2em;
+				overflow: hidden;
+				white-space: nowrap;
+				text-overflow: ellipsis;
 			}
 
-			svg {
-				fill: var(--c_border);
-				animation: fill .3s ease-in-out;
+			div.calendar_controls {
+				display: flex;
+				justify-content: center;
+				align-items: center;
 
-				:hover {
-					fill: var(--c_day);
-				}
-				&.caret {
-					width: 1.6em;
-					height: 1.6em;
+				svg {
+					fill: var(--c_border);
+					animation: fill .3s ease-in-out;
 
-					&.right {
-						transform: rotate(180deg);
+					:hover {
+						fill: var(--c_day);
 					}
-				}
-				&.today {
-					width: 1.2em;
-					height: 1.2em;
-					margin: 0 15px;
+					&.caret {
+						width: 1.6em;
+						height: 1.6em;
+
+						&.right {
+							transform: rotate(180deg);
+						}
+					}
+					&.today {
+						width: 1.2em;
+						height: 1.2em;
+						margin: 0 3px;
+					}
 				}
 			}
 		}

@@ -31,9 +31,11 @@
 			<div class="dashboard_calendar" attr-filename="<%= cal.filename %>" attr-date="<%= dateStr %>">
 				<div class="calendar_header">
 					<p class="title"><%= cal.name %></p>
-					<svg class="caret left"><use xlink:href="/icons/caret.svg#icon"></use></svg>
-					<svg class="today"><use xlink:href="/icons/today.svg#icon"></use></svg>
-					<svg class="caret right"><use xlink:href="/icons/caret.svg#icon"></use></svg>
+					<div class="calendar_controls">
+						<svg class="caret left"><use xlink:href="/icons/caret.svg#icon"></use></svg>
+						<svg class="today"><use xlink:href="/icons/today.svg#icon"></use></svg>
+						<svg class="caret right"><use xlink:href="/icons/caret.svg#icon"></use></svg>
+					</div>
 				</div>
 				<div class="calendar"></div>
 			</div>

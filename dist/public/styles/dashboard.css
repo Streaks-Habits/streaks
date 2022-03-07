@@ -24,10 +24,10 @@ html {
 
 div.calendar {
   display: flex;
-  justify-content: center;
   flex-direction: column;
   align-items: center;
-  width: fit-content;
+  width: 14em;
+  height: 18.2em;
   border: solid 2px var(--c_border);
   border-radius: 15px;
   padding: 20px; }
@@ -161,25 +161,33 @@ div#dashboard {
     align-items: center; }
     div#dashboard div.dashboard_calendar div.calendar_header {
       display: flex;
-      justify-content: center;
+      justify-content: space-between;
       align-items: center;
-      margin-bottom: 10px; }
+      margin-bottom: 10px;
+      width: calc(14em + 20px); }
       div#dashboard div.dashboard_calendar div.calendar_header p.title {
         color: var(--c_title);
-        margin: 0 15px 0 0;
+        margin: 0 5px 0 0;
         font-weight: bold;
-        font-size: 1.2em; }
-      div#dashboard div.dashboard_calendar div.calendar_header svg {
-        fill: var(--c_border);
-        animation: fill .3s ease-in-out; }
-        div#dashboard div.dashboard_calendar div.calendar_header svg :hover {
-          fill: var(--c_day); }
-        div#dashboard div.dashboard_calendar div.calendar_header svg.caret {
-          width: 1.6em;
-          height: 1.6em; }
-          div#dashboard div.dashboard_calendar div.calendar_header svg.caret.right {
-            transform: rotate(180deg); }
-        div#dashboard div.dashboard_calendar div.calendar_header svg.today {
-          width: 1.2em;
-          height: 1.2em;
-          margin: 0 15px; }
+        font-size: 1.2em;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis; }
+      div#dashboard div.dashboard_calendar div.calendar_header div.calendar_controls {
+        display: flex;
+        justify-content: center;
+        align-items: center; }
+        div#dashboard div.dashboard_calendar div.calendar_header div.calendar_controls svg {
+          fill: var(--c_border);
+          animation: fill .3s ease-in-out; }
+          div#dashboard div.dashboard_calendar div.calendar_header div.calendar_controls svg :hover {
+            fill: var(--c_day); }
+          div#dashboard div.dashboard_calendar div.calendar_header div.calendar_controls svg.caret {
+            width: 1.6em;
+            height: 1.6em; }
+            div#dashboard div.dashboard_calendar div.calendar_header div.calendar_controls svg.caret.right {
+              transform: rotate(180deg); }
+          div#dashboard div.dashboard_calendar div.calendar_header div.calendar_controls svg.today {
+            width: 1.2em;
+            height: 1.2em;
+            margin: 0 3px; }

@@ -2,10 +2,10 @@
 
 div.calendar {
 	display: flex;
-	justify-content: center;
 	flex-direction: column;
 	align-items: center;
-	width: fit-content;
+	width: 14em;
+	height: 18.2em;
 	border: solid 2px var(--c_border);
 	border-radius: 15px;
 	padding: 20px;

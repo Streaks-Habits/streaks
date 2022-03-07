@@ -5,3 +5,4 @@ streaks/*
 daemons/*
 !daemons/docker-cron.sh
 .env
+test.js
