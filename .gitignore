@@ -2,7 +2,6 @@ node_modules/
 package-lock.json
 streaks/*
 !streaks/example.streaks.json
-daemons/*
-!daemons/commands.list
+daemons/
 .env
 test.js

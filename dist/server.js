@@ -12,7 +12,7 @@ const node_schedule_1 = __importDefault(require("node-schedule"));
 const routes_1 = __importDefault(require("./routes"));
 const daemons_1 = require("./scripts/daemons");
 dotenv_1.default.config();
-node_schedule_1.default.scheduleJob('50 * * * *', daemons_1.runDaemons);
+node_schedule_1.default.scheduleJob('* * * * *', daemons_1.runDaemons);
 const app = (0, express_1.default)();
 app.set('trust proxy', 1);
 app.set('views', path_1.default.join('src', 'views'));
