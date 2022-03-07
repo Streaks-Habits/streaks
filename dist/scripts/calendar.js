@@ -3,8 +3,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getCalendar = exports.isOver = void 0;
-const path_1 = __importDefault(require("path"));
+exports.getCalendarList = exports.getCalendar = exports.isOver = void 0;
+const fs_1 = __importDefault(require("fs"));
+const data_1 = require("./data");
 function dateString(date) {
     return (date.toISOString().split('T')[0]);
 }
@@ -19,20 +20,6 @@ function getCalendarArray(monthDate) {
         calendar[cur] = date;
     }
     return (calendar);
-}
-function findDayInData(data, date) {
-    var dataDay = {
-        date: date,
-        state: "fail"
-    };
-    for (let cur = 0; cur < data.days.length; cur++) {
-        if (data.days[cur].date == date) {
-            if (!["fail", "freeze", "breakday", "success"].includes(data.days[cur].state))
-                break;
-            dataDay = data.days[cur];
-        }
-    }
-    return (dataDay);
 }
 function isToday(date) {
     var today = new Date();
@@ -52,40 +39,70 @@ function countStreaks(data) {
     var date = new Date();
     var streaks = 0;
     var current_state;
-    current_state = findDayInData(data, dateString(date)).state;
+    current_state = (0, data_1.findDayInData)(data, dateString(date)).state;
     do {
         if (current_state == "success")
             streaks++;
         date.setDate(date.getDate() - 1);
-        current_state = findDayInData(data, dateString(date)).state;
+        current_state = (0, data_1.findDayInData)(data, dateString(date)).state;
     } while (current_state != "fail");
     return (streaks);
 }
 function getCalendar(monthDate, dataPath) {
-    var calendar = { first_index: 1, days: Array(), firstDayOfWeek: 0, currentStreaks: 0, streaksExpandedToday: false };
-    var dateCalendar = getCalendarArray(monthDate);
-    var daysNum = dateCalendar.length;
-    var data = require(path_1.default.join("../../", "streaks", dataPath));
-    calendar.first_index = (7 + dateCalendar[0].getDay() - data.firstDayOfWeek - 1) % 7;
-    calendar.days = Array(daysNum);
-    calendar.currentStreaks = countStreaks(data);
-    calendar.streaksExpandedToday = findDayInData(data, dateString(new Date())).state != "fail";
-    for (let cur = 0; cur < daysNum; cur++) {
-        let dataDay;
-        calendar.days[cur] = {
-            date: dateCalendar[cur],
-            dateString: "",
-            dayNum: cur + 1,
-            state: "",
-            isToday: isToday(dateCalendar[cur]),
-            isOver: isOver(dateCalendar[cur])
-        };
-        calendar.days[cur].dateString = dateString(calendar.days[cur].date);
-        dataDay = findDayInData(data, calendar.days[cur].dateString);
-        calendar.days[cur].state = dataDay.state;
-    }
-    if (data.firstDayOfWeek)
-        calendar.firstDayOfWeek = 1;
-    return (calendar);
+    return new Promise((resolve, reject) => {
+        var calendar = { first_index: 1, days: Array(), firstDayOfWeek: 0, currentStreaks: 0, streaksExpandedToday: false };
+        var dateCalendar = getCalendarArray(monthDate);
+        var daysNum = dateCalendar.length;
+        (0, data_1.getData)(dataPath).then((data) => {
+            calendar.first_index = (7 + dateCalendar[0].getDay() - data.firstDayOfWeek - 1) % 7;
+            calendar.days = Array(daysNum);
+            calendar.currentStreaks = countStreaks(data);
+            calendar.streaksExpandedToday = (0, data_1.findDayInData)(data, dateString(new Date())).state != "fail";
+            for (let cur = 0; cur < daysNum; cur++) {
+                let dataDay;
+                calendar.days[cur] = {
+                    date: dateCalendar[cur],
+                    dateString: "",
+                    dayNum: cur + 1,
+                    state: "",
+                    isToday: isToday(dateCalendar[cur]),
+                    isOver: isOver(dateCalendar[cur])
+                };
+                calendar.days[cur].dateString = dateString(calendar.days[cur].date);
+                dataDay = (0, data_1.findDayInData)(data, calendar.days[cur].dateString);
+                calendar.days[cur].state = dataDay.state;
+            }
+            if (data.firstDayOfWeek)
+                calendar.firstDayOfWeek = 1;
+            resolve(calendar);
+        }).catch(() => {
+            reject("error in getData (calendar.ts, getCalendar())");
+        });
+    });
 }
 exports.getCalendar = getCalendar;
+function getCalendarList() {
+    return new Promise((resolve, reject) => {
+        var calendarList = new Array();
+        fs_1.default.readdir("./streaks", (err, files) => {
+            if (err)
+                return reject("error in getCalendarList (calendar.ts)");
+            var getDataPromises = Array();
+            for (let file of files)
+                getDataPromises.push((0, data_1.getData)(file));
+            getDataPromises.push((0, data_1.getData)("yolo"));
+            Promise.allSettled(getDataPromises).then((results) => {
+                results.forEach((result) => {
+                    if (result.status == 'fulfilled') {
+                        calendarList.push({
+                            name: result.value.name,
+                            filename: result.value.filename
+                        });
+                    }
+                });
+                resolve(calendarList);
+            });
+        });
+    });
+}
+exports.getCalendarList = getCalendarList;

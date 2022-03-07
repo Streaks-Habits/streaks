@@ -3,8 +3,7 @@ import path from 'path'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 
-import { getCalendar } from './scripts/calendar'
-import { getCalendarList } from './scripts/list_calendar'
+import { getCalendar, getCalendarList } from './scripts/calendar'
 import { setState } from './scripts/set_state'
 
 var jwtExpirySeconds: number = 1814400 // three weeks
@@ -27,6 +26,9 @@ export const dashboardView:RequestHandler = (req, res) => {
 
 	getCalendarList().then((calendarList) => {
 		res.render("dashboard", {calendars: calendarList, dateStr: dateStr})
+	}).catch((err) => {
+		res.status(500)
+		res.send(err)
 	})
 }
 
@@ -40,7 +42,12 @@ export const calendarView:RequestHandler = (req, res) => {
 		date.setFullYear(parseInt(dateString.split('-')[0]))
 		date.setMonth(parseInt(dateString.split('-')[1]) - 1)
 	}
-	res.render("calendar", {calendar: getCalendar(date, req.params.filename)})
+	getCalendar(date, req.params.filename).then((calendar) => {
+		res.render("calendar", {calendar})
+	}).catch((err) => {
+		res.status(500)
+		res.send(err)
+	})
 }
 
 export const loginView:RequestHandler = (req, res) => {

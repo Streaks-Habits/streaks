@@ -9,7 +9,6 @@ const path_1 = __importDefault(require("path"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const calendar_1 = require("./scripts/calendar");
-const list_calendar_1 = require("./scripts/list_calendar");
 const set_state_1 = require("./scripts/set_state");
 var jwtExpirySeconds = 1814400; // three weeks
 const index = (req, res) => {
@@ -25,8 +24,11 @@ exports.servePublic = express_1.default.static(path_1.default.join(__dirname, ".
 const dashboardView = (req, res) => {
     var date = new Date();
     var dateStr = `${date.getFullYear()}-${date.getMonth() + 1}`;
-    (0, list_calendar_1.getCalendarList)().then((calendarList) => {
+    (0, calendar_1.getCalendarList)().then((calendarList) => {
         res.render("dashboard", { calendars: calendarList, dateStr: dateStr });
+    }).catch((err) => {
+        res.status(500);
+        res.send(err);
     });
 };
 exports.dashboardView = dashboardView;
@@ -38,7 +40,12 @@ const calendarView = (req, res) => {
         date.setFullYear(parseInt(dateString.split('-')[0]));
         date.setMonth(parseInt(dateString.split('-')[1]) - 1);
     }
-    res.render("calendar", { calendar: (0, calendar_1.getCalendar)(date, req.params.filename) });
+    (0, calendar_1.getCalendar)(date, req.params.filename).then((calendar) => {
+        res.render("calendar", { calendar });
+    }).catch((err) => {
+        res.status(500);
+        res.send(err);
+    });
 };
 exports.calendarView = calendarView;
 const loginView = (req, res) => {

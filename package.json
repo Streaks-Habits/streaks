@@ -5,6 +5,7 @@
   "main": "dist/server.js",
   "scripts": {
     "start": "node dist/server.js",
+    "build": "tsc && node-sass -r src/styles/ -o dist/public/styles/",
     "start-dev": "nodemon --ignore ./streaks/ dist/server.js",
     "sass": "node-sass -w -r src/styles/ -o dist/public/styles/",
     "tsc": "tsc -w"

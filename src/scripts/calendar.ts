@@ -1,6 +1,8 @@
 import path from "path"
+import fs from "fs"
 
-import { DataDay, Data, Calendar } from "./interfaces"
+import { getData, findDayInData } from "./data"
+import { DataDay, Data, Calendar, CalendarMeta } from "./interfaces"
 
 function dateString(date: Date): string {
 	return (date.toISOString().split('T')[0])
@@ -18,23 +20,6 @@ function getCalendarArray(monthDate: Date): Array<Date> {
 		calendar[cur] = date
 	}
 	return (calendar)
-}
-
-function findDayInData(data: Data, date: string): DataDay {
-	var dataDay: DataDay = {
-		date: date,
-		state: "fail"
-	}
-
-	for (let cur = 0; cur < data.days.length; cur++) {
-		if (data.days[cur].date == date)
-		{
-			if (!["fail", "freeze", "breakday", "success"].includes(data.days[cur].state))
-				break
-			dataDay = data.days[cur]
-		}
-	}
-	return (dataDay)
 }
 
 function isToday(date: Date):Boolean {
@@ -69,31 +54,63 @@ function countStreaks(data: Data): number {
 	return (streaks)
 }
 
-export function getCalendar(monthDate: Date, dataPath: string):Calendar {
-	var calendar: Calendar = {first_index: 1, days: Array(), firstDayOfWeek: 0, currentStreaks: 0, streaksExpandedToday: false}
-	var dateCalendar: Array<Date> = getCalendarArray(monthDate)
-	var daysNum = dateCalendar.length
-	var data: Data = require(path.join("../../", "streaks", dataPath))
+export function getCalendar(monthDate: Date, dataPath: string): Promise<Calendar> {
+	return new Promise<Calendar>((resolve, reject) => {
+		var calendar: Calendar = {first_index: 1, days: Array(), firstDayOfWeek: 0, currentStreaks: 0, streaksExpandedToday: false}
+		var dateCalendar: Array<Date> = getCalendarArray(monthDate)
+		var daysNum = dateCalendar.length
 
-	calendar.first_index = (7 + dateCalendar[0].getDay() - data.firstDayOfWeek - 1) % 7
-	calendar.days = Array(daysNum)
-	calendar.currentStreaks = countStreaks(data)
-	calendar.streaksExpandedToday = findDayInData(data, dateString(new Date())).state != "fail"
-	for (let cur = 0; cur < daysNum; cur++) {
-		let dataDay: DataDay;
-		calendar.days[cur] = {
-			date: dateCalendar[cur],
-			dateString: "",
-			dayNum: cur + 1,
-			state: "",
-			isToday: isToday(dateCalendar[cur]),
-			isOver: isOver(dateCalendar[cur])
-		}
-		calendar.days[cur].dateString = dateString(calendar.days[cur].date)
-		dataDay = findDayInData(data, calendar.days[cur].dateString)
-		calendar.days[cur].state = dataDay.state
-	}
-	if (data.firstDayOfWeek)
-		calendar.firstDayOfWeek = 1
-	return (calendar)
+		getData(dataPath).then((data) => {
+			calendar.first_index = (7 + dateCalendar[0].getDay() - data.firstDayOfWeek - 1) % 7
+			calendar.days = Array(daysNum)
+			calendar.currentStreaks = countStreaks(data)
+			calendar.streaksExpandedToday = findDayInData(data, dateString(new Date())).state != "fail"
+			for (let cur = 0; cur < daysNum; cur++) {
+				let dataDay: DataDay;
+				calendar.days[cur] = {
+					date: dateCalendar[cur],
+					dateString: "",
+					dayNum: cur + 1,
+					state: "",
+					isToday: isToday(dateCalendar[cur]),
+					isOver: isOver(dateCalendar[cur])
+				}
+				calendar.days[cur].dateString = dateString(calendar.days[cur].date)
+				dataDay = findDayInData(data, calendar.days[cur].dateString)
+				calendar.days[cur].state = dataDay.state
+			}
+			if (data.firstDayOfWeek)
+				calendar.firstDayOfWeek = 1
+			resolve(calendar)
+		}).catch(() => {
+			reject("error in getData (calendar.ts, getCalendar())")
+		})
+	})
+}
+
+export function getCalendarList(): Promise<Array<CalendarMeta>> {
+	return new Promise<Array<CalendarMeta>>((resolve, reject) => {
+		var calendarList: Array<CalendarMeta> = new Array()
+
+		fs.readdir("./streaks", (err, files) => {
+			if (err) return reject("error in getCalendarList (calendar.ts)")
+
+			var getDataPromises: Array<Promise<Data>> = Array()
+			for (let file of files)
+				getDataPromises.push(getData(file))
+			getDataPromises.push(getData("yolo"))
+			Promise.allSettled(getDataPromises).then((results) => {
+				results.forEach((result) => {
+					if (result.status == 'fulfilled')
+					{
+						calendarList.push({
+							name: result.value.name,
+							filename: result.value.filename
+						})
+					}
+				})
+				resolve(calendarList)
+			})
+		})
+	})
 }

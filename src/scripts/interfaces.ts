@@ -3,6 +3,7 @@ export interface DataDay {
 	state: string
 }
 export interface Data {
+	filename: string,
 	name: string,
 	firstDayOfWeek: number,
 	agenda: Array<number>,
