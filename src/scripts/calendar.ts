@@ -1,10 +1,9 @@
-import path from "path"
 import fs from "fs"
 
 import { getData, findDayInData } from "./data"
 import { DataDay, Data, Calendar, CalendarMeta } from "./interfaces"
 
-function dateString(date: Date): string {
+export function dateString(date: Date): string {
 	return (date.toISOString().split('T')[0])
 }
 
@@ -98,7 +97,6 @@ export function getCalendarList(): Promise<Array<CalendarMeta>> {
 			var getDataPromises: Array<Promise<Data>> = Array()
 			for (let file of files)
 				getDataPromises.push(getData(file))
-			getDataPromises.push(getData("yolo"))
 			Promise.allSettled(getDataPromises).then((results) => {
 				results.forEach((result) => {
 					if (result.status == 'fulfilled')

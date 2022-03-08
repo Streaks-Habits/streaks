@@ -7,7 +7,6 @@ export interface Data {
 	name: string,
 	firstDayOfWeek: number,
 	agenda: Array<number>,
-	bonus: number,
 	days: Array <DataDay>
 }
 export interface CalendarDay {

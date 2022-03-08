@@ -3,12 +3,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getCalendarList = exports.getCalendar = exports.isOver = void 0;
+exports.getCalendarList = exports.getCalendar = exports.isOver = exports.dateString = void 0;
 const fs_1 = __importDefault(require("fs"));
 const data_1 = require("./data");
 function dateString(date) {
     return (date.toISOString().split('T')[0]);
 }
+exports.dateString = dateString;
 function getCalendarArray(monthDate) {
     var calendar;
     var firstDay = new Date(monthDate.getFullYear(), monthDate.getMonth(), 2);
@@ -90,7 +91,6 @@ function getCalendarList() {
             var getDataPromises = Array();
             for (let file of files)
                 getDataPromises.push((0, data_1.getData)(file));
-            getDataPromises.push((0, data_1.getData)("yolo"));
             Promise.allSettled(getDataPromises).then((results) => {
                 results.forEach((result) => {
                     if (result.status == 'fulfilled') {
