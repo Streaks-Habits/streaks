@@ -5,6 +5,13 @@ var htmlSetFail = document.getElementById("set_fail_state")
 
 isLoading = false
 
+/**
+ * Makes a request to set the specified state to the specified day for the specified calendar
+ * @param state - The state to define can be: success, fail, breakday, freeze
+ * @param dateString - The date formatted as YYYY-MM-DD
+ * @param filename - The name of the calendar file in the streaks folder (e.g. example.streaks.json)
+ * @param htmlCal - The DOM element of the .dashboard_calendar to reload
+ */
 setState = (state, dateString, filename, htmlCal) => {
 	isLoading = true
 	htmlStateBox.classList.add("spin")
@@ -23,11 +30,16 @@ setState = (state, dateString, filename, htmlCal) => {
 	})
 }
 
+/**
+ * Show the box that allows you to define a state of the day
+ * @param htmlDay - The DOM element of the day for which you want to define a state
+ * @param htmlCal - The .dashboard_calendar DOM element of the day
+ * @param e - The click event
+ */
 showStateBox = (htmlDay, htmlCal, e) => {
 	if (isLoading)
 		return
 	hideStateBox()
-	console.log("need to set day " + htmlDay.getAttribute("attr-date") + " of cal " + htmlCal.getAttribute("attr-filename"))
 	window.onclick = function(e) {
 		if (!htmlStateBox.contains(e.target)) {
 			hideStateBox()
@@ -47,6 +59,9 @@ showStateBox = (htmlDay, htmlCal, e) => {
 	htmlStateBox.style.display = "block"
 }
 
+/**
+ * Show the box that allows you to define a state of the day and clear every click events
+ */
 hideStateBox = () => {
 	if (htmlStateBox.style.display == "block" && !isLoading) {
 		htmlStateBox.style.display = "none"

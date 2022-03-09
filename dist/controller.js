@@ -83,6 +83,9 @@ exports.loginForm = loginForm;
 const stateSet = (req, res) => {
     (0, set_state_1.setState)(req.params.filename, req.params.dateString, req.params.state).then(() => {
         res.send();
+    }).catch((err) => {
+        res.status(500);
+        res.send(err);
     });
 };
 exports.stateSet = stateSet;

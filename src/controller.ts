@@ -83,6 +83,9 @@ export const loginForm:RequestHandler = (req, res) => {
 export const stateSet:RequestHandler = (req, res) => {
 	setState(req.params.filename, req.params.dateString, req.params.state).then(() => {
 		res.send()
+	}).catch((err) => {
+		res.status(500)
+		res.send(err)
 	})
 }
 

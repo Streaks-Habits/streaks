@@ -11,10 +11,14 @@ const child_process_1 = require("child_process");
 const calendar_1 = require("./calendar");
 const data_1 = require("./data");
 const set_state_1 = require("./set_state");
-function setBreakday() {
+const utils_1 = require("./utils");
+/**
+ * Go through the calendar and set the breakday status to the current day if it is a breakday (a 0 in agenda)
+ */
+function setBreakdays() {
     (0, calendar_1.getCalendarList)().then((calendarsMeta) => {
         calendarsMeta.forEach((calendar) => {
-            (0, data_1.getData)(calendar.filename).then((data) => {
+            (0, data_1.getStreaks)(calendar.filename).then((data) => {
                 var weekday = new Date().getDay();
                 if (data.firstDayOfWeek == 1) {
                     weekday--;
@@ -22,8 +26,10 @@ function setBreakday() {
                         weekday = 6;
                 }
                 if (!data.agenda[weekday]) {
-                    if ((0, data_1.findDayInData)(data, (0, calendar_1.dateString)(new Date())).state == "fail") {
-                        (0, set_state_1.setState)(calendar.filename, (0, calendar_1.dateString)(new Date()), "breakday");
+                    if ((0, data_1.findDayInData)(data, (0, utils_1.dateString)(new Date())).state == "fail") {
+                        (0, set_state_1.setState)(calendar.filename, (0, utils_1.dateString)(new Date()), "breakday").catch((err) => {
+                            console.error(`${calendar.filename} ${err}`);
+                        });
                     }
                 }
             }).catch(() => {
@@ -34,6 +40,10 @@ function setBreakday() {
         console.error(err);
     });
 }
+/**
+ * Run each command in daemons/commands.list (one command per line) and put the logs in daemons/daemons.log.
+ * Then run the setBreakday function
+ */
 function runDaemons() {
     var commandsListPath = path_1.default.join(__dirname, "../../", "daemons", "commands.list");
     var logPath = path_1.default.join(__dirname, "../../", "daemons", "daemons.log");
@@ -74,7 +84,7 @@ function runDaemons() {
             });
         });
     }).finally(() => {
-        setBreakday();
+        setBreakdays();
     });
 }
 exports.runDaemons = runDaemons;

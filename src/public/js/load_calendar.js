@@ -1,8 +1,13 @@
 var htmlDashboard = document.getElementById("dashboard")
 var htmlCalendars = htmlDashboard.getElementsByClassName("dashboard_calendar")
 
+/**
+ * Load the calendar of the specified .dashboard_calendar element (do a GET request)
+ * @param htmlCal - The DOM element of the .dashboard_calendar to load
+ * @return - A promise that resolve(void) when finished
+ */
 loadCalendar = (htmlCal) => {
-	return new Promise((resolve, reject) => {
+	return new Promise((resolve, _reject) => {
 		let filename = htmlCal.getAttribute('attr-filename')
 		let date = htmlCal.getAttribute('attr-date')
 		let url = `/calendar/${filename}?${new URLSearchParams({
@@ -35,12 +40,19 @@ loadCalendar = (htmlCal) => {
 	})
 }
 
+/**
+ * Call the loadCalendar function for each .dashboard_calendar element
+ */
 loadCalendars = () => {
 	for (htmlCal of htmlCalendars) {
 		loadCalendar(htmlCal)
 	}
 }
 
+/**
+ * Set the specified .dashboard_calendar element to the previous month then load it
+ * @param htmlCal - The DOM element of the .dashboard_calendar
+ */
 setPreviousMonth = (htmlCal) => {
 	let date = htmlCal.getAttribute('attr-date')
 	let year = parseInt(date.split('-')[0])
@@ -56,6 +68,10 @@ setPreviousMonth = (htmlCal) => {
 	loadCalendar(htmlCal)
 }
 
+/**
+ * Set the specified .dashboard_calendar element to the next month then load it
+ * @param htmlCal - The DOM element of the .dashboard_calendar
+ */
 setNextMonth = (htmlCal) => {
 	let date = htmlCal.getAttribute('attr-date')
 	let year = parseInt(date.split('-')[0])
@@ -71,6 +87,10 @@ setNextMonth = (htmlCal) => {
 	loadCalendar(htmlCal)
 }
 
+/**
+ * Set the specified .dashboard_calendar element to the current month then load it
+ * @param htmlCal - The DOM element of the .dashboard_calendar
+ */
 setToday = (htmlCal) => {
 	let date = new Date()
 
