@@ -4,7 +4,7 @@ var htmlCalendars = htmlDashboard.getElementsByClassName("dashboard_calendar")
 /**
  * Load the calendar of the specified .dashboard_calendar element (do a GET request)
  * @param htmlCal - The DOM element of the .dashboard_calendar to load
- * @return - A promise that resolve(void) when finished
+ * @returns - A promise that resolve(void) when finished
  */
 loadCalendar = (htmlCal) => {
 	return new Promise((resolve, _reject) => {
