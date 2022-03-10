@@ -12,6 +12,7 @@ COPY package.json package.json
 
 RUN npm i
 
+COPY user_scripts user_scripts
 COPY dist dist
 COPY src src
 
