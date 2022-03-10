@@ -8,15 +8,11 @@ services:
 before_script:
   - docker info
 
-#docker-build:
-#  image: docker:latest
-#  stage: build
-#  script:
-#    - docker build --pull .
-
 docker-publish:
   image: docker:latest
   stage: deploy
+  only:
+    - main
   retry: 2
   before_script:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
