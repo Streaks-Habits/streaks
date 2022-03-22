@@ -14,8 +14,8 @@ RUN npm run build
 FROM node:alpine as main
 
 # Install daemons dependencies
-RUN apk add --no-cache python3 chromium chromium-chromedriver && \
-	apk add --no-cache --virtual build-dependencies libffi libffi-dev gcc musl-dev openssl-dev cargo python3-dev py3-pip && \
+RUN apk add --no-cache python3 py3-pip chromium chromium-chromedriver && \
+	apk add --no-cache --virtual build-dependencies libffi libffi-dev gcc musl-dev openssl-dev cargo python3-dev && \
 	pip3 install -U selenium python-dotenv certifi && \
 	apk del build-dependencies
 # Copy sources and builded sources
