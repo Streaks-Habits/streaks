@@ -6,7 +6,7 @@ import os from 'os'
 
 import { getCalendarList } from './calendar'
 import { findDayInData, getStreaks } from './data'
-import { setState } from './set_state'
+import { setState } from './state'
 import { dateString } from './utils'
 
 /**
