@@ -54,8 +54,8 @@ showStateBox = (htmlDay, htmlCal, e) => {
 	htmlSetFail.onclick = function() {
 		setState("fail", htmlDay.getAttribute("attr-date"), htmlCal.getAttribute("attr-filename"), htmlCal)
 	}
-	htmlStateBox.style.top = e.clientY + "px"
-	htmlStateBox.style.left = e.clientX + "px"
+	htmlStateBox.style.top = e.clientY + window.scrollY + "px"
+	htmlStateBox.style.left = e.clientX + window.scrollX + "px"
 	htmlStateBox.style.display = "block"
 }
 
