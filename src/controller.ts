@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 
 import { getCalendar, getCalendarList } from './scripts/calendar'
-import { setState } from './scripts/set_state'
+import { setState } from './scripts/state'
 
 var jwtExpirySeconds: number = 1814400 // three weeks
 
