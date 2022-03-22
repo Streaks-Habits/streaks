@@ -36,6 +36,8 @@ function setBreakdays(): Promise<void> {
 									resolve()
 								})
 							}
+							else
+								resolve()
 						}
 						else
 							resolve()

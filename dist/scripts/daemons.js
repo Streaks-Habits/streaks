@@ -38,6 +38,8 @@ function setBreakdays() {
                                     resolve();
                                 });
                             }
+                            else
+                                resolve();
                         }
                         else
                             resolve();
