@@ -1,28 +1,32 @@
-FROM node:current-alpine
-
-# Install dependencies
-RUN apk update && \
-	apk add --no-cache chromium chromium-chromedriver libffi libffi-dev gcc musl-dev openssl-dev cargo python3 python3-dev py3-pip && \
-	pip3 install -U selenium python-dotenv && \
-	apk del libffi libffi-dev gcc musl-dev openssl-dev cargo python3-dev py3-pip
+FROM node:alpine as build
 
 # Copy streaks.json sources
-RUN mkdir /streaks.json
 WORKDIR /streaks.json
 COPY package.json package.json
-
-# Install npm dependencies
-RUN npm i
-
-# Copy the rests of the streaks.json sources
 COPY tsconfig.json tsconfig.json
-COPY user_scripts user_scripts
 COPY src src
-
-# Build streaks.json
+# Install npm dependencies and build
+RUN npm i
 RUN npm run build
+
+
+
+FROM node:alpine as main
+
+# Install daemons dependencies
+RUN apk add --no-cache python3 chromium chromium-chromedriver && \
+	apk add --no-cache --virtual build-dependencies libffi libffi-dev gcc musl-dev openssl-dev cargo python3-dev py3-pip && \
+	pip3 install -U selenium python-dotenv certifi && \
+	apk del build-dependencies
+# Copy sources and builded sources
+WORKDIR /streaks.json
+COPY package.json package.json
+COPY --from=build /streaks.json/dist ./dist
+COPY src src
+COPY user_scripts user_scripts
+# Install only production
+RUN npm install --production
 
 EXPOSE 80
 ENV PORT=80
-
 CMD sh -c "npm start"
