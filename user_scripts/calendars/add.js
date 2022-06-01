@@ -2,7 +2,7 @@ const chalk = require('chalk')
 const readlineSync = require('readline-sync')
 const mongoose = require("mongoose")
 
-const { connectDB, addCalendar } = require("../../dist/scripts/database")
+const { connectDB, addCalendar, User } = require("../../dist/scripts/database")
 
 process.stdout.write(`${chalk.blue("cestmaddy")} database => `);
 connectDB().then(() => {
@@ -12,8 +12,9 @@ connectDB().then(() => {
 
 	var user_id = readlineSync.question('User id: ')
 	var calendar_name = readlineSync.question('Calendar name: ')
+	var user = new User(user_id)
 
-	addCalendar(calendar_name, user_id).then(calendar => {
+	user.addCalendar(calendar_name).then(calendar => {
 		console.log(`Calendar ${calendar.name} (${calendar._id}) ${chalk.green("added")}`)
 	}).catch(err => {
 		console.error(`Error: ${chalk.red(err)}`)

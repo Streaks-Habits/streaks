@@ -56,8 +56,11 @@ getEnv().then((envContent) => {
 		envObj["TZ"] = defaultTZ
 	if (!envObj.hasOwnProperty("JWT_KEY"))
 		envObj["JWT_KEY"] = Math.random().toString(16).substring(2, 14)
-	if (!envObj.hasOwnProperty("MONGO_URI"))
-		envObj["MONGO_URI"] = readlineSync.question('Paste your MongoDB connection string: ')
+	if (!envObj.hasOwnProperty("MONGO_URI")) {
+		let mongo_uri = readlineSync.question('Paste your MongoDB connection string\n\t(leave empty if using the default docker-compose): ')
+		if (mongo_uri != "")
+			envObj["MONGO_URI"] = mongo_uri
+	}
 
 	writeEnv(stringify(envObj)).then(() => {
 		console.log(chalk.green(".env successfully updated !"))
