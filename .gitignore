@@ -4,3 +4,4 @@ package-lock.json
 daemons/*
 .env
 test.js
+database

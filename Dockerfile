@@ -1,5 +1,7 @@
 FROM node:alpine as build
 
+# Install dependencies
+RUN apk add --no-cache python3 make g++
 # Copy streaks.json sources
 WORKDIR /streaks.json
 COPY package.json package.json

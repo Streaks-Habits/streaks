@@ -1,5 +1,12 @@
 version: "3.9"
 services:
+  db:
+    image : mongo:5.0.8
+    container_name: mongodb
+    restart: always
+    volumes:
+    - ./database:/data/db
+
   streaks.json:
     # If you want to build from Dockerfile
     build: .
@@ -7,11 +14,13 @@ services:
     # image: "registry.chevro.fr/cestoliv/streaks.json:latest"
     container_name: "streaks.json"
     restart: always
+    depends_on:
+      - db
     environment:
       - TZ=${TZ}
+      - MONGO_URI=mongodb://db:27017/?retryWrites=true&w=majority
     ports:
       - ${PORT}:80
     volumes:
-      - ./streaks/:/streaks.json/streaks/
       - ./daemons/:/streaks.json/daemons/
       - ./.env:/streaks.json/.env
