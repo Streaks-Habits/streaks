@@ -1,8 +1,8 @@
 const fs = require("fs")
+const chalk = require('chalk')
 const path = require("path")
 const { parse, stringify } = require('envfile')
 const readlineSync = require('readline-sync')
-const bcrypt = require('bcrypt')
 
 const defaultPort = 80
 const defaultTZ = "Europe/Paris"
@@ -47,24 +47,8 @@ getEnv = () => {
 	})
 }
 
-/**
- * Ask a password on the standard input and return it hashed
- * @returns - A promise that resolve(hash)
- */
-getPassword = () => {
-	return new Promise((resolve, reject) => {
-		var password = readlineSync.question('Type password : ', { hideEchoBack: true })
-
-		bcrypt.hash(password, 10, (err, hash) => {
-			if (err) throw err
-			resolve(hash)
-		})
-	})
-}
-
 getEnv().then((envContent) => {
 	var envObj = parse(envContent)
-	var changePass = false
 
 	if (!envObj.hasOwnProperty("PORT"))
 		envObj["PORT"] = defaultPort
@@ -72,24 +56,17 @@ getEnv().then((envContent) => {
 		envObj["TZ"] = defaultTZ
 	if (!envObj.hasOwnProperty("JWT_KEY"))
 		envObj["JWT_KEY"] = Math.random().toString(16).substring(2, 14)
-	if (!envObj.hasOwnProperty("PASSWORD_HASH"))
-		changePass = true
-	else {
-		if (readlineSync.question('Do you want to change the password? [Y/n] ').toUpperCase() == 'Y')
-			changePass = true
+	if (!envObj.hasOwnProperty("MONGO_URI")) {
+		let mongo_uri = readlineSync.question('Paste your MongoDB connection string\n\t(leave empty if using the default docker-compose): ')
+		if (mongo_uri != "")
+			envObj["MONGO_URI"] = mongo_uri
 	}
 
-	if (changePass) {
-		getPassword().then((hash) => {
-			envObj["PASSWORD_HASH"] = hash
-			writeEnv(stringify(envObj))
-			console.log(".env successfully updated !")
-		})
-	}
-	else {
-		writeEnv(stringify(envObj))
-		console.log(".env successfully updated !")
-	}
+	writeEnv(stringify(envObj)).then(() => {
+		console.log(chalk.green(".env successfully updated !"))
+	}).catch((err) => {
+		console.error(`Error: ${chalk.red(err)}`)
+	})
 }).catch((err) => {
-	console.error(`Can't access ${envPath} : ${err}`)
+	console.error(`Error: ${chalk.red(err)}`)
 })

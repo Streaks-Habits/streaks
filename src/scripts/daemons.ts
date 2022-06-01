@@ -4,54 +4,45 @@ import path from 'path'
 import { exec } from 'child_process'
 import os from 'os'
 
-import { getCalendarList } from './calendar'
-import { findDayInData, getStreaks } from './data'
-import { setState } from './state'
+import { getCalendars, User } from './database'
 import { dateString } from './utils'
+import chalk from 'chalk'
 
 /**
- * Go through the calendar and set the breakday status to the current day if it is a breakday (a 0 in agenda)
+ * Go through the calendar and set the breakday status to the current day
+ * if it is a breakday (a 0 in agenda)
  * @return - A promise that resolve(void) at the end
  */
 function setBreakdays(): Promise<void> {
 	return new Promise((resolve, _reject) => {
-		getCalendarList().then((calendarsMeta) => {
+		getCalendars().then((db_calendars) => {
 			var promisesList: Array<Promise<void>> = Array()
 
-			calendarsMeta.forEach((calendar) => {
+			db_calendars.forEach((db_calendar) => {
 				promisesList.push(new Promise((resolve, _reject) => {
-					getStreaks(calendar.filename).then((data) => {
-						var weekday: number = new Date().getDay()
+					var user = new User(db_calendar.user_id.toString())
+					var weekday: number = new Date().getDay()
 
-						if (data.firstDayOfWeek == 1) {
-							weekday--
-							if (weekday == -1)
-								weekday = 6
-						}
-						if (!data.agenda[weekday]) {
-							if (findDayInData(data, dateString(new Date())).state == "fail") {
-								setState(calendar.filename, dateString(new Date()), "breakday").catch((err) => {
-									console.error(`${calendar.filename} ${err}`)
-								}).finally(() => {
-									resolve()
-								})
-							}
-							else
+					if (!db_calendar.agenda[weekday]) {
+						if (db_calendar.days.get(dateString(new Date())) != "success") {
+							user.setDayState(db_calendar._id, dateString(new Date()), "breakday").catch((err) => {
+								console.error(`Daemons: ${chalk.red(err.message)}`)
+							}).finally(() => {
 								resolve()
+							})
 						}
 						else
 							resolve()
-					}).catch(() => {
-						console.error("error in getStreaks (daemons.ts, setBreakday())")
+					}
+					else
 						resolve()
-					})
 				}))
 			})
 			Promise.allSettled(promisesList).then(() => {
 				resolve()
 			})
 		}).catch((err) => {
-			console.error(err)
+			console.error(`Daemons: ${chalk.red(err.message)}`)
 			resolve()
 		})
 	})

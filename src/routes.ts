@@ -10,8 +10,9 @@ router.get("/login", loginView)
 router.post("/login", loginForm)
 router.use("/", checkAuthenticated)
 router.get("/", index)
-router.get("/calendar/:filename", calendarView)
 router.get("/dashboard", dashboardView)
-router.get("/set_state/:filename/:dateString/:state", stateSet)
+/// API ///
+router.get("/api/set_state/:id/:dateString/:state", stateSet)
+router.get("/api/calendar_view/:id", calendarView)
 
 export default router

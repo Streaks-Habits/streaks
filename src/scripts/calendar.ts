@@ -1,18 +1,20 @@
-import fs from "fs"
+import moment from "moment"
 
-import { getStreaks, findDayInData, countStreaks } from "./data"
-import { StreaksFileDay, StreaksFile, Calendar, CalendarMeta } from "./interfaces"
-import { dateString, isOver, isToday } from "./utils"
+import { UICalendar } from "./interfaces"
+import { dateString, isOver, isToday, countStreaks } from "./utils"
+import { User } from './database'
 
 /**
- * Returns a table of each date of the specified month. From the first day of the month to the last day of the month
+ * Returns a table of each date of the specified month. From the first
+ * day of the month to the last day of the month
  * @param monthDate - A date that is included in the desired month
  * @returns - An Array<Date> of the month
  */
-function createMonthArray(monthDate: Date): Array<Date> {
+function createMonthArray(monthDate: string): Array<Date> {
+	var date: Date = moment(monthDate).toDate()
 	var calendar: Array<Date>
-	var firstDay: Date = new Date(monthDate.getFullYear(), monthDate.getMonth(), 2)
-	var lastDay: number = new Date(monthDate.getFullYear(), monthDate.getMonth() + 1, 0).getDate()
+	var firstDay: Date = new Date(date.getFullYear(), date.getMonth(), 1)
+	var lastDay: number = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate()
 
 	calendar = Array(lastDay)
 	for (let cur = 0; cur < lastDay; cur++) {
@@ -24,24 +26,30 @@ function createMonthArray(monthDate: Date): Array<Date> {
 }
 
 /**
- * Retrieves the contents of the specified streaks file and returns data for the specified month
+ * Retrieves the specified calendar and create an UICalendar, with every information to display
+ * specified month
+ * @param User - The User owning that calendar
  * @param monthDate - A date that is included in the desired month
- * @param filename - The name of the calendar file in the streaks folder (e.g. example.streaks.json)
+ * @param id - The id of the calendar
  * @returns - A promise that resolve(Calendar) or reject(errorMessage)
  */
-export function getCalendar(monthDate: Date, filename: string): Promise<Calendar> {
-	return new Promise<Calendar>((resolve, reject) => {
-		var calendar: Calendar = {first_index: 1, days: Array(), firstDayOfWeek: 0, currentStreaks: 0, streaksExpandedToday: false}
+export function getUICalendar(user: User, monthDate: string, id: string): Promise<UICalendar> {
+	return new Promise<UICalendar>((resolve, reject) => {
+		var calendar: UICalendar = {
+			id: "", user_id: "", first_index: 1, days: Array(),
+			weekStartsMonday: user.weekStartsMonday, currentStreaks: 0,
+			streaksExpandedToday: false
+		}
 		var monthArray: Array<Date> = createMonthArray(monthDate)
-		var daysNum = monthArray.length
 
-		getStreaks(filename).then((data) => {
-			calendar.first_index = (7 + monthArray[0].getDay() - data.firstDayOfWeek - 1) % 7
-			calendar.days = Array(daysNum)
-			calendar.currentStreaks = countStreaks(data)
-			calendar.streaksExpandedToday = findDayInData(data, dateString(new Date())).state != "fail"
-			for (let cur = 0; cur < daysNum; cur++) {
-				let StreaksFileDay: StreaksFileDay;
+		user.getCalendarById(id).then((db_calendar) => {
+			calendar.id = db_calendar._id
+			calendar.user_id = db_calendar.user_id.toString()
+
+			calendar.first_index = (7 + monthArray[0].getDay() - (user.weekStartsMonday ? 1 : 0) - 1) % 7
+			calendar.currentStreaks = countStreaks(db_calendar)
+			calendar.streaksExpandedToday = db_calendar.days.get(dateString(new Date())) != "fail"
+			for (let cur = 0; cur < monthArray.length; cur++) {
 				calendar.days[cur] = {
 					date: monthArray[cur],
 					dateString: "",
@@ -51,44 +59,11 @@ export function getCalendar(monthDate: Date, filename: string): Promise<Calendar
 					isOver: isOver(monthArray[cur])
 				}
 				calendar.days[cur].dateString = dateString(calendar.days[cur].date)
-				StreaksFileDay = findDayInData(data, calendar.days[cur].dateString)
-				calendar.days[cur].state = StreaksFileDay.state
+				calendar.days[cur].state = db_calendar.days.get(calendar.days[cur].dateString) || "fail"
 			}
-			if (data.firstDayOfWeek)
-				calendar.firstDayOfWeek = 1
 			resolve(calendar)
-		}).catch(() => {
-			reject("error in getData (calendar.ts, getCalendar())")
-		})
-	})
-}
-
-/**
- * Returns a list of calendars contained in the streaks folder
- * @returns - A promise that resolve(Array<CalendarMeta>) or reject(errorMessage)
- */
-export function getCalendarList(): Promise<Array<CalendarMeta>> {
-	return new Promise<Array<CalendarMeta>>((resolve, reject) => {
-		var calendarList: Array<CalendarMeta> = new Array()
-
-		fs.readdir("./streaks", (err, files) => {
-			if (err) return reject("error in getCalendarList (calendar.ts)")
-
-			var getDataPromises: Array<Promise<StreaksFile>> = Array()
-			for (let file of files)
-				getDataPromises.push(getStreaks(file))
-			Promise.allSettled(getDataPromises).then((results) => {
-				results.forEach((result) => {
-					if (result.status == 'fulfilled')
-					{
-						calendarList.push({
-							name: result.value.name,
-							filename: result.value.filename
-						})
-					}
-				})
-				resolve(calendarList)
-			})
+		}).catch(err => {
+			reject(err)
 		})
 	})
 }

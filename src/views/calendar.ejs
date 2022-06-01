@@ -8,7 +8,7 @@
 		</div>
 	</div>
 	<div class="calendar_grid">
-		<% if (!calendar.firstDayOfWeek) { %>
+		<% if (!calendar.weekStartsMonday) { %>
 			<div class="day_name"><p>Su</p></div>
 		<% } %>
 		<div class="day_name"><p>M</p></div>
@@ -17,7 +17,7 @@
 		<div class="day_name"><p>Th</p></div>
 		<div class="day_name"><p>F</p></div>
 		<div class="day_name"><p>Sa</p></div>
-		<% if (calendar.firstDayOfWeek) { %>
+		<% if (calendar.weekStartsMonday) { %>
 			<div class="day_name"><p>Su</p></div>
 		<% } %>
 		<% calendar.days.forEach(function(day) { %>
