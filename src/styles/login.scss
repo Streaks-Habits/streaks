@@ -27,7 +27,7 @@ form#login_form {
 		margin: 0 0 15px 0;
 	}
 
-	input#password {
+	input#password, input#username {
 		background: var(--c_border);
 		border: none;
 		border-radius: 5px;

@@ -28,7 +28,7 @@
 
 	<div id="dashboard">
 		<% calendars.forEach(function(cal) { %>
-			<div class="dashboard_calendar" attr-filename="<%= cal.filename %>" attr-date="<%= dateStr %>">
+			<div class="dashboard_calendar" attr-id="<%= cal.id %>" attr-date="<%= dateStr %>">
 				<div class="calendar_header">
 					<p class="title"><%= cal.name %></p>
 					<div class="calendar_controls">

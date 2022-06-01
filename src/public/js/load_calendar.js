@@ -8,9 +8,9 @@ var htmlCalendars = htmlDashboard.getElementsByClassName("dashboard_calendar")
  */
 loadCalendar = (htmlCal) => {
 	return new Promise((resolve, _reject) => {
-		let filename = htmlCal.getAttribute('attr-filename')
+		let cal_id = htmlCal.getAttribute('attr-id')
 		let date = htmlCal.getAttribute('attr-date')
-		let url = `/calendar/${filename}?${new URLSearchParams({
+		let url = `/api/calendar_view/${cal_id}?${new URLSearchParams({
 			date: date
 		})}`
 
@@ -64,6 +64,9 @@ setPreviousMonth = (htmlCal) => {
 		month = 12
 		year--
 	}
+	month = `${month}`
+	if (month.length == 1)
+		month = `0${month}`
 	htmlCal.setAttribute('attr-date', `${year}-${month}`)
 	loadCalendar(htmlCal)
 }
@@ -83,6 +86,9 @@ setNextMonth = (htmlCal) => {
 		month = 1
 		year++
 	}
+	month = `${month}`
+	if (month.length == 1)
+		month = `0${month}`
 	htmlCal.setAttribute('attr-date', `${year}-${month}`)
 	loadCalendar(htmlCal)
 }
@@ -94,7 +100,10 @@ setNextMonth = (htmlCal) => {
 setToday = (htmlCal) => {
 	let date = new Date()
 
-	htmlCal.setAttribute('attr-date', `${date.getFullYear()}-${date.getMonth() + 1}`)
+	let month = `${date.getMonth() + 1}`
+	if (month.length == 1)
+		month = `0${month}`
+	htmlCal.setAttribute('attr-date', `${date.getFullYear()}-${month}`)
 	loadCalendar(htmlCal)
 }
 

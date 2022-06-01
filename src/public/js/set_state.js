@@ -9,15 +9,14 @@ isLoading = false
  * Makes a request to set the specified state to the specified day for the specified calendar
  * @param state - The state to define can be: success, fail, breakday, freeze
  * @param dateString - The date formatted as YYYY-MM-DD
- * @param filename - The name of the calendar file in the streaks folder (e.g. example.streaks.json)
+ * @param id - The id of the calendar
  * @param htmlCal - The DOM element of the .dashboard_calendar to reload
  */
-setState = (state, dateString, filename, htmlCal) => {
+setState = (state, dateString, id, htmlCal) => {
 	isLoading = true
 	htmlStateBox.classList.add("spin")
-	console.log(`set ${dateString} to ${state} on ${filename}`)
 
-	let url = `/set_state/${filename}/${dateString}/${state}`
+	let url = `/api/set_state/${id}/${dateString}/${state}`
 
 	fetch(url).then(data => {
 		if (data.ok)
@@ -46,13 +45,13 @@ showStateBox = (htmlDay, htmlCal, e) => {
 		}
 	}
 	htmlSetSuccess.onclick = function() {
-		setState("success", htmlDay.getAttribute("attr-date"), htmlCal.getAttribute("attr-filename"), htmlCal)
+		setState("success", htmlDay.getAttribute("attr-date"), htmlCal.getAttribute("attr-id"), htmlCal)
 	}
 	htmlSetFreeze.onclick = function() {
-		setState("freeze", htmlDay.getAttribute("attr-date"), htmlCal.getAttribute("attr-filename"), htmlCal)
+		setState("freeze", htmlDay.getAttribute("attr-date"), htmlCal.getAttribute("attr-id"), htmlCal)
 	}
 	htmlSetFail.onclick = function() {
-		setState("fail", htmlDay.getAttribute("attr-date"), htmlCal.getAttribute("attr-filename"), htmlCal)
+		setState("fail", htmlDay.getAttribute("attr-date"), htmlCal.getAttribute("attr-id"), htmlCal)
 	}
 	htmlStateBox.style.top = e.clientY + window.scrollY + "px"
 	htmlStateBox.style.left = e.clientX + window.scrollX + "px"

@@ -1,8 +1,6 @@
 node_modules/
 dist/
 package-lock.json
-streaks/*
-!streaks/example.streaks.json
 daemons/*
 .env
 test.js
