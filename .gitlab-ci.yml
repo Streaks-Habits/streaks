@@ -8,9 +8,6 @@ variables:
 services:
   - docker:dind
 
-before_script:
-  - docker info
-
 sast:
   stage: test
 include:
@@ -23,6 +20,7 @@ docker-publish:
     - main
   retry: 2
   before_script:
+    - docker info
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
   script:
     - |
