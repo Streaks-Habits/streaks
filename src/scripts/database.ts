@@ -1,8 +1,9 @@
-import { connect, model, Schema, Model, Document, Types, SchemaTypes } from 'mongoose'
+import { connect, model, Schema, Model, Document, Types, SchemaTypes, isValidObjectId, ObjectId } from 'mongoose'
 import chalk from 'chalk'
 import bcrypt from 'bcrypt'
 import moment from 'moment'
 import dotenv from 'dotenv'
+import { v4 as uuidv4 } from 'uuid'
 
 import { UICalendarMeta } from './interfaces'
 import { dateString } from './utils'
@@ -11,7 +12,12 @@ dotenv.config()
 
 interface IUser extends Document {
 	username: string,
-	password_hash: string
+	password_hash: string,
+	api_keys: Array<{
+		_id: ObjectId,
+		name: string,
+		key_hash: string
+	}>
 }
 export interface ICalendar extends Document {
 	name: string,
@@ -22,7 +28,11 @@ export interface ICalendar extends Document {
 
 const	UserSchema: Schema = new Schema({
 	username: { type: String, required: true, unique: true, index: true },
-	password_hash: { type: String, required: true }
+	password_hash: { type: String, required: true },
+	api_keys: [{
+		name: { type: String, required: true },
+		key_hash: { type: String, required: true }
+	}]
 })
 const	MUser: Model<IUser> = model('User', UserSchema)
 
@@ -270,6 +280,8 @@ export class User {
 	setDayState(calendar_id: string, date: string, state: string)
 			: Promise<ICalendar> {
 		return new Promise((resolve, reject) => {
+			if (!isValidObjectId(calendar_id))
+				return reject({code: 400, message: "Invalid calendar id"})
 			if (!moment(date, 'YYYY-MM-DD', true).isValid())
 				return reject({code: 400, message: "Invalid date format, must be formatted as YYYY-MM-DD"})
 			if (!["fail", "success", "breakday", "freeze"].includes(state))
@@ -290,6 +302,87 @@ export class User {
 					return reject({code: 404, message: "Calendar doesn't exists for this user"})
 
 				return resolve(calendar)
+			})
+		})
+	}
+
+	/**
+	 * Create an API with the given name for the user and returns it
+	 * Api keys have the following format: user_id.key_id.key
+	 * @param name - The name of the api key
+	 * @returns - A promise that resolve(string) or reject(errorMessage)
+	 */
+	createApiKey(name: string)
+			: Promise<string> {
+		return new Promise((resolve, reject) => {
+			if (name.length == 0)
+				return reject({code: 400, message: "Name can't be empty"})
+
+			let key = uuidv4().replaceAll('-', '')
+			let key_id = new Types.ObjectId()
+
+			bcrypt.hash(key, 10, (err, key_hash) => {
+				if (err) return reject(err)
+
+				MUser.findByIdAndUpdate(
+					this.id,
+					{ $push: { api_keys: { _id: key_id, name, key_hash }} },
+				(err, result) => {
+					if (err)
+						return reject({code: 500, message: err.message})
+					if (!result)
+						return reject({code: 404, message: "User doesn't exists"})
+
+					resolve(`${this.id}.${key_id}.${key}`)
+				})
+			})
+		})
+	}
+
+	/**
+	 * Check that the given api key exist and id valid for the user
+	 * @param api_key - The api key to check
+	 * @returns - A promise that resolve() or reject(errorMessage)
+	 */
+	checkApiKey(api_key: string)
+			: Promise<void> {
+		return new Promise((resolve, reject) => {
+			if (api_key.split('.').length != 3)
+				return reject({code: 400, message: "Bad api key format"})
+
+			let key_id = api_key.split('.')[1]
+			let key = api_key.split('.')[2]
+
+			if (!isValidObjectId(key_id))
+				return reject({code: 400, message: "Bad api key format"})
+
+			MUser.findById(this.id, null, (err, user) => {
+				if (err) return reject({code: 500, message: err.message})
+				if (!user) return reject({code: 404, message: "User doesn't exists"})
+
+				let key_hash = ""
+
+				if(user.api_keys) {
+					user.api_keys.every(key => {
+						if (key._id.toString() == key_id) {
+							key_hash = key.key_hash
+							return false
+						}
+						return true
+					})
+				}
+
+				if (key_hash == "")
+					return reject({code: 404, message: "Api key doesn't exists"})
+
+				bcrypt.compare(key, key_hash, (err, result) => {
+					if (err) return reject({code: 500, message: err.message})
+
+					if (result)
+						resolve()
+					else
+					return reject({code: 403, message: "Bad api key"})
+				})
 			})
 		})
 	}
