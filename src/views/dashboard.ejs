@@ -5,7 +5,10 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" type="text/css" href="/styles/dashboard.css">
-	<title>Document</title>
+
+	<%- include("partial/favicons.ejs") %>
+
+	<title>Streaks - Dashboard</title>
 </head>
 <body>
 	<div id="set_state_box">
@@ -24,7 +27,7 @@
 		</div>
 	</div>
 
-	<img id="logo" src="/icons/logo.svg" alt="streaks.json logo">
+	<img id="logo" src="/icons/logoname.svg" alt="streaks.json logo">
 
 	<div id="dashboard">
 		<% calendars.forEach(function(cal) { %>
