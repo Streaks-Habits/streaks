@@ -1,0 +1,11 @@
+version: 2
+updates:
+  # Maintain dependencies for npm
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    # include a list of updated dependencies
+    commit-message:
+      prefix: "NPM "
+      include: "scope"
