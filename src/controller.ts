@@ -29,8 +29,7 @@ export const dashboardView:RequestHandler = (req, res) => {
 	req.session.user!.getCalendarsInfo().then((calendarsList) => {
 		res.render("dashboard", {calendars: calendarsList, dateStr: dateStr})
 	}).catch((err) => {
-		res.status(500)
-		res.send(err)
+		res.status(err.code).send(err.message)
 	})
 }
 
@@ -105,8 +104,7 @@ export const calendarView:RequestHandler = (req, res) => {
 	getUICalendar(req.session.user!, dateString, req.params.id).then((calendar) => {
 		res.render("calendar", {calendar})
 	}).catch((err) => {
-		res.status(err.code)
-		res.send(err.message)
+		res.status(err.code).send(err.message)
 	})
 }
 
@@ -115,7 +113,6 @@ export const stateSet:RequestHandler = (req, res) => {
 	req.session.user!.setDayState(req.params.id, req.body.date, req.body.state).then(() => {
 		res.send()
 	}).catch((err) => {
-		res.status(500)
-		res.send(err)
+		res.status(err.code).send(err.message)
 	})
 }
