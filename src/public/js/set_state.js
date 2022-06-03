@@ -16,9 +16,19 @@ setState = (state, dateString, id, htmlCal) => {
 	isLoading = true
 	htmlStateBox.classList.add("spin")
 
-	let url = `/api/set_state/${id}/${dateString}/${state}`
+	let url = `/set_state/${id}`
+	let data = {
+		date: dateString,
+		state: state
+	}
 
-	fetch(url).then(data => {
+	fetch(url, {
+		method: 'POST',
+		body: JSON.stringify(data),
+		headers: {
+			'Content-Type': 'application/json'
+		}
+	}).then(data => {
 		if (data.ok)
 		{
 			loadCalendar(htmlCal).then(() => {

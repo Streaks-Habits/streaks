@@ -10,7 +10,7 @@ loadCalendar = (htmlCal) => {
 	return new Promise((resolve, _reject) => {
 		let cal_id = htmlCal.getAttribute('attr-id')
 		let date = htmlCal.getAttribute('attr-date')
-		let url = `/api/calendar_view/${cal_id}?${new URLSearchParams({
+		let url = `/calendar_view/${cal_id}?${new URLSearchParams({
 			date: date
 		})}`
 

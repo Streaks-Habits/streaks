@@ -86,10 +86,6 @@ export const checkAuthenticated:RequestHandler = (req, res, next) => {
 	})
 }
 
-///////////
-/// API ///
-//////////
-
 /// CALENDAR VIEW ///
 export const calendarView:RequestHandler = (req, res) => {
 	var dateString: string
@@ -116,7 +112,7 @@ export const calendarView:RequestHandler = (req, res) => {
 
 /// SET STATE ///
 export const stateSet:RequestHandler = (req, res) => {
-	req.session.user!.setDayState(req.params.id, req.params.dateString, req.params.state).then(() => {
+	req.session.user!.setDayState(req.params.id, req.body.date, req.body.state).then(() => {
 		res.send()
 	}).catch((err) => {
 		res.status(500)
