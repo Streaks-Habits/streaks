@@ -47,11 +47,11 @@ app.use(session({
 }))
 app.use('/', routes)
 
-process.stdout.write(`${chalk.blue("cestmaddy")} database => `);
+process.stdout.write(`${chalk.blue("streaks")} database => `);
 connectDB().then(() => {
 	console.log(chalk.green("connected"))
 	app.listen(process.env.PORT, () => {
-		console.log(`${chalk.blue("cestmaddy")} => started on ${chalk.green(`::${process.env.PORT}`)}`)
+		console.log(`${chalk.blue("streaks")} => started on ${chalk.green(`::${process.env.PORT}`)}`)
 	})
 }).catch((err) => {
 	console.error(`Error: ${chalk.red(err)}`)

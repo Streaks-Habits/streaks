@@ -9,7 +9,7 @@ if (process.argv.length != 5)
 	process.exit(1)
 }
 
-process.stdout.write(`${chalk.blue("cestmaddy")} database => `);
+process.stdout.write(`${chalk.blue("streaks")} database => `);
 connectDB().then(() => {
 	console.log(chalk.green("connected"))
 

@@ -4,7 +4,7 @@ const mongoose = require("mongoose")
 
 const { connectDB, addCalendar, User } = require("../../dist/scripts/database")
 
-process.stdout.write(`${chalk.blue("cestmaddy")} database => `);
+process.stdout.write(`${chalk.blue("streaks")} database => `);
 connectDB().then(() => {
 	console.log(chalk.green("connected"))
 
