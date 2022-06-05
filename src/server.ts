@@ -35,7 +35,7 @@ schedule.scheduleJob('50 * * * *', runDaemons)
 
 const app = express()
 app.set('trust proxy', 1)
-app.set('views', path.join('src', 'views'))
+app.set('views', path.join('dist', 'views'))
 app.set('view engine', 'ejs')
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())

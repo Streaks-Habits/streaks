@@ -1,9 +1,3 @@
-import fs from 'fs'
-import readline from 'readline'
-import path from 'path'
-import { exec } from 'child_process'
-import os from 'os'
-
 import { getCalendars, User } from './database'
 import { dateString } from './utils'
 import chalk from 'chalk'
@@ -49,57 +43,13 @@ function setBreakdays(): Promise<void> {
 }
 
 /**
- * Run each command in daemons/commands.list (one command per line) and put the logs in daemons/daemons.log.
- * Then run the setBreakday function
+ * Run the setBreakday function
  * @returns - A promise that resolve(void) at the end
  */
 export function runDaemons(): Promise<void> {
 	return new Promise((resolve, _reject) => {
-		var commandsListPath: string = path.join(__dirname, "../../", "daemons", "commands.list")
-		var logPath: string = path.join(__dirname, "../../", "daemons", "daemons.log")
-
-		new Promise<void>((resolve, reject) => {
-			fs.access(commandsListPath, (err) => {
-				if (err) {
-					console.error(err)
-					reject()
-				}
-				var rl = readline.createInterface({ input: fs.createReadStream(commandsListPath) })
-				var execPromises: Array<Promise<void>> = Array()
-
-				rl.on('line', (line) => {
-					execPromises.push(new Promise((resolve, reject) => {
-						exec(line, (error, stdout, stderr) => {
-							var startDate: Date = new Date()
-							var commandReturn: string
-
-							if (error)
-								commandReturn = `error: ${error.message}`
-							else if (stderr)
-								commandReturn = `command error: ${stderr}`
-							else
-								commandReturn = `${stdout}`
-							commandReturn = `${startDate.toISOString()} => ${line} : ${commandReturn.trim()}${os.EOL}`
-							fs.appendFile(logPath, commandReturn, 'utf-8', (err) => {
-								if (err) {
-									console.error(err)
-									reject()
-								}
-								resolve()
-							})
-						})
-					}))
-				})
-				rl.on('close', () => {
-					Promise.allSettled(execPromises).then(() => {
-						resolve()
-					})
-				})
-			})
-		}).finally(() => {
-			setBreakdays().then(() => {
-				resolve()
-			})
+		setBreakdays().then(() => {
+			resolve()
 		})
 	})
 }
