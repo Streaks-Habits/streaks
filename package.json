@@ -11,7 +11,7 @@
 		"sass": "node-sass -r src/styles/ -o dist/public/styles/",
 		"build-static": "mkdir -p dist/public && cp -r src/views dist/views && cp -r src/public/* dist/public",
 
-		"start-dev": "nodemon --watch src --watch .env --exec 'npm run build && npm run start'"
+		"start-dev": "nodemon --watch src --watch .env -e env,json,ts,ejs,scss,js --exec 'npm run build && npm run start'"
 	},
 	"author": "cestoliv",
 	"license": "MIT",

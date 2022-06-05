@@ -14,6 +14,8 @@ RUN npm run build
 
 FROM node:alpine as main
 
+# Install dependencies
+RUN apk add --no-cache tzdata
 # Copy sources and builded sources
 WORKDIR /streaks
 COPY package.json package.json

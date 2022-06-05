@@ -46,7 +46,7 @@ export function getUICalendar(user: User, monthDate: string, id: string): Promis
 			calendar.id = db_calendar._id
 			calendar.user_id = db_calendar.user_id.toString()
 
-			calendar.first_index = (7 + monthArray[0].getDay() - (user.weekStartsMonday ? 1 : 0) - 1) % 7
+			calendar.first_index = (7 + monthArray[0].getDay() - (user.weekStartsMonday ? 1 : 0)) % 7
 			calendar.currentStreaks = countStreaks(db_calendar)
 			calendar.streaksExpandedToday = db_calendar.days.get(dateString(new Date())) != "fail"
 			for (let cur = 0; cur < monthArray.length; cur++) {
