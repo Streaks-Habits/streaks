@@ -1,15 +1,11 @@
 stages:
 - test
+- docker-publish
 - deploy
-
-variables:
-  DOCKER_TLS_CERTDIR: "/certs"
-
-services:
-  - docker:dind
 
 sast:
   stage: test
+  retry: 2
 include:
 - template: Security/SAST.gitlab-ci.yml
 - template: Security/Dependency-Scanning.gitlab-ci.yml
@@ -17,10 +13,10 @@ include:
 
 docker-publish:
   image: docker:latest
-  stage: deploy
+  stage: docker-publish
+  retry: 2
   only:
     - main
-  retry: 2
   before_script:
     - docker info
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
@@ -35,3 +31,27 @@ docker-publish:
       fi
     - docker build --pull -t "$CI_REGISTRY/$CI_PROJECT_PATH${tag}" .
     - docker push "$CI_REGISTRY/$CI_PROJECT_PATH${tag}"
+
+deploy:
+  image: alpine:latest
+  stage: deploy
+  retry: 2
+  only:
+    - main
+  environment:
+    name: production
+    url: https://streaks.chevro.fr
+  before_script:
+    - apk update && apk add openssh-client
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+  script:
+    - >
+      ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "
+      cd $SERVER_PATH;
+      docker-compose down;
+      docker-compose pull;
+      docker-compose up -d;
+      "
