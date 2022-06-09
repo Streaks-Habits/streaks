@@ -10,14 +10,19 @@ import { dateString } from './utils'
 
 dotenv.config()
 
-interface IUser extends Document {
+export interface IUser extends Document {
 	username: string,
 	password_hash: string,
 	api_keys: Array<{
 		_id: ObjectId,
 		name: string,
 		key_hash: string
-	}>
+	}>,
+	notifications: {
+		matrix: {
+			room_id: string
+		}
+	}
 }
 export interface ICalendar extends Document {
 	name: string,
@@ -32,7 +37,12 @@ const	UserSchema: Schema = new Schema({
 	api_keys: [{
 		name: { type: String, required: true },
 		key_hash: { type: String, required: true }
-	}]
+	}],
+	notifications: {
+		matrix: {
+			room_id: { type: String }
+		}
+	}
 })
 const	MUser: Model<IUser> = model('User', UserSchema)
 
@@ -194,7 +204,7 @@ export class User {
 	getCalendars()
 			: Promise<(ICalendar & { _id: any; })[]> {
 		return new Promise((resolve, reject) => {
-			MCalendar.find({user_id: this.id}, "_id name", (err, calendars) => {
+			MCalendar.find({user_id: this.id}, null, (err, calendars) => {
 				if (err) return reject({code: 500, message: err.message})
 
 				return resolve(calendars)
