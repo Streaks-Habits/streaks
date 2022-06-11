@@ -1,6 +1,6 @@
-database/
-dist/
-node_modules/
-store/
+/database/
+/dist/
+/node_modules/
+/store/
 
 .env

@@ -1,7 +1,7 @@
 import { Router } from 'express'
 
 import { apiCheckKey, apiStateSet } from './api'
-import { calendarView, dashboardView, index, servePublic, serveStyles, stateSet, checkAuthenticated, loginView, loginForm } from './controller'
+import { calendarView, dashboardView, index, servePublic, stateSet, checkAuthenticated, loginView, loginForm } from './controller'
 
 const router = Router()
 
@@ -11,7 +11,6 @@ router.post("/api/set_state/:id", apiStateSet)
 
 /// APP ///
 router.use("/", servePublic)
-router.use("/", serveStyles)
 router.get("/login", loginView)
 router.post("/login", loginForm)
 router.use("/", checkAuthenticated)

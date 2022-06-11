@@ -3,17 +3,13 @@ import path from 'path'
 import jwt from 'jsonwebtoken'
 import moment from 'moment'
 
-import { getUICalendar } from './scripts/calendar'
-import { checkPassword, getUserById, User } from './scripts/database'
+import { getUICalendar } from '../calendar'
+import { checkPassword, getUserById } from '../database/User'
 
 var jwtExpirySeconds: number = 1814400 // three weeks
 
 /// STATIC ///
-export const serveStyles:RequestHandler = express.static(path.join(__dirname, "public"), {
-	fallthrough: true
-})
-
-export const servePublic:RequestHandler = express.static(path.join(__dirname, "../", "src", "public"), {
+export const servePublic:RequestHandler = express.static(path.join(__dirname, "../", "../", "public"), {
 	fallthrough: true
 })
 
@@ -26,7 +22,7 @@ export const index:RequestHandler = (req, res) => {
 export const dashboardView:RequestHandler = (req, res) => {
 	var dateStr: string = moment().format("YYYY-MM")
 
-	req.session.user!.getCalendarsInfo().then((calendarsList) => {
+	req.session.user!.getCalendars().then((calendarsList) => {
 		res.render("dashboard", {calendars: calendarsList, dateStr: dateStr})
 	}).catch((err) => {
 		res.status(err.code).send(err.message)
@@ -40,7 +36,7 @@ export const loginView:RequestHandler = (_req, res) => {
 
 export const loginForm:RequestHandler = (req, res) => {
 	checkPassword(req.body.username, req.body.password).then(user => {
-		jwt.sign({ user_id: user._id }, process.env.JWT_KEY!, {
+		jwt.sign({ user_id: user.id }, process.env.JWT_KEY!, {
 			algorithm: "HS256",
 			expiresIn: jwtExpirySeconds,
 		}, (err, token) => {
@@ -68,9 +64,9 @@ export const checkAuthenticated:RequestHandler = (req, res, next) => {
 			res.redirect('/login')
 		else {
 			getUserById(decoded["user_id"]).then(user => {
-				req.session.user = new User(user.id)
+				req.session.user = user
 
-				jwt.sign({ user_id: user._id}, process.env.JWT_KEY!, {
+				jwt.sign({ user_id: user.id}, process.env.JWT_KEY!, {
 					algorithm: "HS256",
 					expiresIn: jwtExpirySeconds,
 				}, (err, token) => {
@@ -110,8 +106,12 @@ export const calendarView:RequestHandler = (req, res) => {
 
 /// SET STATE ///
 export const stateSet:RequestHandler = (req, res) => {
-	req.session.user!.setDayState(req.params.id, req.body.date, req.body.state).then(() => {
-		res.send()
+	req.session.user!.getCalendarById(req.params.id).then(calendar => {
+		calendar.setDayState(req.body.date, req.body.state).then(() => {
+			res.send()
+		}).catch((err) => {
+			res.status(err.code).send(err.message)
+		})
 	}).catch((err) => {
 		res.status(err.code).send(err.message)
 	})

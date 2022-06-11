@@ -13,7 +13,7 @@ connectDB().then(() => {
 		console.log("Done!")
 	}).finally(() => {
 		mongoose.disconnect()
-		//process.exit()
+		process.exit()
 	})
 }).catch((err) => {
 	console.error(chalk.red(err))

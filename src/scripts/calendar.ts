@@ -1,8 +1,7 @@
 import moment from "moment"
 
-import { UICalendar } from "./interfaces"
-import { dateString, isOver, isToday, countStreaks } from "./utils"
-import { User } from './database'
+import { dateString, isOver, isToday } from "./utils"
+import { User } from './database/User'
 
 /**
  * Returns a table of each date of the specified month. From the first
@@ -25,6 +24,23 @@ function createMonthArray(monthDate: string): Array<Date> {
 	return (calendar)
 }
 
+interface UICalendarDay {
+	date: Date,
+	dateString: string,
+	dayNum: number,
+	state: string,
+	isToday: Boolean,
+	isOver: Boolean
+}
+export interface UICalendar {
+	id: string,
+	user_id: string,
+	weekStartsMonday: boolean,
+	first_index: number,
+	currentStreaks: number,
+	streaksExpandedToday: boolean,
+	days: Array<UICalendarDay>
+}
 /**
  * Retrieves the specified calendar and create an UICalendar, with every information to display
  * specified month
@@ -35,22 +51,22 @@ function createMonthArray(monthDate: string): Array<Date> {
  */
 export function getUICalendar(user: User, monthDate: string, id: string): Promise<UICalendar> {
 	return new Promise<UICalendar>((resolve, reject) => {
-		var calendar: UICalendar = {
+		var ui_calendar: UICalendar = {
 			id: "", user_id: "", first_index: 1, days: Array(),
 			weekStartsMonday: user.weekStartsMonday, currentStreaks: 0,
 			streaksExpandedToday: false
 		}
 		var monthArray: Array<Date> = createMonthArray(monthDate)
 
-		user.getCalendarById(id).then((db_calendar) => {
-			calendar.id = db_calendar._id
-			calendar.user_id = db_calendar.user_id.toString()
+		user.getCalendarById(id).then((calendar) => {
+			ui_calendar.id = calendar.id
+			ui_calendar.user_id = calendar.user_id!.toString()
 
-			calendar.first_index = (7 + monthArray[0].getDay() - (user.weekStartsMonday ? 1 : 0)) % 7
-			calendar.currentStreaks = countStreaks(db_calendar)
-			calendar.streaksExpandedToday = db_calendar.days.get(dateString(new Date())) != "fail"
+			ui_calendar.first_index = (7 + monthArray[0].getDay() - (user.weekStartsMonday ? 1 : 0)) % 7
+			ui_calendar.currentStreaks = calendar.countStreaks()
+			ui_calendar.streaksExpandedToday = calendar.days!.get(dateString(new Date())) != "fail"
 			for (let cur = 0; cur < monthArray.length; cur++) {
-				calendar.days[cur] = {
+				ui_calendar.days[cur] = {
 					date: monthArray[cur],
 					dateString: "",
 					dayNum: cur + 1,
@@ -58,10 +74,10 @@ export function getUICalendar(user: User, monthDate: string, id: string): Promis
 					isToday: isToday(monthArray[cur]),
 					isOver: isOver(monthArray[cur])
 				}
-				calendar.days[cur].dateString = dateString(calendar.days[cur].date)
-				calendar.days[cur].state = db_calendar.days.get(calendar.days[cur].dateString) || "fail"
+				ui_calendar.days[cur].dateString = dateString(ui_calendar.days[cur].date)
+				ui_calendar.days[cur].state = calendar.days!.get(ui_calendar.days[cur].dateString) || "fail"
 			}
-			resolve(calendar)
+			resolve(ui_calendar)
 		}).catch(err => {
 			reject(err)
 		})

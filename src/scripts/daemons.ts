@@ -1,10 +1,11 @@
-import { getCalendars, getUsers, User } from './database'
-import { countStreaks, dateString } from './utils'
 import chalk from 'chalk'
 import moment from 'moment'
 import dotenv from 'dotenv'
 
 import { MatrixNotifications } from './notifications/matrix'
+import { dateString } from './utils'
+import { getUsers } from './database/User'
+import { getCalendars } from './database/Calendar'
 
 dotenv.config()
 
@@ -15,17 +16,17 @@ dotenv.config()
  */
 function setBreakdays(): Promise<void> {
 	return new Promise((resolve, _reject) => {
-		getCalendars().then((db_calendars) => {
+		getCalendars().then((calendars) => {
 			var promisesList: Array<Promise<void>> = Array()
 
-			db_calendars.forEach((db_calendar) => {
+			calendars.forEach((calendar) => {
+
 				promisesList.push(new Promise((resolve, _reject) => {
-					var user = new User(db_calendar.user_id.toString())
 					var weekday: number = new Date().getDay()
 
-					if (!db_calendar.agenda[weekday]) {
-						if (db_calendar.days.get(dateString(new Date())) != "success") {
-							user.setDayState(db_calendar._id, dateString(new Date()), "breakday").catch((err) => {
+					if (!calendar.agenda![weekday]) {
+						if (calendar.days!.get(dateString(new Date())) != "success") {
+							calendar.setDayState(dateString(new Date()), "breakday").catch((err) => {
 								console.error(`Daemons: ${chalk.red(err.message)}`)
 							}).finally(() => {
 								resolve()
@@ -62,21 +63,20 @@ export async function sendNotifications() {
 	var notificationsPromises: Array<Promise<void>> = Array()
 
 	for (let u = 0; u < users.length; u++) {
-		const user = new User(users[u]._id)
-		const calendars = await user.getCalendars()
+		const calendars = await users[u].getCalendars()
 
 		for (let c = 0; c < calendars.length; c++) {
 			let message = ''
 
-			if (calendars[c].days.get(moment().format('YYYY-MM-DD')) == undefined
-				|| calendars[c].days.get(moment().format('YYYY-MM-DD')) == 'fail')
-				message = `🔴 You have not completed the '${calendars[c].name}' task!  🔥 ${countStreaks(calendars[c])}`
+			if (calendars[c].days!.get(moment().format('YYYY-MM-DD')) == undefined
+				|| calendars[c].days!.get(moment().format('YYYY-MM-DD')) == 'fail')
+				message = `🔴 You have not completed the '${calendars[c].name!}' task!  🔥 ${calendars[c].countStreaks()}`
 
 			if (message == '')
 				continue;
 
-			if (matrix && users[u].notifications.matrix.room_id)
-				notificationsPromises.push(matrix.sendMessage(users[u].notifications.matrix.room_id, message))
+			if (matrix && users[u].notifications!.matrix.room_id)
+				notificationsPromises.push(matrix.sendMessage(users[u].notifications!.matrix.room_id, message))
 		}
 	}
 
@@ -84,8 +84,6 @@ export async function sendNotifications() {
 		if (matrix)
 			matrix.matrixClient.stopClient()
 	})
-
-	//var log = require('why-is-node-running')
 }
 
 /**

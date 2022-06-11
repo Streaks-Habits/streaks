@@ -6,9 +6,10 @@ import dotenv from 'dotenv'
 import schedule from 'node-schedule'
 import chalk from 'chalk'
 
-import { connectDB, User } from './scripts/database'
+import { connectDB } from '../database/database'
+import { User } from '../database/User'
 import routes from './routes'
-import { runDaemons } from './scripts/daemons'
+import { runDaemons } from '../daemons'
 
 declare module 'express-session' {
 	export interface SessionData {

@@ -14,7 +14,7 @@ connectDB().then(() => {
 	var password = readlineSync.question('Password: ', { hideEchoBack: true })
 
 	addUser(username, password).then(user => {
-		console.log(`User ${username} (${user._id}) ${chalk.green("added")}`)
+		console.log(`User ${username} (${user.id}) ${chalk.green("added")}`)
 	}).catch(err => {
 		console.error(`Error: ${chalk.red(err)}`)
 	}).finally(() => {

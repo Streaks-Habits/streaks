@@ -4,7 +4,7 @@
 	"description": "",
 	"main": "dist/server.js",
 	"scripts": {
-		"start": "node dist/server.js",
+		"start": "node dist/scripts/webserv/server.js",
 		"build": "npm run clear && tsc && npm run build-static && npm run sass",
 		"clear": "rm -rf dist",
 		"sass": "node-sass -r src/styles/ -o dist/public/styles/",

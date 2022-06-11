@@ -1,7 +1,7 @@
 import { RequestHandler } from "express"
 import { isValidObjectId } from "mongoose"
 
-import { User } from "./scripts/database"
+import { User } from "../database/User"
 
 ///CHECK API KEY ///
 export const apiCheckKey:RequestHandler = (req, res, next) => {
@@ -35,8 +35,12 @@ export const apiStateSet:RequestHandler = (req, res) => {
 	if (!req.body.state || req.body.state.toString().length == 0)
 		return res.status(400).send("You forgot the state ;)")
 
-	req.session.user!.setDayState(req.params.id, req.body.date, req.body.state).then(() => {
-		res.send("OK")
+	req.session.user!.getCalendarById(req.params.id).then(calendar => {
+		calendar.setDayState(req.body.date, req.body.state).then(() => {
+			res.send("OK")
+		}).catch((err) => {
+			res.status(err.code).send(err.message)
+		})
 	}).catch((err) => {
 		res.status(err.code).send(err.message)
 	})

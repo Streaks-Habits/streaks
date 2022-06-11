@@ -15,7 +15,7 @@ connectDB().then(() => {
 	var user = new User(user_id)
 
 	user.addCalendar(calendar_name).then(calendar => {
-		console.log(`Calendar ${calendar.name} (${calendar._id}) ${chalk.green("added")}`)
+		console.log(`Calendar ${calendar.name} (${calendar.id}) ${chalk.green("added")}`)
 	}).catch(err => {
 		console.error(`Error: ${chalk.red(err)}`)
 	}).finally(() => {
