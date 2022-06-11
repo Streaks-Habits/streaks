@@ -82,10 +82,8 @@ export async function sendNotifications() {
 
 	await Promise.allSettled(notificationsPromises).then(async results => {
 		if (matrix)
-			matrix.matrixClient.stopClient()
+			matrix.disconnect()
 	})
-
-	//var log = require('why-is-node-running')
 }
 
 /**

@@ -35,7 +35,7 @@ export class MatrixNotifications {
 			console.log(chalk.red("Please add a MATRIX_URL in your .env"))
 			process.exit(1)
 		}
-		
+
 		this.matrixClient = sdk.createClient({
 			deviceId: "Streaks Server",
 			baseUrl: process.env.MATRIX_URL,
@@ -56,6 +56,12 @@ export class MatrixNotifications {
 		// Send encrypted message, even if member isn't trusted
 		this.matrixClient.setGlobalErrorOnUnknownDevices(false)
 		this.connected = true
+	}
+
+	disconnect() {
+		if (!this.connected)
+			return
+		this.matrixClient.stopClient()
 	}
 
 	async sendMessage(roomID: string, message: string) {
