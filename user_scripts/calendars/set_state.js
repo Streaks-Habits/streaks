@@ -1,7 +1,7 @@
 const chalk = require('chalk')
 const mongoose = require("mongoose")
 
-const { connectDB, getCalendarById, User } = require("../../dist/scripts/database")
+const { connectDB, getCalendarById, User } = require("../../dist/scripts/database/database")
 
 if (process.argv.length != 5)
 {

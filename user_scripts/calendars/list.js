@@ -1,7 +1,7 @@
 const chalk = require('chalk')
 const mongoose = require("mongoose")
 
-const { connectDB, getUserById, getCalendars } = require("../../dist/scripts/database")
+const { connectDB, getUserById, getCalendars } = require("../../dist/scripts/database/database")
 const { countStreaks } = require("../../dist/scripts/utils")
 
 process.stdout.write(`${chalk.blue("streaks")} database => `);

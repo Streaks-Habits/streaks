@@ -66,17 +66,12 @@ export async function sendNotifications() {
 		const calendars = await users[u].getCalendars()
 
 		for (let c = 0; c < calendars.length; c++) {
-			let message = ''
-
-			if (calendars[c].days!.get(moment().format('YYYY-MM-DD')) == undefined
-				|| calendars[c].days!.get(moment().format('YYYY-MM-DD')) == 'fail')
-				message = `🔴 You have not completed the '${calendars[c].name!}' task!  🔥 ${calendars[c].countStreaks()}`
-
-			if (message == '')
+			if (calendars[c].days!.get(moment().format('YYYY-MM-DD')) &&
+				calendars[c].days!.get(moment().format('YYYY-MM-DD')) != 'fail')
 				continue;
 
 			if (matrix && users[u].notifications!.matrix.room_id)
-				notificationsPromises.push(matrix.sendMessage(users[u].notifications!.matrix.room_id, message))
+				notificationsPromises.push(matrix.sendReminder(users[u].notifications!.matrix.room_id, calendars[c]))
 		}
 	}
 
@@ -87,8 +82,7 @@ export async function sendNotifications() {
 }
 
 /**
- * Run the setBreakday function
- * @returns - A promise that resolve(void) at the end
+ * Run the setBreakday function, then sendNotifications
  */
 export function runDaemons(): Promise<void> {
 	return new Promise((resolve, _reject) => {

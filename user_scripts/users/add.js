@@ -2,7 +2,7 @@ const chalk = require('chalk')
 const readlineSync = require('readline-sync')
 const mongoose = require("mongoose")
 
-const { connectDB, addUser } = require("../../dist/scripts/database")
+const { connectDB, addUser } = require("../../dist/scripts/database/database")
 
 process.stdout.write(`${chalk.blue("streaks")} database => `);
 connectDB().then(() => {

@@ -9,7 +9,7 @@ import chalk from 'chalk'
 import { connectDB } from '../database/database'
 import { User } from '../database/User'
 import routes from './routes'
-import { runDaemons } from '../daemons'
+import { runDaemons, sendNotifications } from '../daemons'
 
 declare module 'express-session' {
 	export interface SessionData {
@@ -57,4 +57,3 @@ connectDB().then(() => {
 }).catch((err) => {
 	console.error(`Error: ${chalk.red(err)}`)
 })
-

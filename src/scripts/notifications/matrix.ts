@@ -1,8 +1,13 @@
 import * as sdk from 'matrix-js-sdk'
+import { logger } from 'matrix-js-sdk/lib/logger'
+import { ClientEvent } from 'matrix-js-sdk'
+
 import { LocalStorage } from 'node-localstorage'
 import { LocalStorageCryptoStore } from 'matrix-js-sdk/lib/crypto/store/localStorage-crypto-store'
 import dotenv from 'dotenv'
 import chalk from 'chalk'
+
+import { Calendar } from '../database/Calendar'
 
 var Olm = require("olm/olm_legacy")
 declare global {
@@ -43,19 +48,24 @@ export class MatrixNotifications {
 			userId: process.env.MATRIX_USER,
 
 			sessionStore: new sdk.MemoryStore({ localStorage }),
-			cryptoStore: new LocalStorageCryptoStore(localStorage),
+			cryptoStore: new LocalStorageCryptoStore(localStorage)
 		})
 	}
 
 	async connect() {
 		if (this.connected)
 			return
+		logger.setLevel(logger.levels.ERROR)
 		await this.matrixClient.initCrypto()
 		await this.matrixClient.startClient()
-
-		// Send encrypted message, even if member isn't trusted
-		this.matrixClient.setGlobalErrorOnUnknownDevices(false)
-		this.connected = true
+		await new Promise<void>((resolve, _reject) => {
+			this.matrixClient.once(ClientEvent.Sync, () => {
+				// Send encrypted message, even if member isn't trusted
+				this.matrixClient.setGlobalErrorOnUnknownDevices(false)
+				this.connected = true
+				resolve()
+			})
+		})
 	}
 
 	disconnect() {
@@ -68,5 +78,10 @@ export class MatrixNotifications {
 		await this.matrixClient.joinRoom(roomID)
 		await this.matrixClient.uploadKeys()
 		await this.matrixClient.sendTextMessage(roomID, message)
+	}
+
+	async sendReminder(roomID: string, calendar: Calendar) {
+		let message = `🔴 You have not completed the '${calendar.name!}' task!  🔥 ${calendar.countStreaks()}`
+		await this.sendMessage(roomID, message)
 	}
 }
