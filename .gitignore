@@ -5,3 +5,4 @@ daemons/*
 .env
 test.js
 database
+store
