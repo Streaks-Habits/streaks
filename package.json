@@ -7,10 +7,8 @@
 		"start": "node dist/server.js",
 		"build": "npm run clear && tsc && npm run build-static && npm run sass",
 		"clear": "rm -rf dist",
-
 		"sass": "node-sass -r src/styles/ -o dist/public/styles/",
 		"build-static": "mkdir -p dist/public && cp -r src/views dist/views && cp -r src/public/* dist/public",
-
 		"start-dev": "nodemon --watch src --watch .env -e env,json,ts,ejs,scss,js --exec 'npm run build && npm run start'"
 	},
 	"author": "cestoliv",
@@ -19,29 +17,29 @@
 		"bcrypt": "^5.0.1",
 		"chalk": "v4.1.2",
 		"cookie-parser": "^1.4.6",
-		"dotenv": "^16.0.0",
-		"ejs": "^3.1.6",
+		"dotenv": "^16.0.1",
+		"ejs": "^3.1.8",
 		"envfile": "^6.17.0",
-		"express": "^4.17.2",
-		"express-session": "^1.17.2",
+		"express": "^4.18.1",
+		"express-session": "^1.17.3",
 		"jsonwebtoken": "^8.5.1",
 		"moment": "^2.29.3",
-		"mongoose": "^6.3.5",
+		"mongoose": "^6.4.1",
 		"node-schedule": "^2.1.0",
 		"readline-sync": "^1.4.10",
 		"uuid": "^8.3.2"
 	},
 	"devDependencies": {
 		"@types/bcrypt": "^5.0.0",
-		"@types/cookie-parser": "^1.4.2",
+		"@types/cookie-parser": "^1.4.3",
 		"@types/express": "^4.17.13",
 		"@types/express-session": "^1.17.4",
 		"@types/jsonwebtoken": "^8.5.8",
-		"@types/node": "^17.0.17",
+		"@types/node": "^18.0.0",
 		"@types/node-schedule": "^2.1.0",
 		"@types/uuid": "^8.3.4",
 		"node-sass": "^7.0.1",
-		"nodemon": "^2.0.16",
-		"typescript": "^4.7.2"
+		"nodemon": "^2.0.18",
+		"typescript": "^4.7.4"
 	}
 }
