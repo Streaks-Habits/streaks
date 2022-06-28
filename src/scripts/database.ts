@@ -14,7 +14,7 @@ interface IUser extends Document {
 	username: string,
 	password_hash: string,
 	api_keys: Array<{
-		_id: ObjectId,
+		_id: Types.ObjectId,
 		name: string,
 		key_hash: string
 	}>
@@ -34,7 +34,7 @@ const	UserSchema: Schema = new Schema({
 		key_hash: { type: String, required: true }
 	}]
 })
-const	MUser: Model<IUser> = model('User', UserSchema)
+const	MUser: Model<IUser> = model<IUser>('User', UserSchema)
 
 const	CalendarSchema: Schema = new Schema({
 	name: { type: String, required: true },
@@ -45,7 +45,7 @@ const	CalendarSchema: Schema = new Schema({
 		of: String
 	}
 })
-const	MCalendar: Model<ICalendar> = model('Calendar', CalendarSchema)
+const	MCalendar: Model<ICalendar> = model<ICalendar>('Calendar', CalendarSchema)
 
 /**
  * Connect mongoose to the MongoDB server using MONGO_URI env
