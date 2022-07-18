@@ -1,25 +1,26 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 const chalk = require('chalk')
-const mongoose = require("mongoose")
+const mongoose = require('mongoose')
 
-const { connectDB, getCalendarById, User } = require("../../dist/scripts/database/database")
+const { connectDB } = require('../../dist/scripts/database/database')
+const { getCalendarById } = require('../../dist/scripts/database/Calendar')
+
 
 if (process.argv.length != 5)
 {
-	console.log("Usage : node user_scripts/calendars/set_state.js <calendar id> <YYYY-MM-DD> <state>")
+	console.log('Usage : node user_scripts/calendars/set_state.js <calendar id> <YYYY-MM-DD> <state>')
 	process.exit(1)
 }
 
-process.stdout.write(`${chalk.blue("streaks")} database => `);
+process.stdout.write(`${chalk.blue('streaks')} database => `)
 connectDB().then(() => {
-	console.log(chalk.green("connected"))
+	console.log(chalk.green('connected'))
 
-	console.log(`\n\tSet a day state.`)
+	console.log('\n\tSet a day state.')
 
 	getCalendarById(process.argv[2]).then((calendar) => {
-		var user = new User(calendar.user_id)
-
-		user.setDayState(calendar._id, process.argv[3], process.argv[4]).then(calendar => {
-			console.log(`Calendar ${calendar.name} (${calendar._id}) ${chalk.green("updated")}`)
+		calendar.setDayState(process.argv[3], process.argv[4]).then(calendar => {
+			console.log(`Calendar ${calendar.name} (${calendar.id}) ${chalk.green('updated')}`)
 		}).catch(err => {
 			console.error(`Error: ${chalk.red(err.message)}`)
 		}).finally(() => {

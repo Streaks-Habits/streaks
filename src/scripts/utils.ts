@@ -1,4 +1,4 @@
-import moment from "moment"
+import moment from 'moment'
 
 /**
  * Converts a date into a string format as follows YYYY-MM-DD
@@ -6,7 +6,7 @@ import moment from "moment"
  * @returns - A string of characters representing a date in YYYY-MM-DD format
  */
 export function dateString(date: Date | string): string {
-	return (moment(date).format("YYYY-MM-DD"))
+	return (moment(date).format('YYYY-MM-DD'))
 }
 
 /**
@@ -14,8 +14,8 @@ export function dateString(date: Date | string): string {
  * @param date - The date to compare with today date
  * @remark - Compares year, month and day, not hours/minutes
  */
-export function isToday(date: Date):Boolean {
-	var	today: Date = new Date();
+export function isToday(date: Date):boolean {
+	const	today: Date = new Date()
 
 	if (dateString(today) == dateString(date))
 		return (true)
@@ -27,8 +27,8 @@ export function isToday(date: Date):Boolean {
  * @param date - The date to compare
  * @remark - Compares year, month and day, not hours/minutes
  */
-export function isOver(date: Date): Boolean {
-	var	today: Date = new Date();
+export function isOver(date: Date): boolean {
+	const	today: Date = new Date()
 
 	if (date < today || isToday(date))
 		return (true)
@@ -38,16 +38,16 @@ export function isOver(date: Date): Boolean {
 /**
  *
  */
-export function hour_between(start_date: string, end_date: string): Boolean {
+export function hour_between(start_date: string, end_date: string): boolean {
 	// Start
-	var moment_date = moment(start_date, 'HH:mm')
-	var start_date_minutes = moment_date.hours() * 60 + moment(moment_date, 'HH:mm').minutes()
+	let moment_date = moment(start_date, 'HH:mm')
+	const start_date_minutes = moment_date.hours() * 60 + moment(moment_date, 'HH:mm').minutes()
 	// End
 	moment_date = moment(end_date, 'HH:mm')
-	var end_date_minutes = moment_date.hours() * 60 + moment(moment_date, 'HH:mm').minutes()
+	const end_date_minutes = moment_date.hours() * 60 + moment(moment_date, 'HH:mm').minutes()
 	// Current
 	moment_date = moment()
-	var current_date_minutes = moment_date.hours() * 60 + moment(moment_date, 'HH:mm').minutes()
+	const current_date_minutes = moment_date.hours() * 60 + moment(moment_date, 'HH:mm').minutes()
 
 	if (current_date_minutes >= start_date_minutes && current_date_minutes <= end_date_minutes)
 		return (true)

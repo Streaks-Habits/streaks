@@ -1,19 +1,18 @@
-import chalk from "chalk"
-import moment from "moment"
-import { Types } from "mongoose"
+import chalk from 'chalk'
+import moment from 'moment'
 
-import { dateString } from "../utils"
-import { ICalendar, MCalendar } from "./database"
+import { dateString } from '../utils'
+import { ICalendar, MCalendar } from './database'
 
 export class Calendar {
-	initialized: boolean = false
+	initialized = false
 	// From constructor
 	id: string
 	// From database / init
-	name: ICalendar["name"] | undefined
-	user_id: ICalendar["user_id"] | undefined
-	agenda: ICalendar["agenda"] | undefined
-	days: ICalendar["days"] | undefined
+	name: ICalendar['name'] | undefined
+	user_id: ICalendar['user_id'] | undefined
+	agenda: ICalendar['agenda'] | undefined
+	days: ICalendar['days'] | undefined
 
 	public constructor (id: string) {
 		this.id = id
@@ -35,6 +34,7 @@ export class Calendar {
 		})
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	init(calendar: (ICalendar & { _id: any; })): void {
 		this.name = calendar.name
 		this.user_id = calendar.user_id
@@ -53,32 +53,32 @@ export class Calendar {
 	setDayState(date: string, state: string)
 			: Promise<ICalendar> {
 		if (!this.initialized) {
-			console.error(chalk.red("The calendar has not been initialized."))
+			console.error(chalk.red('The calendar has not been initialized.'))
 			process.exit(1)
 		}
 
 		return new Promise((resolve, reject) => {
 			if (!moment(date, 'YYYY-MM-DD', true).isValid())
-				return reject({code: 400, message: "Invalid date format, must be formatted as YYYY-MM-DD"})
-			if (!["fail", "success", "breakday", "freeze"].includes(state))
-				return reject({code: 400, message: "Incorrect state, must be fail, success, breakday or freeze"})
+				return reject({code: 400, message: 'Invalid date format, must be formatted as YYYY-MM-DD'})
+			if (!['fail', 'success', 'breakday', 'freeze'].includes(state))
+				return reject({code: 400, message: 'Incorrect state, must be fail, success, breakday or freeze'})
 			if (moment(date, 'YYYY-MM-DD') > moment())
-				return reject({code: 403, message: "Can't define the state of a future day"})
+				return reject({code: 403, message: 'Can\'t define the state of a future day'})
 
-			var day_path = `days.${dateString(date)}`
+			const day_path = `days.${dateString(date)}`
 
 			MCalendar.findByIdAndUpdate(
 				this.id,
-				{ "$set": {[day_path]: state } },
+				{ '$set': {[day_path]: state } },
 				{ new: true },
-			(err, calendar) => {
-				if (err)
-					return reject({code: 500, message: err.message})
-				if (!calendar)
-					return reject({code: 404, message: "Calendar doesn't exists"})
+				(err, calendar) => {
+					if (err)
+						return reject({code: 500, message: err.message})
+					if (!calendar)
+						return reject({code: 404, message: 'Calendar doesn\'t exists'})
 
-				return resolve(calendar)
-			})
+					return resolve(calendar)
+				})
 		})
 	}
 
@@ -88,21 +88,23 @@ export class Calendar {
 	 */
 	countStreaks(): number {
 		if (!this.initialized) {
-			console.error(chalk.red("The calendar has not been initialized."))
+			console.error(chalk.red('The calendar has not been initialized.'))
 			process.exit(1)
 		}
+		if (!this.days)
+			return (0)
 
-		var date: Date = new Date()
-		var streaks: number = 0
-		var current_state: string
+		const date: Date = new Date()
+		let streaks = 0
+		let current_state: string
 
-		current_state = this.days!.get(dateString(date)) || "fail"
+		current_state = this.days.get(dateString(date)) || 'fail'
 		do {
-			if (current_state == "success")
-				streaks++;
+			if (current_state == 'success')
+				streaks++
 			date.setDate(date.getDate() - 1)
-			current_state = this!.days!.get(dateString(date)) || "fail"
-		} while (current_state && current_state != "fail")
+			current_state = this.days.get(dateString(date)) || 'fail'
+		} while (current_state && current_state != 'fail')
 		return (streaks)
 	}
 }
@@ -119,9 +121,9 @@ export function getCalendarById(id: string)
 			if (err)
 				return reject({code: 500, message: err.message})
 			if (!db_calendar)
-				return reject({code: 404, message: "Calendar doesn't exists"})
+				return reject({code: 404, message: 'Calendar doesn\'t exists'})
 
-			let calendar = new Calendar(db_calendar._id)
+			const calendar = new Calendar(db_calendar._id)
 			calendar.init(db_calendar)
 			return resolve(calendar)
 		})
@@ -138,9 +140,9 @@ export function getCalendars()
 		MCalendar.find({}, null, (err, db_calendars) => {
 			if (err) return reject({code: 500, message: err.message})
 
-			var calendars: Calendar[] = Array()
+			const calendars: Calendar[] = []
 			db_calendars.forEach(db_calendar => {
-				let calendar = new Calendar(db_calendar._id)
+				const calendar = new Calendar(db_calendar._id)
 				calendar.init(db_calendar)
 				calendars.push(calendar)
 			})

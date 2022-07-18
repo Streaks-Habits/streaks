@@ -1,16 +1,17 @@
-const chalk = require("chalk")
-const mongoose = require("mongoose")
+/* eslint-disable @typescript-eslint/no-var-requires */
+const chalk = require('chalk')
+const mongoose = require('mongoose')
 
-const daemons = require("../dist/scripts/daemons")
-const { connectDB } = require("../dist/scripts/database/database")
+const daemons = require('../dist/scripts/daemons')
+const { connectDB } = require('../dist/scripts/database/database')
 
-process.stdout.write(`${chalk.blue("cestmaddy")} database => `);
+process.stdout.write(`${chalk.blue('cestmaddy')} database => `)
 connectDB().then(() => {
-	console.log(chalk.green("connected"))
+	console.log(chalk.green('connected'))
 
-	console.log("\tLaunching daemons...")
+	console.log('\tLaunching daemons...')
 	daemons.sendNotifications().then(() => {
-		console.log("Done!")
+		console.log('Done!')
 	}).finally(() => {
 		mongoose.disconnect()
 		process.exit()

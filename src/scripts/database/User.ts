@@ -1,20 +1,20 @@
-import { isValidObjectId, ObjectId, Types } from "mongoose"
+import { isValidObjectId, Types } from 'mongoose'
 import { v4 as uuidv4 } from 'uuid'
 import bcrypt from 'bcrypt'
 
-import { IUser, MCalendar, MUser } from "./database"
-import { Calendar } from "./Calendar"
-import chalk from "chalk"
+import { IUser, MCalendar, MUser } from './database'
+import { Calendar } from './Calendar'
+import chalk from 'chalk'
 
 export class User {
-	initialized: boolean = false
+	initialized = false
 	// From constructor
 	id: string
 	weekStartsMonday: boolean
 	// From database / init
-	username: IUser["username"] | undefined
-	api_keys: IUser["api_keys"] | undefined
-	notifications: IUser["notifications"] | undefined
+	username: IUser['username'] | undefined
+	api_keys: IUser['api_keys'] | undefined
+	notifications: IUser['notifications'] | undefined
 
 	public constructor (id: string) {
 		this.id = id
@@ -36,6 +36,7 @@ export class User {
 		})
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	init(user: (IUser & { _id: any; })): void {
 		this.username = user.username
 		this.api_keys = user.api_keys
@@ -53,7 +54,7 @@ export class User {
 	getCalendars()
 			: Promise<Calendar[]> {
 		if (!this.initialized) {
-			console.error(chalk.red("The user has not been initialized."))
+			console.error(chalk.red('The user has not been initialized.'))
 			process.exit(1)
 		}
 
@@ -61,9 +62,9 @@ export class User {
 			MCalendar.find({user_id: this.id}, null, (err, db_calendars) => {
 				if (err) return reject({code: 500, message: err.message})
 
-				var calendars: Calendar[] = Array()
+				const calendars: Calendar[] = []
 				db_calendars.forEach(db_calendar => {
-					let calendar = new Calendar(db_calendar._id)
+					const calendar = new Calendar(db_calendar._id)
 					calendar.init(db_calendar)
 					calendars.push(calendar)
 				})
@@ -80,7 +81,7 @@ export class User {
 	getCalendarById(id: string)
 			: Promise<Calendar> {
 		if (!this.initialized) {
-			console.error(chalk.red("The user has not been initialized."))
+			console.error(chalk.red('The user has not been initialized.'))
 			process.exit(1)
 		}
 
@@ -89,11 +90,11 @@ export class User {
 				if (err)
 					return reject({code: 500, message: err.message})
 				if (!db_calendar)
-					return reject({code: 404, message: "Calendar doesn't exists"})
+					return reject({code: 404, message: 'Calendar doesn\'t exists'})
 				if (db_calendar.user_id.toString() != this.id)
-					return reject({code: 403, message: "You don't own this calendar"})
+					return reject({code: 403, message: 'You don\'t own this calendar'})
 
-				let calendar: Calendar = new Calendar(db_calendar._id)
+				const calendar: Calendar = new Calendar(db_calendar._id)
 				calendar.init(db_calendar)
 				return resolve(calendar)
 			})
@@ -108,7 +109,7 @@ export class User {
 	addCalendar(name: string)
 			: Promise<Calendar> {
 		if (!this.initialized) {
-			console.error(chalk.red("The user has not been initialized."))
+			console.error(chalk.red('The user has not been initialized.'))
 			process.exit(1)
 		}
 
@@ -122,7 +123,7 @@ export class User {
 				}).save((err, data) => {
 					if (err) return reject({code: 500, message: err.message})
 
-					let calendar = new Calendar(data._id)
+					const calendar = new Calendar(data._id)
 					calendar.init(data)
 					resolve(calendar)
 				})
@@ -145,16 +146,16 @@ export class User {
 	createApiKey(name: string)
 			: Promise<string> {
 		if (!this.initialized) {
-			console.error(chalk.red("The user has not been initialized."))
+			console.error(chalk.red('The user has not been initialized.'))
 			process.exit(1)
 		}
 
 		return new Promise((resolve, reject) => {
 			if (name.length == 0)
-				return reject({code: 400, message: "Name can't be empty"})
+				return reject({code: 400, message: 'Name can\'t be empty'})
 
-			let key = uuidv4().replaceAll('-', '')
-			let key_id = new Types.ObjectId()
+			const key = uuidv4().replaceAll('-', '')
+			const key_id = new Types.ObjectId()
 
 			bcrypt.hash(key, 10, (err, key_hash) => {
 				if (err) return reject(err)
@@ -162,14 +163,14 @@ export class User {
 				MUser.findByIdAndUpdate(
 					this.id,
 					{ $push: { api_keys: { _id: key_id, name, key_hash }} },
-				(err, result) => {
-					if (err)
-						return reject({code: 500, message: err.message})
-					if (!result)
-						return reject({code: 404, message: "User doesn't exists"})
+					(err, result) => {
+						if (err)
+							return reject({code: 500, message: err.message})
+						if (!result)
+							return reject({code: 404, message: 'User doesn\'t exists'})
 
-					resolve(`${this.id}.${key_id}.${key}`)
-				})
+						resolve(`${this.id}.${key_id}.${key}`)
+					})
 			})
 		})
 	}
@@ -182,25 +183,25 @@ export class User {
 	checkApiKey(api_key: string)
 			: Promise<void> {
 		if (!this.initialized) {
-			console.error(chalk.red("The user has not been initialized."))
+			console.error(chalk.red('The user has not been initialized.'))
 			process.exit(1)
 		}
 
 		return new Promise((resolve, reject) => {
 			if (api_key.split('.').length != 3)
-				return reject({code: 400, message: "Bad api key format"})
+				return reject({code: 400, message: 'Bad api key format'})
 
-			let key_id = api_key.split('.')[1]
-			let key = api_key.split('.')[2]
+			const key_id = api_key.split('.')[1]
+			const key = api_key.split('.')[2]
 
 			if (!isValidObjectId(key_id))
-				return reject({code: 400, message: "Bad api key format"})
+				return reject({code: 400, message: 'Bad api key format'})
 
 			MUser.findById(this.id, null, (err, user) => {
 				if (err) return reject({code: 500, message: err.message})
-				if (!user) return reject({code: 404, message: "User doesn't exists"})
+				if (!user) return reject({code: 404, message: 'User doesn\'t exists'})
 
-				let key_hash = ""
+				let key_hash = ''
 
 				if(user.api_keys) {
 					user.api_keys.every(key => {
@@ -212,8 +213,8 @@ export class User {
 					})
 				}
 
-				if (key_hash == "")
-					return reject({code: 404, message: "Api key doesn't exists"})
+				if (key_hash == '')
+					return reject({code: 404, message: 'Api key doesn\'t exists'})
 
 				bcrypt.compare(key, key_hash, (err, result) => {
 					if (err) return reject({code: 500, message: err.message})
@@ -221,7 +222,7 @@ export class User {
 					if (result)
 						resolve()
 					else
-					return reject({code: 403, message: "Bad api key"})
+						return reject({code: 403, message: 'Bad api key'})
 				})
 			})
 		})
@@ -240,10 +241,10 @@ export class User {
 export function addUser(username: string, password: string)
 		: Promise<User> {
 	return new Promise((resolve, reject) => {
-		if (!/^[a-z0-9_\.]+$/.exec(username))
-			return reject("The username contains unauthorized characters. Authorized characters: a-z, 0-9, ., _")
+		if (!/^[a-z0-9_.]+$/.exec(username))
+			return reject('The username contains unauthorized characters. Authorized characters: a-z, 0-9, ., _')
 		if (password.length == 0)
-			return reject("Password can't be empty")
+			return reject('Password can\'t be empty')
 		bcrypt.hash(password, 10, (err, hash) => {
 			if (err) return reject(err)
 
@@ -253,7 +254,7 @@ export function addUser(username: string, password: string)
 			}).save((err, data) => {
 				if (err) return reject(err)
 
-				let user = new User(data._id)
+				const user = new User(data._id)
 				user.init(data)
 				resolve(user)
 			})
@@ -272,18 +273,18 @@ export function checkPassword(username: string, password: string)
 	return new Promise((resolve, reject) => {
 		MUser.findOne({ username }, null, (err, db_user) => {
 			if (err) return reject(err)
-			if (!db_user) return reject("User doesn't exists")
+			if (!db_user) return reject('User doesn\'t exists')
 
 			bcrypt.compare(password, db_user.password_hash, (err, result) => {
 				if (err) return reject(err)
 
 				if (result) {
-					let user = new User(db_user._id)
+					const user = new User(db_user._id)
 					user.init(db_user)
 					resolve(user)
 				}
 				else
-					reject("Wrong password")
+					reject('Wrong password')
 			})
 		})
 	})
@@ -299,9 +300,9 @@ export function getUserById(id: string)
 	return new Promise((resolve, reject) => {
 		MUser.findById(id, null, (err, db_user) => {
 			if (err) return reject({code: 500, message: err.message})
-			if (!db_user) return reject({code: 404, message: "User doesn't exists"})
+			if (!db_user) return reject({code: 404, message: 'User doesn\'t exists'})
 
-			let user = new User(db_user._id)
+			const user = new User(db_user._id)
 			user.init(db_user)
 			return resolve(user)
 		})
@@ -318,9 +319,9 @@ export function getUsers()
 		MUser.find({}, null, (err, db_users) => {
 			if (err) return reject({code: 500, message: err.message})
 
-			var users: User[] = Array()
+			const users: User[] = []
 			db_users.forEach(db_user => {
-				let user = new User(db_user._id)
+				const user = new User(db_user._id)
 				user.init(db_user)
 				users.push(user)
 			})

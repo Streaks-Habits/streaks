@@ -9,9 +9,11 @@ import chalk from 'chalk'
 
 import { Calendar } from '../database/Calendar'
 
-var Olm = require("olm/olm_legacy")
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const Olm = require('olm/olm_legacy')
 declare global {
-	var Olm: any
+	// eslint-disable-next-line no-var
+	var Olm: unknown
 }
 global.Olm = Olm
 const localStorage = new LocalStorage('./store/matrix')
@@ -24,25 +26,26 @@ export class MatrixNotifications {
 	constructor() {
 		this.connected = false
 		// temp fix : https://github.com/matrix-org/matrix-js-sdk/issues/2415#issuecomment-1141246410
-		const request = require("request")
+		// eslint-disable-next-line @typescript-eslint/no-var-requires
+		const request = require('request')
 		sdk.request(request)
 		///
 
-		if (process.env.MATRIX_USER == undefined || process.env.MATRIX_USER == "") {
-			console.log(chalk.red("Please add a MATRIX_USER in your .env"))
+		if (process.env.MATRIX_USER == undefined || process.env.MATRIX_USER == '') {
+			console.log(chalk.red('Please add a MATRIX_USER in your .env'))
 			process.exit(1)
 		}
-		if (process.env.MATRIX_TOKEN == undefined || process.env.MATRIX_TOKEN == "") {
-			console.log(chalk.red("Please add a MATRIX_TOKEN in your .env"))
+		if (process.env.MATRIX_TOKEN == undefined || process.env.MATRIX_TOKEN == '') {
+			console.log(chalk.red('Please add a MATRIX_TOKEN in your .env'))
 			process.exit(1)
 		}
-		if (process.env.MATRIX_URL == undefined || process.env.MATRIX_URL == "") {
-			console.log(chalk.red("Please add a MATRIX_URL in your .env"))
+		if (process.env.MATRIX_URL == undefined || process.env.MATRIX_URL == '') {
+			console.log(chalk.red('Please add a MATRIX_URL in your .env'))
 			process.exit(1)
 		}
 
 		this.matrixClient = sdk.createClient({
-			deviceId: "Streaks Server",
+			deviceId: 'Streaks Server',
 			baseUrl: process.env.MATRIX_URL,
 			accessToken: process.env.MATRIX_TOKEN,
 			userId: process.env.MATRIX_USER,
@@ -58,7 +61,7 @@ export class MatrixNotifications {
 		logger.setLevel(logger.levels.ERROR)
 		await this.matrixClient.initCrypto()
 		await this.matrixClient.startClient()
-		await new Promise<void>((resolve, _reject) => {
+		await new Promise<void>((resolve) => {
 			this.matrixClient.once(ClientEvent.Sync, () => {
 				// Send encrypted message, even if member isn't trusted
 				this.matrixClient.setGlobalErrorOnUnknownDevices(false)
@@ -81,7 +84,7 @@ export class MatrixNotifications {
 	}
 
 	async sendReminder(roomID: string, calendar: Calendar) {
-		let message = `🔴 You have not completed the '${calendar.name!}' task!  🔥 ${calendar.countStreaks()}`
+		const message = `🔴 You have not completed the '${calendar.name}' task!  🔥 ${calendar.countStreaks()}`
 		await this.sendMessage(roomID, message)
 	}
 }

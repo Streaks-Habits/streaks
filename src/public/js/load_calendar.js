@@ -1,13 +1,15 @@
-var htmlDashboard = document.getElementById("dashboard")
-var htmlCalendars = htmlDashboard.getElementsByClassName("dashboard_calendar")
+/* global document */
+/* global showStateBox */
+var htmlDashboard = document.getElementById('dashboard')
+var htmlCalendars = htmlDashboard.getElementsByClassName('dashboard_calendar')
 
 /**
  * Load the calendar of the specified .dashboard_calendar element (do a GET request)
  * @param htmlCal - The DOM element of the .dashboard_calendar to load
  * @returns - A promise that resolve(void) when finished
  */
-loadCalendar = (htmlCal) => {
-	return new Promise((resolve, _reject) => {
+function loadCalendar(htmlCal) {
+	return new Promise((resolve) => {
 		let cal_id = htmlCal.getAttribute('attr-id')
 		let date = htmlCal.getAttribute('attr-date')
 		let url = `/calendar_view/${cal_id}?${new URLSearchParams({
@@ -18,15 +20,15 @@ loadCalendar = (htmlCal) => {
 			if (data.ok)
 			{
 				data.text().then(text => {
-					htmlCal.getElementsByClassName("calendar")[0].outerHTML = text
+					htmlCal.getElementsByClassName('calendar')[0].outerHTML = text
 
-					htmlCal.getElementsByClassName("caret left")[0].onclick = function() { setPreviousMonth(htmlCal) }
-					htmlCal.getElementsByClassName("caret right")[0].onclick = function() { setNextMonth(htmlCal) }
-					htmlCal.getElementsByClassName("today")[0].onclick = function() { setToday(htmlCal) }
+					htmlCal.getElementsByClassName('caret left')[0].onclick = function() { setPreviousMonth(htmlCal) }
+					htmlCal.getElementsByClassName('caret right')[0].onclick = function() { setNextMonth(htmlCal) }
+					htmlCal.getElementsByClassName('today')[0].onclick = function() { setToday(htmlCal) }
 
-					let days = htmlCal.getElementsByClassName("day")
+					let days = htmlCal.getElementsByClassName('day')
 					for (let cur = 0; cur < days.length; cur++) {
-						if (!days[cur].classList.contains("future")) {
+						if (!days[cur].classList.contains('future')) {
 							days[cur].onclick = function(e) {
 								e.stopPropagation()
 								showStateBox(days[cur], htmlCal, e)
@@ -43,8 +45,8 @@ loadCalendar = (htmlCal) => {
 /**
  * Call the loadCalendar function for each .dashboard_calendar element
  */
-loadCalendars = () => {
-	for (htmlCal of htmlCalendars) {
+function loadCalendars() {
+	for (let htmlCal of htmlCalendars) {
 		loadCalendar(htmlCal)
 	}
 }
@@ -53,7 +55,7 @@ loadCalendars = () => {
  * Set the specified .dashboard_calendar element to the previous month then load it
  * @param htmlCal - The DOM element of the .dashboard_calendar
  */
-setPreviousMonth = (htmlCal) => {
+function setPreviousMonth(htmlCal) {
 	let date = htmlCal.getAttribute('attr-date')
 	let year = parseInt(date.split('-')[0])
 	let month = parseInt(date.split('-')[1])
@@ -75,7 +77,7 @@ setPreviousMonth = (htmlCal) => {
  * Set the specified .dashboard_calendar element to the next month then load it
  * @param htmlCal - The DOM element of the .dashboard_calendar
  */
-setNextMonth = (htmlCal) => {
+function setNextMonth(htmlCal) {
 	let date = htmlCal.getAttribute('attr-date')
 	let year = parseInt(date.split('-')[0])
 	let month = parseInt(date.split('-')[1])
@@ -97,7 +99,7 @@ setNextMonth = (htmlCal) => {
  * Set the specified .dashboard_calendar element to the current month then load it
  * @param htmlCal - The DOM element of the .dashboard_calendar
  */
-setToday = (htmlCal) => {
+function setToday(htmlCal) {
 	let date = new Date()
 
 	let month = `${date.getMonth() + 1}`

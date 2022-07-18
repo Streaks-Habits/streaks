@@ -6,17 +6,17 @@ import { calendarView, dashboardView, index, servePublic, stateSet, checkAuthent
 const router = Router()
 
 /// API ///
-router.post("/api/*", apiCheckKey)
-router.post("/api/set_state/:id", apiStateSet)
+router.post('/api/*', apiCheckKey)
+router.post('/api/set_state/:id', apiStateSet)
 
 /// APP ///
-router.use("/", servePublic)
-router.get("/login", loginView)
-router.post("/login", loginForm)
-router.use("/", checkAuthenticated)
-router.get("/", index)
-router.get("/dashboard", dashboardView)
-router.post("/set_state/:id", stateSet)
-router.get("/calendar_view/:id", calendarView)
+router.use('/', servePublic)
+router.get('/login', loginView)
+router.post('/login', loginForm)
+router.use('/', checkAuthenticated)
+router.get('/', index)
+router.get('/dashboard', dashboardView)
+router.post('/set_state/:id', stateSet)
+router.get('/calendar_view/:id', calendarView)
 
 export default router

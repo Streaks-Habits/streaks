@@ -1,20 +1,22 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 const chalk = require('chalk')
 const readlineSync = require('readline-sync')
-const mongoose = require("mongoose")
+const mongoose = require('mongoose')
 
-const { connectDB, addUser } = require("../../dist/scripts/database/database")
+const { connectDB } = require('../../dist/scripts/database/database')
+const { addUser } = require('../../dist/scripts/database/User')
 
-process.stdout.write(`${chalk.blue("streaks")} database => `);
+process.stdout.write(`${chalk.blue('streaks')} database => `)
 connectDB().then(() => {
-	console.log(chalk.green("connected"))
+	console.log(chalk.green('connected'))
 
-	console.log(`\n\tAdd a new user.`)
+	console.log('\n\tAdd a new user.')
 
 	var username = readlineSync.question('Username: ')
 	var password = readlineSync.question('Password: ', { hideEchoBack: true })
 
 	addUser(username, password).then(user => {
-		console.log(`User ${username} (${user.id}) ${chalk.green("added")}`)
+		console.log(`User ${username} (${user.id}) ${chalk.green('added')}`)
 	}).catch(err => {
 		console.error(`Error: ${chalk.red(err)}`)
 	}).finally(() => {
