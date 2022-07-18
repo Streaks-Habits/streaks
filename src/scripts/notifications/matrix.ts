@@ -77,14 +77,18 @@ export class MatrixNotifications {
 		this.matrixClient.stopClient()
 	}
 
-	async sendMessage(roomID: string, message: string) {
+	async sendMessage(roomID: string, message: string, htmlMessage = '') {
 		await this.matrixClient.joinRoom(roomID)
 		await this.matrixClient.uploadKeys()
-		await this.matrixClient.sendTextMessage(roomID, message)
+		if (htmlMessage != '')
+			await this.matrixClient.sendHtmlMessage(roomID, message, htmlMessage)
+		else
+			await this.matrixClient.sendTextMessage(roomID, message)
 	}
 
 	async sendReminder(roomID: string, calendar: Calendar) {
-		const message = `🔴 You have not completed the '${calendar.name}' task!  🔥 ${calendar.countStreaks()}`
-		await this.sendMessage(roomID, message)
+		const message = `🔴 ${calendar.name?.toUpperCase()} {${calendar.countStreaks()}🔥}  Task not completed!`
+		const htmlMessage = `🔴 <strong>${calendar.name?.toUpperCase()}</strong> {${calendar.countStreaks()}🔥}  Task not completed!`
+		await this.sendMessage(roomID, message, htmlMessage)
 	}
 }
