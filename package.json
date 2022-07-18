@@ -10,6 +10,7 @@
 		"build:static": "mkdir -p dist/public && cp -r src/views dist/views && cp -r src/public/* dist/public",
 		"build:sass": "node-sass -r src/styles/ -o dist/public/styles/",
 		"build:clear": "rm -rf dist",
+		"test": "npm run test:lint",
 		"test:lint": "eslint src/ user_scripts/"
 	},
 	"author": "cestoliv",
