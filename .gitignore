@@ -1,8 +1,6 @@
-node_modules/
-dist/
-package-lock.json
-daemons/*
+/database/
+/dist/
+/node_modules/
+/store/
+
 .env
-test.js
-database
-store

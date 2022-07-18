@@ -1,9 +1,11 @@
-var htmlStateBox = document.getElementById("set_state_box")
-var htmlSetSuccess = document.getElementById("set_success_state")
-var htmlSetFreeze = document.getElementById("set_freeze_state")
-var htmlSetFail = document.getElementById("set_fail_state")
+/* global document window */
+/* global loadCalendar */
+var htmlStateBox = document.getElementById('set_state_box')
+var htmlSetSuccess = document.getElementById('set_success_state')
+var htmlSetFreeze = document.getElementById('set_freeze_state')
+var htmlSetFail = document.getElementById('set_fail_state')
 
-isLoading = false
+var isLoading = false
 
 /**
  * Makes a request to set the specified state to the specified day for the specified calendar
@@ -12,9 +14,9 @@ isLoading = false
  * @param id - The id of the calendar
  * @param htmlCal - The DOM element of the .dashboard_calendar to reload
  */
-setState = (state, dateString, id, htmlCal) => {
+function setState (state, dateString, id, htmlCal) {
 	isLoading = true
-	htmlStateBox.classList.add("spin")
+	htmlStateBox.classList.add('spin')
 
 	let url = `/set_state/${id}`
 	let data = {
@@ -45,7 +47,8 @@ setState = (state, dateString, id, htmlCal) => {
  * @param htmlCal - The .dashboard_calendar DOM element of the day
  * @param e - The click event
  */
-showStateBox = (htmlDay, htmlCal, e) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function showStateBox(htmlDay, htmlCal, e) {
 	if (isLoading)
 		return
 	hideStateBox()
@@ -55,28 +58,28 @@ showStateBox = (htmlDay, htmlCal, e) => {
 		}
 	}
 	htmlSetSuccess.onclick = function() {
-		setState("success", htmlDay.getAttribute("attr-date"), htmlCal.getAttribute("attr-id"), htmlCal)
+		setState('success', htmlDay.getAttribute('attr-date'), htmlCal.getAttribute('attr-id'), htmlCal)
 	}
 	htmlSetFreeze.onclick = function() {
-		setState("freeze", htmlDay.getAttribute("attr-date"), htmlCal.getAttribute("attr-id"), htmlCal)
+		setState('freeze', htmlDay.getAttribute('attr-date'), htmlCal.getAttribute('attr-id'), htmlCal)
 	}
 	htmlSetFail.onclick = function() {
-		setState("fail", htmlDay.getAttribute("attr-date"), htmlCal.getAttribute("attr-id"), htmlCal)
+		setState('fail', htmlDay.getAttribute('attr-date'), htmlCal.getAttribute('attr-id'), htmlCal)
 	}
-	htmlStateBox.style.top = e.clientY + window.scrollY + "px"
-	htmlStateBox.style.left = e.clientX + window.scrollX + "px"
-	htmlStateBox.style.display = "block"
+	htmlStateBox.style.top = e.clientY + window.scrollY + 'px'
+	htmlStateBox.style.left = e.clientX + window.scrollX + 'px'
+	htmlStateBox.style.display = 'block'
 }
 
 /**
  * Show the box that allows you to define a state of the day and clear every click events
  */
-hideStateBox = () => {
-	if (htmlStateBox.style.display == "block" && !isLoading) {
-		htmlStateBox.style.display = "none"
-		htmlStateBox.classList.remove("spin")
-		htmlSetSuccess.onclick = () => {}
-		htmlSetFreeze.onclick = () => {}
-		htmlSetFail.onclick = () => {}
+function hideStateBox() {
+	if (htmlStateBox.style.display == 'block' && !isLoading) {
+		htmlStateBox.style.display = 'none'
+		htmlStateBox.classList.remove('spin')
+		htmlSetSuccess.onclick = null
+		htmlSetFreeze.onclick = null
+		htmlSetFail.onclick = null
 	}
 }
