@@ -12,7 +12,7 @@ export class User {
 	weekStartsMonday: boolean
 	username: string | undefined
 	api_keys: Array<{
-		_id: ObjectId,
+		_id: Types.ObjectId,
 		name: string,
 		key_hash: string
 	}> | undefined
