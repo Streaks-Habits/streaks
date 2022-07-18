@@ -3,7 +3,7 @@ import moment from 'moment'
 import dotenv from 'dotenv'
 
 import { MatrixNotifications } from './notifications/matrix'
-import { dateString } from './utils'
+import { dateString, hour_between } from './utils'
 import { getUsers } from './database/User'
 import { getCalendars } from './database/Calendar'
 
@@ -71,7 +71,8 @@ export async function sendNotifications() {
 				continue;
 
 			if (matrix && users[u].notifications!.matrix.room_id)
-				notificationsPromises.push(matrix.sendReminder(users[u].notifications!.matrix.room_id, calendars[c]))
+				if (hour_between(users[u].notifications!.matrix.start_date, users[u].notifications!.matrix.end_date))
+					notificationsPromises.push(matrix.sendReminder(users[u].notifications!.matrix.room_id, calendars[c]))
 		}
 	}
 

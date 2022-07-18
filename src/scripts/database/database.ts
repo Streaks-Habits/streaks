@@ -14,7 +14,9 @@ export interface IUser extends Document {
 	}>,
 	notifications: {
 		matrix: {
-			room_id: string
+			room_id: string,
+			start_date: string, // HH:MM 24h // format
+			end_date: string // HH:MM 24h // format
 		}
 	}
 }
@@ -34,7 +36,9 @@ const	UserSchema: Schema = new Schema({
 	}],
 	notifications: {
 		matrix: {
-			room_id: { type: String }
+			room_id: { type: String },
+			start_date: { type: String }, // HH:MM 24h // format
+			end_date: { type: String } // HH:MM 24h // format
 		}
 	}
 })

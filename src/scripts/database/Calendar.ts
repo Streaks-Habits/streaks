@@ -7,11 +7,13 @@ import { ICalendar, MCalendar } from "./database"
 
 export class Calendar {
 	initialized: boolean = false
+	// From constructor
 	id: string
-	name: string | undefined
-	user_id: Types.ObjectId | undefined
-	agenda: Array<boolean> | undefined
-	days: Map<string, string> | undefined
+	// From database / init
+	name: ICalendar["name"] | undefined
+	user_id: ICalendar["user_id"] | undefined
+	agenda: ICalendar["agenda"] | undefined
+	days: ICalendar["days"] | undefined
 
 	public constructor (id: string) {
 		this.id = id
@@ -44,7 +46,6 @@ export class Calendar {
 
 	/**
 	 * Set the given state (success, fail...) of the given day (YYYY-MM-DD) for the given calendar
-	 * @param calendar_id - The calendars's id
 	 * @param date - The date to set (formated as YYYY-MM-DD)
 	 * @param state - The state to set (must be success, fail, breakday or freeze)
 	 * @returns - A promise that resolve(ICalendar) or reject(errorMessage)
@@ -83,7 +84,6 @@ export class Calendar {
 
 	/**
 	 * Returns the current streaks of the specified calendar
-	 * @param calendar - The database calendar to count in
 	 * @returns - The current streaks (a number)
 	 */
 	countStreaks(): number {

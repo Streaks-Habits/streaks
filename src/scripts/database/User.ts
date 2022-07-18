@@ -8,19 +8,13 @@ import chalk from "chalk"
 
 export class User {
 	initialized: boolean = false
+	// From constructor
 	id: string
 	weekStartsMonday: boolean
-	username: string | undefined
-	api_keys: Array<{
-		_id: Types.ObjectId,
-		name: string,
-		key_hash: string
-	}> | undefined
-	notifications: {
-		matrix: {
-			room_id: string
-		}
-	} | undefined
+	// From database / init
+	username: IUser["username"] | undefined
+	api_keys: IUser["api_keys"] | undefined
+	notifications: IUser["notifications"] | undefined
 
 	public constructor (id: string) {
 		this.id = id

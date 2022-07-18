@@ -34,3 +34,22 @@ export function isOver(date: Date): Boolean {
 		return (true)
 	return (false)
 }
+
+/**
+ *
+ */
+export function hour_between(start_date: string, end_date: string): Boolean {
+	// Start
+	var moment_date = moment(start_date, 'HH:mm')
+	var start_date_minutes = moment_date.hours() * 60 + moment(moment_date, 'HH:mm').minutes()
+	// End
+	moment_date = moment(end_date, 'HH:mm')
+	var end_date_minutes = moment_date.hours() * 60 + moment(moment_date, 'HH:mm').minutes()
+	// Current
+	moment_date = moment()
+	var current_date_minutes = moment_date.hours() * 60 + moment(moment_date, 'HH:mm').minutes()
+
+	if (current_date_minutes >= start_date_minutes && current_date_minutes <= end_date_minutes)
+		return (true)
+	return (false)
+}
