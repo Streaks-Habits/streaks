@@ -50,7 +50,6 @@ export class MatrixNotifications {
 			accessToken: process.env.MATRIX_TOKEN,
 			userId: process.env.MATRIX_USER,
 
-			sessionStore: new sdk.MemoryStore({ localStorage }),
 			cryptoStore: new LocalStorageCryptoStore(localStorage)
 		})
 	}
