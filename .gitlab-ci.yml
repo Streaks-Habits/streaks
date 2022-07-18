@@ -8,9 +8,8 @@ eslint:
   image: node:latest
   stage: lint
   script:
-    - npm install -g eslint
-    - eslint --init
-    - eslint 
+    - npm install @typescript-eslint/eslint-plugin @typescript-eslint/parser eslint
+    - npm run eslint
 
 sast:
   stage: test
