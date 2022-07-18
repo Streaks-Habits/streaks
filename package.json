@@ -5,12 +5,12 @@
 	"main": "dist/server.js",
 	"scripts": {
 		"start": "node dist/scripts/webserv/server.js",
+		"start:dev": "nodemon --watch src --watch .env -e env,json,ts,ejs,scss,js --exec 'npm run build && npm run start'",
 		"build": "npm run clear && tsc && npm run build-static && npm run sass",
-		"lint": "eslint src/ user_scripts/",
-		"clear": "rm -rf dist",
-		"sass": "node-sass -r src/styles/ -o dist/public/styles/",
-		"build-static": "mkdir -p dist/public && cp -r src/views dist/views && cp -r src/public/* dist/public",
-		"start-dev": "nodemon --watch src --watch .env -e env,json,ts,ejs,scss,js --exec 'npm run build && npm run start'"
+		"build:static": "mkdir -p dist/public && cp -r src/views dist/views && cp -r src/public/* dist/public",
+		"build:sass": "node-sass -r src/styles/ -o dist/public/styles/",
+		"build:clear": "rm -rf dist",
+		"test:lint": "eslint src/ user_scripts/"
 	},
 	"author": "cestoliv",
 	"license": "MIT",
