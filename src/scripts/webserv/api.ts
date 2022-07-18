@@ -17,9 +17,13 @@ export const apiCheckKey:RequestHandler = (req, res, next) => {
 		return res.status(400).send('Bad api key format')
 
 	const user = new User(user_id)
-	user.checkApiKey(api_key).then(() => {
-		req.session.user = user
-		next()
+	user.dbInit().then(() => {
+		user.checkApiKey(api_key).then(() => {
+			req.session.user = user
+			next()
+		}).catch((err) => {
+			res.status(err.code).send(err.message)
+		})
 	}).catch((err) => {
 		res.status(err.code).send(err.message)
 	})
