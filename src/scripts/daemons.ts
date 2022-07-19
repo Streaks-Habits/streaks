@@ -1,9 +1,8 @@
 import chalk from 'chalk'
-import moment from 'moment'
 import dotenv from 'dotenv'
 
 import { MatrixNotifications } from './notifications/matrix'
-import { dateString, hour_between } from './utils'
+import { dateString } from './utils'
 import { getUsers } from './database/User'
 import { getCalendars } from './database/Calendar'
 
@@ -63,19 +62,9 @@ export async function sendNotifications() {
 	const notificationsPromises: Array<Promise<void>> = []
 
 	for (let u = 0; u < users.length; u++) {
-		const calendars = await users[u].getCalendars()
 		if (!users[u].notifications)
 			continue
-
-		for (let c = 0; c < calendars.length; c++) {
-			if (calendars[c].days?.get(moment().format('YYYY-MM-DD')) &&
-				calendars[c].days?.get(moment().format('YYYY-MM-DD')) != 'fail')
-				continue
-
-			if (matrix && (users[u].notifications?.matrix.room_id ?? false))
-				if (hour_between((users[u].notifications?.matrix.start_date ?? '00:00'), (users[u].notifications?.matrix.end_date ?? '24:00')))
-					notificationsPromises.push(matrix.sendReminder((users[u].notifications?.matrix.room_id ?? ''), calendars[c]))
-		}
+		notificationsPromises.push(users[u].sendReminders({matrix}))
 	}
 
 	await Promise.allSettled(notificationsPromises).then(async () => {
