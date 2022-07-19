@@ -2,7 +2,7 @@
 const chalk = require('chalk')
 const mongoose = require('mongoose')
 
-const daemons = require('../dist/scripts/daemons')
+const { sendNotifications } = require('../dist/scripts/notifications/notifications')
 const { connectDB } = require('../dist/scripts/database/database')
 
 process.stdout.write(`${chalk.blue('streaks')} database => `)
@@ -10,7 +10,7 @@ connectDB().then(() => {
 	console.log(chalk.green('connected'))
 
 	console.log('\tLaunching notifications...')
-	daemons.sendNotifications().then(() => {
+	sendNotifications().then(() => {
 		console.log('Done!')
 	}).finally(() => {
 		mongoose.disconnect()

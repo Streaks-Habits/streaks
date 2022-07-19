@@ -77,6 +77,7 @@ export class Calendar {
 					if (!calendar)
 						return reject({code: 404, message: 'Calendar doesn\'t exists'})
 
+					this.days = calendar.days
 					return resolve(calendar)
 				})
 		})

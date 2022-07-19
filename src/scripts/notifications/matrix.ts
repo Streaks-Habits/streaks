@@ -90,4 +90,10 @@ export class MatrixNotifications {
 		const htmlMessage = `🔴 <strong>${calendar.name?.toUpperCase()}</strong> {${calendar.countStreaks()}🔥}  Task not completed!`
 		await this.sendMessage(roomID, message, htmlMessage)
 	}
+
+	async sendCongratulation(roomID: string, calendar: Calendar) {
+		const message = `🟢 ${calendar.name?.toUpperCase()} {${calendar.countStreaks()}🔥}  Task completed!`
+		const htmlMessage = `🟢 <strong>${calendar.name?.toUpperCase()}</strong> {${calendar.countStreaks()}🔥}  Task completed!`
+		await this.sendMessage(roomID, message, htmlMessage)
+	}
 }

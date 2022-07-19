@@ -1,10 +1,9 @@
 import chalk from 'chalk'
 import dotenv from 'dotenv'
 
-import { MatrixNotifications } from './notifications/matrix'
 import { dateString } from './utils'
-import { getUsers } from './database/User'
 import { getCalendars } from './database/Calendar'
+import { sendNotifications } from './notifications/notifications'
 
 dotenv.config()
 
@@ -45,31 +44,6 @@ function setBreakdays(): Promise<void> {
 			console.error(`Daemons: ${chalk.red(err.message)}`)
 			resolve()
 		})
-	})
-}
-
-export async function sendNotifications() {
-	let matrix: MatrixNotifications | undefined
-
-	// Check enabled services and enable them
-	if (process.env.MATRIX_ENABLED && process.env.MATRIX_ENABLED == 'true') {
-		matrix = new MatrixNotifications()
-		await matrix.connect()
-	}
-
-	const users = await getUsers()
-
-	const notificationsPromises: Array<Promise<void>> = []
-
-	for (let u = 0; u < users.length; u++) {
-		if (!users[u].notifications)
-			continue
-		notificationsPromises.push(users[u].sendReminders({matrix}))
-	}
-
-	await Promise.allSettled(notificationsPromises).then(async () => {
-		if (matrix)
-			matrix.disconnect()
 	})
 }
 

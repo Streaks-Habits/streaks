@@ -2,12 +2,9 @@ import { isValidObjectId, Types } from 'mongoose'
 import { v4 as uuidv4 } from 'uuid'
 import bcrypt from 'bcrypt'
 import chalk from 'chalk'
-import moment from 'moment'
 
 import { IUser, MCalendar, MUser } from './database'
 import { Calendar } from './Calendar'
-import { hour_between } from '../utils'
-import { MatrixNotifications } from '../notifications/matrix'
 
 export class User {
 	initialized = false
@@ -232,34 +229,6 @@ export class User {
 	}
 
 	//#endregion API
-
-	//#region NOTIFICATIONS
-
-	sendReminders(services: { matrix: MatrixNotifications | undefined }): Promise<void> {
-		return new Promise((resolve, reject) => {
-			const notificationsPromises: Array<Promise<void>> = []
-
-			this.getCalendars().then(calendars => {
-				for (let c = 0; c < calendars.length; c++) {
-					if (calendars[c].days?.get(moment().format('YYYY-MM-DD')) &&
-						calendars[c].days?.get(moment().format('YYYY-MM-DD')) != 'fail')
-						continue
-
-					if (services.matrix && (this.notifications?.matrix.room_id ?? false))
-						if (hour_between((this.notifications?.matrix.start_date ?? '00:00'), (this.notifications?.matrix.end_date ?? '24:00')))
-							notificationsPromises.push(services.matrix.sendReminder((this.notifications?.matrix.room_id ?? ''), calendars[c]))
-				}
-
-				Promise.allSettled(notificationsPromises).then(async () => {
-					resolve()
-				})
-			}).catch(errObj => {
-				reject(errObj)
-			})
-		})
-	}
-
-	//#endregion NOTIFICATIONS
 }
 
 

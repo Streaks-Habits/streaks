@@ -1,7 +1,9 @@
 import { RequestHandler } from 'express'
+import moment from 'moment'
 import { isValidObjectId } from 'mongoose'
 
 import { User } from '../database/User'
+import { sendCongratulation } from '../notifications/notifications'
 
 ///CHECK API KEY ///
 export const apiCheckKey:RequestHandler = (req, res, next) => {
@@ -41,8 +43,11 @@ export const apiStateSet:RequestHandler = (req, res) => {
 		return res.status(400).send('You forgot the state ;)')
 
 	req.session.user.getCalendarById(req.params.id).then(calendar => {
+		const state_set_to_success = calendar.days?.get(moment().format('YYYY-MM-DD')) != 'success' && req.body.state == 'success'
 		calendar.setDayState(req.body.date, req.body.state).then(() => {
 			res.send('OK')
+			if (req.session.user && state_set_to_success)
+				sendCongratulation(req.session.user, calendar)
 		}).catch((err) => {
 			res.status(err.code).send(err.message)
 		})
