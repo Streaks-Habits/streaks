@@ -39,15 +39,9 @@ export function isOver(date: Date): boolean {
  *
  */
 export function hour_between(start_date: string, end_date: string): boolean {
-	// Start
-	let moment_date = moment(start_date, 'HH:mm')
-	const start_date_minutes = moment_date.hours() * 60 + moment(moment_date, 'HH:mm').minutes()
-	// End
-	moment_date = moment(end_date, 'HH:mm')
-	const end_date_minutes = moment_date.hours() * 60 + moment(moment_date, 'HH:mm').minutes()
-	// Current
-	moment_date = moment()
-	const current_date_minutes = moment_date.hours() * 60 + moment(moment_date, 'HH:mm').minutes()
+	const start_date_minutes = moment(start_date, 'HH:mm').valueOf()
+	const end_date_minutes = moment(end_date, 'HH:mm').valueOf()
+	const current_date_minutes = moment().valueOf()
 
 	if (current_date_minutes >= start_date_minutes && current_date_minutes <= end_date_minutes)
 		return (true)
