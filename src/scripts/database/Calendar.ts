@@ -4,6 +4,11 @@ import moment from 'moment'
 import { dateString } from '../utils'
 import { ICalendar, MCalendar } from './database'
 
+function exitUninitialized():void {
+	console.error(chalk.red('The calendar has not been initialized.'))
+	process.exit(1)
+}
+
 export class Calendar {
 	initialized = false
 	// From constructor
@@ -13,6 +18,7 @@ export class Calendar {
 	user_id: ICalendar['user_id'] | undefined
 	agenda: ICalendar['agenda'] | undefined
 	days: ICalendar['days'] | undefined
+	notifications: ICalendar['notifications'] | undefined
 
 	public constructor (id: string) {
 		this.id = id
@@ -25,6 +31,7 @@ export class Calendar {
 				this.user_id = calendar.user_id
 				this.agenda = calendar.agenda
 				this.days = calendar.days
+				this.notifications = calendar.notifications
 
 				this.initialized = true
 				resolve()
@@ -40,6 +47,7 @@ export class Calendar {
 		this.user_id = calendar.user_id
 		this.agenda = calendar.agenda
 		this.days = calendar.days
+		this.notifications = calendar.notifications
 
 		this.initialized = true
 	}
@@ -52,10 +60,8 @@ export class Calendar {
 	 */
 	setDayState(date: string, state: string)
 			: Promise<ICalendar> {
-		if (!this.initialized) {
-			console.error(chalk.red('The calendar has not been initialized.'))
-			process.exit(1)
-		}
+		if (!this.initialized)
+			exitUninitialized()
 
 		return new Promise((resolve, reject) => {
 			if (!moment(date, 'YYYY-MM-DD', true).isValid())
@@ -88,10 +94,8 @@ export class Calendar {
 	 * @returns - The current streaks (a number)
 	 */
 	countStreaks(): number {
-		if (!this.initialized) {
-			console.error(chalk.red('The calendar has not been initialized.'))
-			process.exit(1)
-		}
+		if (!this.initialized)
+			exitUninitialized()
 		if (!this.days)
 			return (0)
 
@@ -108,6 +112,46 @@ export class Calendar {
 		} while (current_state && current_state != 'fail')
 		return (streaks)
 	}
+
+	//#region NOTIFICATIONS
+
+	setRemindersState(state: boolean): Promise<void> {
+		if (!this.initialized)
+			exitUninitialized()
+
+		return new Promise((resolve, reject) => {
+			MCalendar.findByIdAndUpdate(this.id, { 'notifications.reminders': state },
+				{ new: true }, (err, calendar) => {
+					if (err)
+						return reject({code: 500, message: err.message})
+					if (!calendar)
+						return reject({code: 404, message: 'Calendar doesn\'t exists'})
+
+					this.notifications = calendar.notifications
+					return resolve()
+				})
+		})
+	}
+
+	setCongratsState(state: boolean): Promise<void> {
+		if (!this.initialized)
+			exitUninitialized()
+
+		return new Promise((resolve, reject) => {
+			MCalendar.findByIdAndUpdate(this.id, { 'notifications.congrats': state },
+				{ new: true }, (err, calendar) => {
+					if (err)
+						return reject({code: 500, message: err.message})
+					if (!calendar)
+						return reject({code: 404, message: 'Calendar doesn\'t exists'})
+
+					this.notifications = calendar.notifications
+					return resolve()
+				})
+		})
+	}
+
+	//#endregion NOTIFICATIONS
 }
 
 /**
@@ -132,9 +176,9 @@ export function getCalendarById(id: string)
 }
 
 /**
-* Find every calendars of the instance
-* @returns - A promise that resolve(ICalendar[]) or reject(errorMessage)
-*/
+ * Find every calendars of the instance
+ * @returns - A promise that resolve(ICalendar[]) or reject(errorMessage)
+ */
 export function getCalendars()
 		: Promise<Calendar[]> {
 	return new Promise((resolve, reject) => {

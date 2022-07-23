@@ -263,11 +263,11 @@ export function addUser(username: string, password: string)
 }
 
 /**
-* Compare the hashed password of the given username with the given password
-* @param username - The users's username
-* @param password - The users's password to test
-* @returns - A promise that resolve(IUser) if passwords match or reject(errorMessage)
-*/
+ * Compare the hashed password of the given username with the given password
+ * @param username - The users's username
+ * @param password - The users's password to test
+ * @returns - A promise that resolve(IUser) if passwords match or reject(errorMessage)
+ */
 export function checkPassword(username: string, password: string)
 		: Promise<User> {
 	return new Promise((resolve, reject) => {
@@ -291,10 +291,10 @@ export function checkPassword(username: string, password: string)
 }
 
 /**
-* Find a user in database with the given id
-* @param id - The users's id
-* @returns - A promise that resolve(IUser) or reject(errorMessage)
-*/
+ * Find a user in database with the given id
+ * @param id - The users's id
+ * @returns - A promise that resolve(IUser) or reject(errorMessage)
+ */
 export function getUserById(id: string)
 		: Promise<User> {
 	return new Promise((resolve, reject) => {
@@ -310,9 +310,9 @@ export function getUserById(id: string)
 }
 
 /**
-* Find every users of the instance
-* @returns - A promise that resolve(IUser[]) or reject(errorMessage)
-*/
+ * Find every users of the instance
+ * @returns - A promise that resolve(IUser[]) or reject(errorMessage)
+ */
 export function getUsers()
 		: Promise<User[]> {
 	return new Promise((resolve, reject) => {

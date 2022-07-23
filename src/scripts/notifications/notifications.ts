@@ -25,6 +25,8 @@ export async function sendNotifications() {
 		const calendars = await users[u].getCalendars()
 
 		for (let c = 0; c < calendars.length; c++) {
+			if (!calendars[c].notifications?.reminders)
+				continue
 			if (calendars[c].days?.get(moment().format('YYYY-MM-DD')) &&
 				calendars[c].days?.get(moment().format('YYYY-MM-DD')) != 'fail')
 				continue
