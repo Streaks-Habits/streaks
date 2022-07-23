@@ -122,7 +122,8 @@ export class User {
 					name,
 					user_id: user.id,
 					agenda: [1, 1, 1, 1, 1, 1, 1],
-					days: {}
+					days: {},
+					notifications: {reminders: true, congrats: true}
 				}).save((err, data) => {
 					if (err) return reject({code: 500, message: err.message})
 
