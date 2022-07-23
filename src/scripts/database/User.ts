@@ -49,7 +49,8 @@ export class User {
 
 	/**
 	 * Find every calendars of the user
-	 * @returns - A promise that resolve(IUser[]) or reject(errorMessage)
+	 *
+	 * @returns {Promise<Calendar[]>} - A promise that resolve(IUser[]) or reject(errorMessage)
 	 */
 	getCalendars()
 			: Promise<Calendar[]> {
@@ -75,8 +76,9 @@ export class User {
 
 	/**
 	 * Find a calendar of the user with the given id
-	 * @param id - The calendar's id
-	 * @returns - A promise that resolve(ICalendar) or reject(errorMessage)
+	 *
+	 * @param {string} id - The calendar's id
+	 * @returns {Promise<Calendar>} - A promise that resolve(ICalendar) or reject(errorMessage)
 	 */
 	getCalendarById(id: string)
 			: Promise<Calendar> {
@@ -103,8 +105,9 @@ export class User {
 
 	/**
 	 * Add a calendar for the user
-	 * @param name - The name of the future calendar
-	 * @returns - A promise that resolve(ICalendar) or reject(errorMessage)
+	 *
+	 * @param {string} name - The name of the future calendar
+	 * @returns {Promise<Calendar>} - A promise that resolve(ICalendar) or reject(errorMessage)
 	 */
 	addCalendar(name: string)
 			: Promise<Calendar> {
@@ -140,8 +143,9 @@ export class User {
 	/**
 	 * Create an API with the given name for the user and returns it
 	 * Api keys have the following format: user_id.key_id.key
-	 * @param name - The name of the api key
-	 * @returns - A promise that resolve(string) or reject(errorMessage)
+	 *
+	 * @param {string} name - The name of the api key
+	 * @returns {Promise<string>} - A promise that resolve(string) or reject(errorMessage)
 	 */
 	createApiKey(name: string)
 			: Promise<string> {
@@ -177,8 +181,9 @@ export class User {
 
 	/**
 	 * Check that the given api key exist and id valid for the user
-	 * @param api_key - The api key to check
-	 * @returns - A promise that resolve() or reject(errorMessage)
+	 *
+	 * @param {string} api_key - The api key to check
+	 * @returns {Promise} - A promise that resolve() or reject(errorMessage)
 	 */
 	checkApiKey(api_key: string)
 			: Promise<void> {
@@ -234,9 +239,10 @@ export class User {
 
 /**
  * Add the specified user to the database. The password is stored hashed
- * @param username - The users's username
- * @param password - The users's password
- * @returns - A promise that resolve(IUser)
+ *
+ * @param {string} username - The users's username
+ * @param {string} password - The users's password
+ * @returns {Promise<User>} - A promise that resolve(IUser)
  */
 export function addUser(username: string, password: string)
 		: Promise<User> {
@@ -264,9 +270,10 @@ export function addUser(username: string, password: string)
 
 /**
  * Compare the hashed password of the given username with the given password
- * @param username - The users's username
- * @param password - The users's password to test
- * @returns - A promise that resolve(IUser) if passwords match or reject(errorMessage)
+ *
+ * @param {string} username - The users's username
+ * @param {string} password - The users's password to test
+ * @returns {Promise<User>} - A promise that resolve(IUser) if passwords match or reject(errorMessage)
  */
 export function checkPassword(username: string, password: string)
 		: Promise<User> {
@@ -292,8 +299,9 @@ export function checkPassword(username: string, password: string)
 
 /**
  * Find a user in database with the given id
- * @param id - The users's id
- * @returns - A promise that resolve(IUser) or reject(errorMessage)
+ *
+ * @param {string} id - The users's id
+ * @returns {Promise<User>} - A promise that resolve(IUser) or reject(errorMessage)
  */
 export function getUserById(id: string)
 		: Promise<User> {
@@ -311,7 +319,8 @@ export function getUserById(id: string)
 
 /**
  * Find every users of the instance
- * @returns - A promise that resolve(IUser[]) or reject(errorMessage)
+ *
+ * @returns {Promise<User[]>} - A promise that resolve(IUser[]) or reject(errorMessage)
  */
 export function getUsers()
 		: Promise<User[]> {

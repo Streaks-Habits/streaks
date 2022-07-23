@@ -5,6 +5,11 @@ import { getUsers, User } from '../database/User'
 import { hour_between } from '../utils'
 import { MatrixNotifications } from './matrix'
 
+/**
+ * Sends a reminder to all users for all tasks they have not done.
+ * It is sent only if the current time is in the slot indicated by the user.
+ * Sends only to users who have activated a notification service supported by the instance.
+ */
 export async function sendNotifications() {
 	let matrix: MatrixNotifications | undefined
 
@@ -43,6 +48,14 @@ export async function sendNotifications() {
 	})
 }
 
+/**
+ * Sends a congratulatory message to the user given in parameter, for the calendar passed in parameter.
+ * It is sent only if the current time is in the slot indicated by the user.
+ * Sends only to users who have activated a notification service supported by the instance.
+ *
+ * @param {User} user - The user to send the message to
+ * @param {Calendar} calendar - The calendar involved
+ */
 export async function sendCongratulation(user: User, calendar: Calendar) {
 	let matrix: MatrixNotifications | undefined
 

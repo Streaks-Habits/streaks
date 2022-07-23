@@ -10,7 +10,8 @@ dotenv.config()
 /**
  * Go through the calendar and set the breakday status to the current day
  * if it is a breakday (a 0 in agenda)
- * @return - A promise that resolve(void) at the end
+ *
+ * @returns {Promise} - A promise that resolve(void) at the end
  */
 function setBreakdays(): Promise<void> {
 	return new Promise((resolve) => {
@@ -49,6 +50,8 @@ function setBreakdays(): Promise<void> {
 
 /**
  * Run the setBreakday function, then sendNotifications
+ *
+ * @returns {Promise} - A promise that resolve when breaksdays are set and reminders sent
  */
 export function runDaemons(): Promise<void> {
 	return new Promise((resolve) => {

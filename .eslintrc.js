@@ -33,6 +33,7 @@ module.exports = {
 		'semi': [
 			'error',
 			'never'
-		]
+		],
+		'jsdoc/no-undefined-types': 0
 	}
 }

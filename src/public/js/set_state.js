@@ -9,10 +9,11 @@ var isLoading = false
 
 /**
  * Makes a request to set the specified state to the specified day for the specified calendar
- * @param state - The state to define can be: success, fail, breakday, freeze
- * @param dateString - The date formatted as YYYY-MM-DD
- * @param id - The id of the calendar
- * @param htmlCal - The DOM element of the .dashboard_calendar to reload
+ *
+ * @param {string} state - The state to define can be: success, fail, breakday, freeze
+ * @param {string} dateString - The date formatted as YYYY-MM-DD
+ * @param {string} id - The id of the calendar
+ * @param {HTMLDivElement} htmlCal - The DOM element of the .dashboard_calendar to reload
  */
 function setState (state, dateString, id, htmlCal) {
 	isLoading = true
@@ -43,9 +44,10 @@ function setState (state, dateString, id, htmlCal) {
 
 /**
  * Show the box that allows you to define a state of the day
- * @param htmlDay - The DOM element of the day for which you want to define a state
- * @param htmlCal - The .dashboard_calendar DOM element of the day
- * @param e - The click event
+ *
+ * @param {HTMLElement} htmlDay - The DOM element of the day for which you want to define a state
+ * @param {HTMLDivElement} htmlCal - The .dashboard_calendar DOM element of the day
+ * @param {Event} e - The click event
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function showStateBox(htmlDay, htmlCal, e) {

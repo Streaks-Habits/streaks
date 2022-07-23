@@ -65,7 +65,8 @@ export const	MCalendar: Model<ICalendar> = model<ICalendar>('Calendar', Calendar
 
 /**
  * Connect mongoose to the MongoDB server using MONGO_URI env
- * @returns - The mongoose connection promises
+ *
+ * @returns {Promise<typeof import('mongoose')>} - The mongoose connection promises
  */
 export function connectDB(): Promise<typeof import('mongoose')> {
 	if (process.env.MONGO_URI != undefined)

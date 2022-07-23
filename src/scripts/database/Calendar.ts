@@ -4,7 +4,10 @@ import moment from 'moment'
 import { dateString } from '../utils'
 import { ICalendar, MCalendar } from './database'
 
-function exitUninitialized():void {
+/**
+ * Displays an error (the calendar is not initialized) and exit the program
+ */
+function exitUninitialized(): void {
 	console.error(chalk.red('The calendar has not been initialized.'))
 	process.exit(1)
 }
@@ -54,9 +57,10 @@ export class Calendar {
 
 	/**
 	 * Set the given state (success, fail...) of the given day (YYYY-MM-DD) for the given calendar
-	 * @param date - The date to set (formated as YYYY-MM-DD)
-	 * @param state - The state to set (must be success, fail, breakday or freeze)
-	 * @returns - A promise that resolve(ICalendar) or reject(errorMessage)
+	 *
+	 * @param {string} date - The date to set (formated as YYYY-MM-DD)
+	 * @param {string} state - The state to set (must be success, fail, breakday or freeze)
+	 * @returns {Promise<ICalendar>} - A promise that resolve(ICalendar) or reject(errorMessage)
 	 */
 	setDayState(date: string, state: string)
 			: Promise<ICalendar> {
@@ -91,7 +95,8 @@ export class Calendar {
 
 	/**
 	 * Returns the current streaks of the specified calendar
-	 * @returns - The current streaks (a number)
+	 *
+	 * @returns {number} - The current streaks (a number)
 	 */
 	countStreaks(): number {
 		if (!this.initialized)
@@ -115,6 +120,12 @@ export class Calendar {
 
 	//#region NOTIFICATIONS
 
+	/**
+	 * Defines the state of the reminders (enabled/disabled) depending on the argument passed.
+	 *
+	 * @param {boolean} state - The state to set, true to enable
+	 * @returns {Promise<void>}
+	 */
 	setRemindersState(state: boolean): Promise<void> {
 		if (!this.initialized)
 			exitUninitialized()
@@ -133,6 +144,12 @@ export class Calendar {
 		})
 	}
 
+	/**
+	 * Defines the state of the congratulations (enabled/disabled) depending on the argument passed.
+	 *
+	 * @param {boolean} state - The state to set, true to enable
+	 * @returns {Promise<void>}
+	 */
 	setCongratsState(state: boolean): Promise<void> {
 		if (!this.initialized)
 			exitUninitialized()
@@ -156,8 +173,9 @@ export class Calendar {
 
 /**
  * Find a calendar in the database with the given id
- * @param id - The calendar's id
- * @returns - A promise that resolve(ICalendar) if passwords match or reject(errorMessage)
+ *
+ * @param {string} id - The calendar's id
+ * @returns {Promise<Calendar>} - A promise that resolve(ICalendar) if passwords match or reject(errorMessage)
  */
 export function getCalendarById(id: string)
 		: Promise<Calendar> {
@@ -177,7 +195,8 @@ export function getCalendarById(id: string)
 
 /**
  * Find every calendars of the instance
- * @returns - A promise that resolve(ICalendar[]) or reject(errorMessage)
+ * 
+ * @returns {Promise<Calendar[]>} - A promise that resolve(ICalendar[]) or reject(errorMessage)
  */
 export function getCalendars()
 		: Promise<Calendar[]> {
