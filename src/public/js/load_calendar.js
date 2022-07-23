@@ -5,8 +5,9 @@ var htmlCalendars = htmlDashboard.getElementsByClassName('dashboard_calendar')
 
 /**
  * Load the calendar of the specified .dashboard_calendar element (do a GET request)
- * @param htmlCal - The DOM element of the .dashboard_calendar to load
- * @returns - A promise that resolve(void) when finished
+ *
+ * @param {HTMLDivElement} htmlCal - The DOM element of the .dashboard_calendar to load
+ * @returns {Promise} - A promise that resolve(void) when finished
  */
 function loadCalendar(htmlCal) {
 	return new Promise((resolve) => {
@@ -53,7 +54,8 @@ function loadCalendars() {
 
 /**
  * Set the specified .dashboard_calendar element to the previous month then load it
- * @param htmlCal - The DOM element of the .dashboard_calendar
+ *
+ * @param {HTMLDivElement} htmlCal - The DOM element of the .dashboard_calendar
  */
 function setPreviousMonth(htmlCal) {
 	let date = htmlCal.getAttribute('attr-date')
@@ -75,7 +77,8 @@ function setPreviousMonth(htmlCal) {
 
 /**
  * Set the specified .dashboard_calendar element to the next month then load it
- * @param htmlCal - The DOM element of the .dashboard_calendar
+ *
+ * @param {HTMLDivElement} htmlCal - The DOM element of the .dashboard_calendar
  */
 function setNextMonth(htmlCal) {
 	let date = htmlCal.getAttribute('attr-date')
@@ -97,7 +100,8 @@ function setNextMonth(htmlCal) {
 
 /**
  * Set the specified .dashboard_calendar element to the current month then load it
- * @param htmlCal - The DOM element of the .dashboard_calendar
+ *
+ * @param {HTMLDivElement} htmlCal - The DOM element of the .dashboard_calendar
  */
 function setToday(htmlCal) {
 	let date = new Date()

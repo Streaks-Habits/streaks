@@ -155,6 +155,15 @@ Defines the state of a day for a calendar. The state can be *success*, *fail*, *
 node user_scripts/calendars/set_state.js <calendar id> <YYYY-MM-DD> <state>
 ```
 
+### **Set notifications state**
+Script: **user_scripts/calendars/set_notifications_state.js**
+
+Enable or disable reminders and congratulations notifications for the calendar
+
+```
+node user_scripts/calendars/set_notifications_state.js
+```
+
 Users
 -----
 

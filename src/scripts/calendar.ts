@@ -6,8 +6,9 @@ import { User } from './database/User'
 /**
  * Returns a table of each date of the specified month. From the first
  * day of the month to the last day of the month
- * @param monthDate - A date that is included in the desired month
- * @returns - An Array<Date> of the month
+ *
+ * @param {string} monthDate - A date that is included in the desired month
+ * @returns {Array<Date>} - An Array<Date> of the month
  */
 function createMonthArray(monthDate: string): Array<Date> {
 	let date: Date = moment(monthDate).toDate()
@@ -40,13 +41,15 @@ export interface UICalendar {
 	streaksExpandedToday: boolean,
 	days: Array<UICalendarDay>
 }
+
 /**
  * Retrieves the specified calendar and create an UICalendar, with every information to display
  * specified month
- * @param User - The User owning that calendar
- * @param monthDate - A date that is included in the desired month
- * @param id - The id of the calendar
- * @returns - A promise that resolve(Calendar) or reject(errorMessage)
+ *
+ * @param {User} user - The User owning that calendar
+ * @param {string} monthDate - A date that is included in the desired month
+ * @param {string} id - The id of the calendar
+ * @returns {Promise<UICalendar>} - A promise that resolve(Calendar) or reject(errorMessage)
  */
 export function getUICalendar(user: User, monthDate: string, id: string): Promise<UICalendar> {
 	return new Promise<UICalendar>((resolve, reject) => {

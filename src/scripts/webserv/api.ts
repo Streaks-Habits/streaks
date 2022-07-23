@@ -47,7 +47,8 @@ export const apiStateSet:RequestHandler = (req, res) => {
 		calendar.setDayState(req.body.date, req.body.state).then(() => {
 			res.send('OK')
 			if (req.session.user && state_set_to_success)
-				sendCongratulation(req.session.user, calendar)
+				if (calendar.notifications?.congrats)
+					sendCongratulation(req.session.user, calendar)
 		}).catch((err) => {
 			res.status(err.code).send(err.message)
 		})

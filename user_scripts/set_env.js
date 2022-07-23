@@ -12,8 +12,9 @@ var envPath = path.join(__dirname, '../', '.env')
 
 /**
  * Write the specified content to the env file
- * @param content - The string to write
- * @returns - A promise that resolve() or reject(err)
+ *
+ * @param {string} content - The string to write
+ * @returns {Promise} - A promise that resolve() or reject(err)
  */
 function writeEnv (content) {
 	return new Promise((resolve, reject) => {
@@ -26,7 +27,8 @@ function writeEnv (content) {
 
 /**
  * Get the content of the env file, create it if it doesn't exists
- * @returns - A promise that resolve(content) or reject(err)
+ * 
+ * @returns {Promise} - A promise that resolve(content) or reject(err)
  */
 function getEnv() {
 	return new Promise((resolve, reject) => {
