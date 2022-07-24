@@ -1,13 +1,14 @@
 import * as sdk from 'matrix-js-sdk'
 import { logger } from 'matrix-js-sdk/lib/logger'
 import { ClientEvent } from 'matrix-js-sdk'
-
 import { LocalStorage } from 'node-localstorage'
 import { LocalStorageCryptoStore } from 'matrix-js-sdk/lib/crypto/store/localStorage-crypto-store'
 import dotenv from 'dotenv'
 import chalk from 'chalk'
+import moment from 'moment'
 
 import { Calendar } from '../database/Calendar'
+import { summary } from './notifications'
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const Olm = require('olm/olm_legacy')
@@ -85,9 +86,24 @@ export class MatrixNotifications {
 			await this.matrixClient.sendTextMessage(roomID, message)
 	}
 
-	async sendReminder(roomID: string, calendar: Calendar) {
-		const message = `🔴 ${calendar.name?.toUpperCase()} {${calendar.countStreaks()}🔥}  Task not completed!`
-		const htmlMessage = `🔴 <strong>${calendar.name?.toUpperCase()}</strong> {${calendar.countStreaks()}🔥}  Task not completed!`
+	async sendReminder(roomID: string, sum: summary) {
+		if (sum.length == 0)
+			return
+
+		let message = `⏰ ${moment().format('HH:mm')}, You still have work to do!`
+		let htmlMessage = `⏰ <strong>${moment().format('HH:mm')}</strong>, You still have work to do!`
+
+		for (let s = 0; s < sum.length; s++) {
+			if (sum[s].fail) {
+				message += `\n      🔴 ${sum[s].name}  ${sum[s].streaks} 🔥`
+				htmlMessage += `<br>&emsp;&emsp;🔴 <strong>${sum[s].name}</strong>&ensp;${sum[s].streaks} 🔥`
+			}
+			else {
+				message += `\n      🟢 ${sum[s].name}  ${sum[s].streaks} 🔥`
+				htmlMessage += `<br>&emsp;&emsp;🟢 <strong>${sum[s].name}</strong>&ensp;${sum[s].streaks} 🔥`
+			}
+		}
+
 		await this.sendMessage(roomID, message, htmlMessage)
 	}
 
