@@ -3,7 +3,7 @@ import dotenv from 'dotenv'
 
 import { dateString } from './utils'
 import { getCalendars } from './database/Calendar'
-import { sendNotifications } from './notifications/notifications'
+import { sendReminders } from './notifications/notifications'
 
 dotenv.config()
 
@@ -49,14 +49,14 @@ function setBreakdays(): Promise<void> {
 }
 
 /**
- * Run the setBreakday function, then sendNotifications
+ * Run the setBreakday function, then sendReminders
  *
  * @returns {Promise} - A promise that resolve when breaksdays are set and reminders sent
  */
 export function runDaemons(): Promise<void> {
 	return new Promise((resolve) => {
 		setBreakdays().then(() => {
-			sendNotifications().then(() => {
+			sendReminders().then(() => {
 				resolve()
 			})
 		})

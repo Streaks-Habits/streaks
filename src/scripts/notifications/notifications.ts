@@ -12,7 +12,7 @@ export type summary = Array<{ name: string, fail: boolean, streaks: number }>
  * It is sent only if the current time is in the slot indicated by the user.
  * Sends only to users who have activated a notification service supported by the instance.
  */
-export async function sendNotifications() {
+export async function sendReminders() {
 	let matrix: MatrixNotifications | undefined
 
 	// Check enabled services and enable them

@@ -119,10 +119,19 @@ node user_scripts/set_env.js
 ### **Run daemons**
 Script: **user_scripts/run_daemons.js**
 
-Launch the daemons. The daemons are the tasks that send notifications, define breakdays...
+Launch the daemons. The daemons are the tasks that send reminders, define breakdays...
 
 ```
 node user_scripts/run_daemons.js
+```
+
+### **Send reminders**
+Script: **user_scripts/run_daemons.js**
+
+Sends a reminder to users who have uncompleted tasks, via the notification service(s) they have defined.
+
+```
+node user_scripts/send_reminders.js
 ```
 
 Calendars
