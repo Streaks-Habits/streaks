@@ -20,10 +20,25 @@ global.Olm = Olm
 const localStorage = new LocalStorage('./store/matrix')
 dotenv.config()
 
+/**
+ * A wrapper for matrix-js-sdk,
+ * which allows to connect to a Matrix account, enables encryption
+ *     connect()
+ * gives a message sending, reminder and congratulation function
+ *     sendMessage()
+ *     sendReminder()
+ *     sendCongratulation()
+ * as well as a disconnection function (that then stop the client).
+ *     disconnect()
+ */
 export class MatrixNotifications {
 	matrixClient: sdk.MatrixClient
 	connected: boolean
 
+	/**
+	 * Check that the instane enable MATRIX via environement variables,
+	 * then create the client
+	 */
 	constructor() {
 		this.connected = false
 		// temp fix : https://github.com/matrix-org/matrix-js-sdk/issues/2415#issuecomment-1141246410
@@ -55,6 +70,9 @@ export class MatrixNotifications {
 		})
 	}
 
+	/**
+	 * Connect the client and start encryption
+	 */
 	async connect() {
 		if (this.connected)
 			return
@@ -71,12 +89,23 @@ export class MatrixNotifications {
 		})
 	}
 
+	/**
+	 * Stop the client if it is started
+	 */
 	disconnect() {
 		if (!this.connected)
 			return
 		this.matrixClient.stopClient()
 	}
 
+	/**
+	 * Send a message in the given room
+	 * First join the room if not already done
+	 *
+	 * @param {string} roomID - The id of the room to send the message to.
+	 * @param {string} message - The message to send
+	 * @param {string} [htmlMessage] - The HTML version of the message
+	 */
 	async sendMessage(roomID: string, message: string, htmlMessage = '') {
 		await this.matrixClient.joinRoom(roomID)
 		await this.matrixClient.uploadKeys()
@@ -86,6 +115,13 @@ export class MatrixNotifications {
 			await this.matrixClient.sendTextMessage(roomID, message)
 	}
 
+	/**
+	 * Send a reminder in the given room
+	 * Don't send the reminder if the summary is empty or if every tasks are successful
+	 *
+	 * @param {string} roomID - The id of the room to send the message to.
+	 * @param {summary} sum - The summary, with every tasks, their name, state and current streaks
+	 */
 	async sendReminder(roomID: string, sum: summary) {
 		if (sum.length == 0)
 			return
@@ -107,6 +143,12 @@ export class MatrixNotifications {
 		await this.sendMessage(roomID, message, htmlMessage)
 	}
 
+	/**
+	 * Send a congratulation in the given room for the given calendar
+	 *
+	 * @param {string} roomID - The id of the room to send the message to.
+	 * @param {Calendar} calendar - The calendar concerned by the congrats
+	 */
 	async sendCongratulation(roomID: string, calendar: Calendar) {
 		const message = `🟢 ${calendar.name?.toUpperCase()} {${calendar.countStreaks()}🔥}  Task completed!`
 		const htmlMessage = `🟢 <strong>${calendar.name?.toUpperCase()}</strong> {${calendar.countStreaks()}🔥}  Task completed!`

@@ -1,3 +1,5 @@
+/* eslint-disable jsdoc/require-returns */
+/* eslint-disable jsdoc/require-param */
 import { RequestHandler } from 'express'
 import moment from 'moment'
 import { isValidObjectId } from 'mongoose'
@@ -5,7 +7,11 @@ import { isValidObjectId } from 'mongoose'
 import { User } from '../database/User'
 import { sendCongratulation } from '../notifications/notifications'
 
-///CHECK API KEY ///
+/**
+ * GET: Request Handler that goes before every /api/* requests
+ * Check that an api_key is provided, have the correct format and link to an existing user
+ * (then create the user object and store it in req.session.user)
+ */
 export const apiCheckKey:RequestHandler = (req, res, next) => {
 	if (!req.body.api_key || req.body.api_key.toString().length == 0)
 		return res.status(400).send('You forgot the api_key ;)')
@@ -31,7 +37,14 @@ export const apiCheckKey:RequestHandler = (req, res, next) => {
 	})
 }
 
-/// SET STATE ///
+/**
+ * POST: Request Handler for the /set_state/:id route
+ * Set the given the state to the given date for the given calendar
+ * Check that the user is authentificated,
+ *       that the date and the date are provided
+ * Then, if it's the first time that the state is set as success,
+ *     a congratulation is sent (if the user have enabled notifications).
+ */
 export const apiStateSet:RequestHandler = (req, res) => {
 	if (!req.session.user)
 		return res.status(400).send('You are not authenticated')

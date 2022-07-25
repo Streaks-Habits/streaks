@@ -61,7 +61,7 @@ export function getUICalendar(user: User, monthDate: string, id: string): Promis
 		const monthArray: Array<Date> = createMonthArray(monthDate)
 
 		user.getCalendarById(id).then((calendar) => {
-			ui_calendar.id = calendar.id
+			ui_calendar.id = calendar.id.toString()
 			ui_calendar.user_id = calendar.user_id?.toString() ?? ''
 
 			ui_calendar.first_index = (7 + monthArray[0].getDay() - (user.weekStartsMonday ? 1 : 0)) % 7

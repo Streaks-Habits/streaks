@@ -1,5 +1,6 @@
 import chalk from 'chalk'
 import moment from 'moment'
+import { Types } from 'mongoose'
 
 import { dateString } from '../utils'
 import { ICalendar, MCalendar } from './database'
@@ -12,10 +13,14 @@ function exitUninitialized(): void {
 	process.exit(1)
 }
 
+/**
+ * A class that represents a calendar, provides all attributes of a user and all modification functions.
+ * Allows not to use directly the database.
+ */
 export class Calendar {
 	initialized = false
 	// From constructor
-	id: string
+	id: Types.ObjectId
 	// From database / init
 	name: ICalendar['name'] | undefined
 	user_id: ICalendar['user_id'] | undefined
@@ -23,10 +28,22 @@ export class Calendar {
 	days: ICalendar['days'] | undefined
 	notifications: ICalendar['notifications'] | undefined
 
-	public constructor (id: string) {
-		this.id = id
+	/**
+	 * The constructor take only the calendar id.
+	 * The next mandatory thing to do is to call the init() function or the dbInit() function,
+	 * otherwise all attributes and methods will be inaccessible.
+	 *
+	 * @param {string | Types.ObjectId} id - The calendar id
+	 */
+	public constructor (id: string | Types.ObjectId) {
+		this.id = new Types.ObjectId(id)
 	}
 
+	/**
+	 * Retrieve all calendar information from the database
+	 *
+	 * @returns {Promise} A promise that resolve when the calendar is initialized
+	 */
 	dbInit(): Promise<void> {
 		return new Promise((resolve, reject) => {
 			getCalendarById(this.id).then((calendar) => {
@@ -44,8 +61,12 @@ export class Calendar {
 		})
 	}
 
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	init(calendar: (ICalendar & { _id: any; })): void {
+	/**
+	 * Sets all attributes of the calendar as given, then passes the calendar to initialized.
+	 *
+	 * @param {ICalendar} calendar - The "source" calendar, which is returned by the database.
+	 */
+	init(calendar: ICalendar): void {
 		this.name = calendar.name
 		this.user_id = calendar.user_id
 		this.agenda = calendar.agenda
@@ -177,7 +198,7 @@ export class Calendar {
  * @param {string} id - The calendar's id
  * @returns {Promise<Calendar>} - A promise that resolve(ICalendar) if passwords match or reject(errorMessage)
  */
-export function getCalendarById(id: string)
+export function getCalendarById(id: string | Types.ObjectId)
 		: Promise<Calendar> {
 	return new Promise((resolve, reject) => {
 		MCalendar.findById(id, null, (err, db_calendar) => {
@@ -195,7 +216,7 @@ export function getCalendarById(id: string)
 
 /**
  * Find every calendars of the instance
- * 
+ *
  * @returns {Promise<Calendar[]>} - A promise that resolve(ICalendar[]) or reject(errorMessage)
  */
 export function getCalendars()

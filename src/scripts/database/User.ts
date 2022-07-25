@@ -6,21 +6,37 @@ import chalk from 'chalk'
 import { IUser, MCalendar, MUser } from './database'
 import { Calendar } from './Calendar'
 
+/**
+ * A class that represents a user, provides all attributes of a user and all modification functions.
+ * Allows not to use directly the database.
+ */
 export class User {
 	initialized = false
 	// From constructor
-	id: string
+	id: Types.ObjectId
 	weekStartsMonday: boolean
 	// From database / init
 	username: IUser['username'] | undefined
 	api_keys: IUser['api_keys'] | undefined
 	notifications: IUser['notifications'] | undefined
 
-	public constructor (id: string) {
-		this.id = id
+	/**
+	 * The constructor take only the user id.
+	 * The next mandatory thing to do is to call the init() function or the dbInit() function,
+	 * otherwise all attributes and methods will be inaccessible.
+	 *
+	 * @param {string | Types.ObjectId} id - The user id
+	 */
+	public constructor (id: string | Types.ObjectId) {
+		this.id = new Types.ObjectId(id)
 		this.weekStartsMonday = true
 	}
 
+	/**
+	 * Retrieve all user information from the database
+	 *
+	 * @returns {Promise} A promise that resolve when the user is initialized
+	 */
 	dbInit(): Promise<void> {
 		return new Promise((resolve, reject) => {
 			getUserById(this.id).then((user) => {
@@ -36,8 +52,12 @@ export class User {
 		})
 	}
 
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	init(user: (IUser & { _id: any; })): void {
+	/**
+	 * Sets all attributes of the user as given, then passes the user to initialized.
+	 *
+	 * @param {IUser} user - The "source" user, which is returned by the database.
+	 */
+	init(user: IUser): void {
 		this.username = user.username
 		this.api_keys = user.api_keys
 		this.notifications = user.notifications
@@ -93,7 +113,7 @@ export class User {
 					return reject({code: 500, message: err.message})
 				if (!db_calendar)
 					return reject({code: 404, message: 'Calendar doesn\'t exists'})
-				if (db_calendar.user_id.toString() != this.id)
+				if (db_calendar.user_id.toString() != this.id.toString())
 					return reject({code: 403, message: 'You don\'t own this calendar'})
 
 				const calendar: Calendar = new Calendar(db_calendar._id)
@@ -304,7 +324,7 @@ export function checkPassword(username: string, password: string)
  * @param {string} id - The users's id
  * @returns {Promise<User>} - A promise that resolve(IUser) or reject(errorMessage)
  */
-export function getUserById(id: string)
+export function getUserById(id: string | Types.ObjectId)
 		: Promise<User> {
 	return new Promise((resolve, reject) => {
 		MUser.findById(id, null, (err, db_user) => {

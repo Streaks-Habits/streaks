@@ -5,6 +5,7 @@ import dotenv from 'dotenv'
 dotenv.config()
 
 export interface IUser extends Document {
+	_id: Types.ObjectId,
 	username: string,
 	password_hash: string,
 	api_keys: Array<{
@@ -21,6 +22,7 @@ export interface IUser extends Document {
 	}
 }
 export interface ICalendar extends Document {
+	_id: Types.ObjectId,
 	name: string,
 	user_id: Types.ObjectId,
 	agenda: Array<boolean>,

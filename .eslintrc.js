@@ -34,6 +34,15 @@ module.exports = {
 			'error',
 			'never'
 		],
-		'jsdoc/no-undefined-types': 0
+		'jsdoc/no-undefined-types': 0,
+		'jsdoc/require-jsdoc': ['error', {
+			'require': {
+				'FunctionDeclaration': true,
+				'MethodDefinition': true,
+				'ClassDeclaration': true,
+				'ArrowFunctionExpression': true,
+				'FunctionExpression': false
+			}
+		}]
 	}
 }

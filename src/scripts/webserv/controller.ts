@@ -1,3 +1,5 @@
+/* eslint-disable jsdoc/require-returns */
+/* eslint-disable jsdoc/require-param */
 import express, { RequestHandler } from 'express'
 import path from 'path'
 import jwt from 'jsonwebtoken'
@@ -8,17 +10,27 @@ import { checkPassword, getUserById } from '../database/User'
 
 const jwtExpirySeconds = 1814400 // three weeks
 
-/// STATIC ///
+/**
+ * GET: Request Handler for the / route
+ * Serve assets in src/public/*
+ */
 export const servePublic:RequestHandler = express.static(path.join(__dirname, '../', '../', 'public'), {
 	fallthrough: true
 })
 
-/// INDEX ///
+/**
+ * GET: Request Handler for the / route
+ * redirect to /dashboard
+ */
 export const index:RequestHandler = (req, res) => {
 	res.redirect('/dashboard')
 }
 
-/// DASHBOARD ///
+/**
+ * GET: Request Handler for the /dashboard route
+ * Send the dashboard's EJS rendered page
+ * Redirect to /login if there's not the req.session.user
+ */
 export const dashboardView:RequestHandler = (req, res) => {
 	if (!req.session.user)
 		return res.redirect('/login')
@@ -32,11 +44,19 @@ export const dashboardView:RequestHandler = (req, res) => {
 	})
 }
 
-/// LOGIN ///
+/**
+ * GET: Request Handler for the /login route
+ * Send the login's EJS rendered page
+ */
 export const loginView:RequestHandler = (_req, res) => {
 	res.render('login', { error: false, username: '' })
 }
 
+/**
+ * POST: Request Handler for the /login route
+ * If users credentials ar correct, create a token and store in the user's cookies, then redirect to /dashboard
+ * If tere are wrong, send the login page again, with an error message and the username filled
+ */
 export const loginForm:RequestHandler = (req, res) => {
 	checkPassword(req.body.username, req.body.password).then(user => {
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -53,6 +73,11 @@ export const loginForm:RequestHandler = (req, res) => {
 	})
 }
 
+/**
+ * GET: Request Handler that goes before every request, except /api/*, assets and /login
+ * Redirect to /login if there is not any token, or if the stored token is invalid
+ * If the token is correct, the token is re-signed and stored again in cookies
+ */
 export const checkAuthenticated:RequestHandler = (req, res, next) => {
 	const token = req.cookies.token
 
@@ -87,7 +112,13 @@ export const checkAuthenticated:RequestHandler = (req, res, next) => {
 	})
 }
 
-/// CALENDAR VIEW ///
+/**
+ * GET: Request Handler for the /calendar_view/:id route
+ * Send a calendar's EJS rendered page
+ * Redirect to /login if there's not the req.session.user
+ * If the date is passed in the url query, the YYYY-MM format is checked
+ * If there's no date passed in query, the current date is used
+ */
 export const calendarView:RequestHandler = (req, res) => {
 	if (!req.session.user)
 		return res.redirect('/login')
@@ -113,7 +144,11 @@ export const calendarView:RequestHandler = (req, res) => {
 	})
 }
 
-/// SET STATE ///
+/**
+ * POST: Request Handler for the /set_state/:id route
+ * Set the given the state to the given date for the given calendar
+ * Redirect to /login if there's not the req.session.user
+ */
 export const stateSet:RequestHandler = (req, res) => {
 	if (!req.session.user)
 		return res.redirect('/login')
