@@ -33,6 +33,7 @@
 		<% calendars.forEach(function(cal) { %>
 			<div class="dashboard_calendar" attr-id="<%= cal.id %>" attr-date="<%= dateStr %>">
 				<div class="calendar_header">
+					<svg class="edit"><use xlink:href="/icons/edit.svg#icon"></use></svg>
 					<p class="title"><%= cal.name %></p>
 					<div class="calendar_controls">
 						<svg class="caret left"><use xlink:href="/icons/caret.svg#icon"></use></svg>
@@ -46,6 +47,7 @@
 	</div>
 
 	<script src="/js/set_state.js"></script>
+	<script src="/js/edit_calendar.js"></script>
 	<script src="/js/load_calendar.js"></script>
 </body>
 </html>
