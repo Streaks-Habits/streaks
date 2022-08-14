@@ -1,6 +1,5 @@
 /* global document */
 /* global showStateBox */
-/* global addEditButtonListener */
 var htmlDashboard = document.getElementById('dashboard')
 var htmlCalendars = htmlDashboard.getElementsByClassName('dashboard_calendar')
 
@@ -17,8 +16,6 @@ function loadCalendar(htmlCal) {
 		let url = `/calendar_view/${cal_id}?${new URLSearchParams({
 			date: date
 		})}`
-
-		addEditButtonListener(htmlCal, cal_id)
 
 		fetch(url).then(data => {
 			if (data.ok)
