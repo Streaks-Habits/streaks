@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" type="text/css" href="/styles/settings.css">
+
+	<%- include("partial/favicons.ejs") %>
+
+	<title>Streaks - Settings</title>
+</head>
+<body>
+	<div id="side-nav">
+		<!-- <div id="logo">
+			<img src="/icons/logoname.svg" alt="streaks logo">
+		</div>
+		<a id="return-dashboard" href="/dashboard">
+			<svg><use xlink:href="/icons/caret.svg#icon"></use></svg>
+			<span>Dashboard</span>
+		</a> -->
+		<div id="nav-header">
+			<a id="return-dashboard" href="/dashboard">
+				<svg><use xlink:href="/icons/cross.svg#icon"></use></svg>
+			</a>
+			<img src="/icons/logoname.svg" alt="streaks logo">
+		</div>
+		<span class="section-separator">General</span>
+		<ul class="side-nav-list">
+			<li>
+				<button>
+					<span>Account</span>
+					<svg><use xlink:href="/icons/caret.svg#icon"></use></svg>
+				</button>
+			</li>
+			<li>
+				<button>
+					<span>Notifications</span>
+					<svg><use xlink:href="/icons/caret.svg#icon"></use></svg>
+				</button>
+			</li>
+			<li>
+				<a href="/logout">
+					<span>Logout</span>
+					<svg><use xlink:href="/icons/caret.svg#icon"></use></svg>
+				</a>
+			</li>
+		</ul>
+
+		<span class="section-separator">Calendars</span>
+		<ul class="calendars-list side-nav-list">
+			<% calendars.forEach(function(cal) { %>
+				<li>
+					<button>
+						<span><%= cal.name %></span>
+						<svg><use xlink:href="/icons/caret.svg#icon"></use></svg>
+					</button>
+				</li>
+			<% }); %>
+		</ul>
+	</div>
+</body>
+</html>

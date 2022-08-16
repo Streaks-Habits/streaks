@@ -1,0 +1,154 @@
+@import "general";
+
+html, body {
+	margin: 0;
+}
+
+div#side-nav {
+	// background: #425d64;
+	max-height: 100vh;
+	min-height: 100vh;
+	width: 17em;
+	overflow-y: auto;
+	padding: 0 10px 0 10px;
+
+	// #logo {
+	// 	display: flex;
+	// 	justify-content: center;
+	// 	align-items: center;
+	// 	margin: 20px 0;
+
+	// 	img {
+	// 		width: 8em;
+	// 		max-width: 8em;
+	// 	}
+	// }
+
+	// a#return-dashboard {
+	// 	text-decoration: none;
+	// 	display: flex;
+	// 	align-items: center;
+	// 	justify-content: start;
+	// 	margin: 0 0 50px 0;
+
+	// 	&:hover {
+	// 		span {
+	// 			margin-left: 15px;
+	// 		}
+	// 	}
+
+	// 	span {
+	// 		font-size: 1.2em;
+	// 		color: #fff;
+	// 		margin-left: 5px;
+	// 		transition: margin .2s ease-in-out;
+	// 	}
+
+	// 	svg {
+	// 		width: 2em;
+	// 		height: 2em;
+	// 		fill: #fff;
+	// 	}
+	// }
+
+	div#nav-header {
+		display: flex;
+		align-items: center;
+		justify-content: start;
+		margin: 5px 0 50px 0;
+
+		a#return-dashboard {
+			text-decoration: none;
+
+			svg {
+				width: 2em;
+				height: 2em;
+				fill: #fff;
+			}
+		}
+
+		img {
+			margin: auto;
+			width: 8em;
+			max-width: 8em;
+		}
+	}
+
+	span.section-separator {
+		font-size: 1.2em;
+		font-weight: bold;
+		margin: 25px 0 10px 15px;
+		display: block;
+	}
+
+	ul.side-nav-list {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		border: var(--c_border) 2px solid;
+		border-radius: 15px;
+
+		li {
+			// transition: background .3s ease-in-out;
+			font-size: 1.1em;
+			padding: 8px 10px 4px 10px;
+
+			&:hover {
+				a, button {
+					span {
+						margin-left: 10px;
+					}
+				}
+			}
+
+			&:first-child {
+				border-top-left-radius: 13px;
+				border-top-right-radius: 13px;
+			}
+
+			&:last-child {
+				padding-bottom: 8px;
+				border-bottom-left-radius: 13px;
+				border-bottom-right-radius: 13px;
+			}
+
+			a {
+				width: 100%;
+				display: block;
+				text-decoration: none;
+				color: #fff;
+			}
+
+			button {
+				background: none;
+				border: none;
+				width: 100%;
+				text-align: start;
+				font-family: inherit;
+				font-size: inherit;
+				color: inherit;
+				padding: 0;
+				cursor: pointer;
+			}
+
+			a, button {
+				display: flex;
+				flex-direction: row;
+				align-items: center;
+
+				span {
+					flex: 1;
+					transition: margin .2s ease-in-out;
+				}
+
+				svg {
+					width: 1.2em;
+					height: 1.2em;
+					margin-top: -4px;
+					fill: #fff;
+					transform: rotate(180deg);
+				}
+			}
+		}
+	}
+}

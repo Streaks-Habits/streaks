@@ -1,0 +1,60 @@
+<h1>Calendar</h1>
+<form action="" method="post" class="form-example">
+	<div class="settings-input">
+		<label for="name">Name</label>
+		<input type="text" name="name" id="name" value="<%= calendar.name %>" />
+	</div>
+
+	<div class="settings-select">
+		<label for="weekStart">Start the week on</label>
+
+		<select name="weekStart" id="weekStart">
+			<option value="monday" <% if (weekStartsMonday) { %>selected<% } %>>Monday</option>
+			<option value="sunday" <% if (!weekStartsMonday) { %>selected<% } %>>Sunday</option>
+		</select>
+	</div>
+
+	<div class="settings-calendar-agenda">
+		<h2>Agenda</h2>
+		<%
+			var startIndex = 0;
+			var endIndex = 7;
+
+			if (weekStartsMonday) {
+				startIndex = 1;
+				endIndex = 8;
+			}
+		%>
+		<% for (aIndex = 0; aIndex < calendar.agenda.length; aIndex++) { %>
+			<%
+				var dayIndex = aIndex;
+				if (weekStartsMonday) {
+					dayIndex += 1;
+					if (aIndex == 6) {
+						dayIndex = 0;
+					}
+				}
+
+				let date = new Date()
+				date.setDate(date.getDate() - date.getDay() + dayIndex)
+				var day_name = date.toLocaleString('en-US', { weekday: 'long' })
+			%>
+			<div class="settings-checkbox">
+				<input type="checkbox" id="agenda-<%= dayIndex %>" name="agenda-<%= dayIndex %>" <% if (calendar.agenda[dayIndex]) { %>checked<% } %>>
+				<label for="agenda-<%= dayIndex %>"><%= day_name %></label>
+			</div>
+		<% } %>
+	</div>
+
+	<div class="settings-calendar-notifications">
+		<h2>Notifications</h2>
+		<div class="settings-checkbox">
+			<input type="checkbox" id="notifications-reminders" name="notifications-reminders" <% if (calendar.notifications.reminders) { %>checked<% } %>>
+			<label for="notifications-reminders">Reminders</label>
+		</div>
+		<div class="settings-checkbox">
+			<input type="checkbox" id="notifications-congrats" name="notifications-congrats" <% if (calendar.notifications.congrats) { %>checked<% } %>>
+			<label for="notifications-congrats">Congrats</label>
+		</div>
+	</div>
+</form>

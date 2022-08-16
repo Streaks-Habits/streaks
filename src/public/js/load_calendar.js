@@ -13,7 +13,7 @@ function loadCalendar(htmlCal) {
 	return new Promise((resolve) => {
 		let cal_id = htmlCal.getAttribute('attr-id')
 		let date = htmlCal.getAttribute('attr-date')
-		let url = `/calendar_view/${cal_id}?${new URLSearchParams({
+		let url = `/components/calendars/${cal_id}?${new URLSearchParams({
 			date: date
 		})}`
 

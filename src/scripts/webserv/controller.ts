@@ -32,13 +32,25 @@ export const index:RequestHandler = (req, res) => {
  * Redirect to /login if there's not the req.session.user
  */
 export const dashboardView:RequestHandler = (req, res) => {
-	if (!req.session.user)
-		return res.redirect('/login')
-
 	const dateStr: string = moment().format('YYYY-MM')
 
-	req.session.user.getCalendars().then((calendarsList) => {
+	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+	req.session.user!.getCalendars().then((calendarsList) => {
 		res.render('dashboard', {calendars: calendarsList, dateStr: dateStr})
+	}).catch((err) => {
+		res.status(err.code).send(err.message)
+	})
+}
+
+/**
+ * GET: Request Handler for the /settings route
+ * Send the settings's EJS rendered page
+ * Redirect to /login if there's not the req.session.user
+ */
+export const settingsView:RequestHandler = (req, res) => {
+	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+	req.session.user!.getCalendars().then((calendarsList) => {
+		res.render('settings', {calendars: calendarsList})
 	}).catch((err) => {
 		res.status(err.code).send(err.message)
 	})
@@ -113,16 +125,13 @@ export const checkAuthenticated:RequestHandler = (req, res, next) => {
 }
 
 /**
- * GET: Request Handler for the /calendar_view/:id route
+ * GET: Request Handler for the /components/calendars/:id route
  * Send a calendar's EJS rendered page
  * Redirect to /login if there's not the req.session.user
  * If the date is passed in the url query, the YYYY-MM format is checked
  * If there's no date passed in query, the current date is used
  */
-export const calendarView:RequestHandler = (req, res) => {
-	if (!req.session.user)
-		return res.redirect('/login')
-
+export const calendarComponent:RequestHandler = (req, res) => {
 	let dateString: string
 
 	if (req.query.date) {
@@ -137,8 +146,24 @@ export const calendarView:RequestHandler = (req, res) => {
 	else
 		dateString = moment().format('YYYY-MM')
 
-	getUICalendar(req.session.user, dateString, req.params.id).then((calendar) => {
-		res.render('calendar', {calendar})
+	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+	getUICalendar(req.session.user!, dateString, req.params.id).then((calendar) => {
+		res.render('components/calendar', {calendar})
+	}).catch((err) => {
+		res.status(err.code).send(err.message)
+	})
+}
+
+/**
+ * GET: Request Handler for the /components/settings/calendars/:id route
+ * Send a calendar settings's EJS rendered page
+ * Redirect to /login if there's not the req.session.user
+ */
+export const calendarSettingsComponent:RequestHandler = (req, res) => {
+	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+	req.session.user!.getCalendarById(req.params.id).then(calendar => {
+		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+		res.render('components/settings/calendar', {calendar, weekStartsMonday: req.session.user!.weekStartsMonday})
 	}).catch((err) => {
 		res.status(err.code).send(err.message)
 	})

@@ -1,7 +1,18 @@
 import { Router } from 'express'
 
 import { apiCheckKey, apiStateSet } from './api'
-import { calendarView, dashboardView, index, servePublic, stateSet, checkAuthenticated, loginView, loginForm } from './controller'
+import {
+	calendarComponent,
+	calendarSettingsComponent,
+	dashboardView,
+	index,
+	servePublic,
+	stateSet,
+	checkAuthenticated,
+	loginView,
+	loginForm,
+	settingsView
+} from './controller'
 
 const router = Router()
 
@@ -16,7 +27,9 @@ router.post('/login', loginForm)
 router.use('/', checkAuthenticated)
 router.get('/', index)
 router.get('/dashboard', dashboardView)
+router.get('/settings', settingsView)
 router.post('/set_state/:id', stateSet)
-router.get('/calendar_view/:id', calendarView)
+router.get('/components/calendars/:id', calendarComponent)
+router.get('/components/settings/calendars/:id', calendarSettingsComponent)
 
 export default router
