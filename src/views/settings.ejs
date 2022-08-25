@@ -12,19 +12,16 @@
 </head>
 <body>
 	<div id="side-nav">
-		<!-- <div id="logo">
+		<div id="nav-header">
 			<img src="/icons/logoname.svg" alt="streaks logo">
+			<button id="nav-close">
+				<svg><use xlink:href="/icons/cross.svg#icon"></use></svg>
+			</button>
 		</div>
 		<a id="return-dashboard" href="/dashboard">
 			<svg><use xlink:href="/icons/caret.svg#icon"></use></svg>
 			<span>Dashboard</span>
-		</a> -->
-		<div id="nav-header">
-			<a id="return-dashboard" href="/dashboard">
-				<svg><use xlink:href="/icons/cross.svg#icon"></use></svg>
-			</a>
-			<img src="/icons/logoname.svg" alt="streaks logo">
-		</div>
+		</a>
 		<span class="section-separator">General</span>
 		<ul class="side-nav-list">
 			<li>
@@ -51,7 +48,7 @@
 		<ul class="calendars-list side-nav-list">
 			<% calendars.forEach(function(cal) { %>
 				<li>
-					<button>
+					<button onclick="load_calendar_component('<%= cal.id %>')">
 						<span><%= cal.name %></span>
 						<svg><use xlink:href="/icons/caret.svg#icon"></use></svg>
 					</button>
@@ -59,5 +56,10 @@
 			<% }); %>
 		</ul>
 	</div>
+	<button id="nav-open">
+		<svg><use xlink:href="/icons/menu.svg#icon"></use></svg>
+	</button>
+	<div id="content"></div>
+	<script src="/js/settings/navigation.js"></script>
 </body>
 </html>
