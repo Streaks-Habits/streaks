@@ -42,25 +42,18 @@ docker-publish:
     - docker push "$CI_REGISTRY/$CI_PROJECT_PATH${tag}"
 
 deploy:
-  image: alpine:latest
   stage: deploy
+  image:
+    name: bitnami/kubectl:latest
+    entrypoint: ['']
   retry: 2
+  script:
+    - kubectl config get-contexts
+    - kubectl config use-context streaks/streaks:streaks
+    - kubectl config set-context --current --namespace=streaks
+    - kubectl rollout restart deployment streaks
   only:
     - main
   environment:
     name: production
     url: https://streaks.chevro.fr
-  before_script:
-    - apk update && apk add openssh-client
-    - eval $(ssh-agent -s)
-    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
-    - mkdir -p ~/.ssh
-    - chmod 700 ~/.ssh
-  script:
-    - >
-      ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "
-      cd $SERVER_PATH;
-      docker-compose down;
-      docker-compose pull;
-      docker-compose up -d;
-      "
