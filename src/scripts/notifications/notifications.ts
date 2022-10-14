@@ -49,6 +49,20 @@ export async function sendReminders() {
 			if (matrix && (users[u].notifications?.matrix.room_id ?? false))
 				if (hour_between((users[u].notifications?.matrix.start_date ?? '00:00'), (users[u].notifications?.matrix.end_date ?? '24:00')))
 					notificationsPromises.push(matrix.sendReminder((users[u].notifications?.matrix.room_id ?? ''), sum))
+
+			if (users[u].notifications?.streaks_done.sent_today)
+				await users[u].setStreaksDoneSentToday(false)
+		}
+		else if (users[u].notifications?.streaks_done.enabled
+			&& users[u].notifications?.streaks_done.channel != ''
+			&& !users[u].notifications?.streaks_done.sent_today) {
+
+			if (matrix
+				&& users[u].notifications?.streaks_done.channel == 'matrix'
+				&& (users[u].notifications?.matrix.room_id ?? false))
+				notificationsPromises.push(matrix.sendStreaksDone(users[u].notifications?.matrix.room_id ?? ''))
+
+			await users[u].setStreaksDoneSentToday(true)
 		}
 	}
 
@@ -90,3 +104,24 @@ export async function sendCongratulation(user: User, calendar: Calendar) {
 			matrix.disconnect()
 	})
 }
+
+// export async function sendStreaksEndNotifications() {
+// 	let matrix: MatrixNotifications | undefined
+
+// 	// Check enabled services and enable them
+// 	if (process.env.MATRIX_ENABLED && process.env.MATRIX_ENABLED == 'true') {
+// 		matrix = new MatrixNotifications()
+// 		await matrix.connect()
+// 	}
+
+// 	const notificationsPromises: Array<Promise<void>> = []
+
+// 	if (matrix && (user.notifications?.matrix.room_id ?? false))
+// 		if (hour_between((user.notifications?.matrix.start_date ?? '00:00'), (user.notifications?.matrix.end_date ?? '24:00')))
+// 			notificationsPromises.push(matrix.sendStreaksEndNotification((user.notifications?.matrix.room_id ?? '')))
+
+// 	await Promise.allSettled(notificationsPromises).then(async () => {
+// 		if (matrix)
+// 			matrix.disconnect()
+// 	})
+// }

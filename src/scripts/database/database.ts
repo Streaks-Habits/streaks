@@ -14,6 +14,11 @@ export interface IUser extends Document {
 		key_hash: string
 	}>,
 	notifications: {
+		streaks_done: {
+			enabled: boolean,
+			sent_today: boolean,
+			channel: 'matrix' | '',
+		}
 		matrix: {
 			room_id: string,
 			start_date: string, // HH:MM 24h // format
@@ -41,6 +46,11 @@ const	UserSchema: Schema = new Schema({
 		key_hash: { type: String, required: true }
 	}],
 	notifications: {
+		streaks_done: {
+			enabled: { type: Boolean, required: true, default: false },
+			sent_today: { type: Boolean, required: true, default: false },
+			channel: { type: String, required: true, default: '' }
+		},
 		matrix: {
 			room_id: { type: String },
 			start_date: { type: String }, // HH:MM 24h // format

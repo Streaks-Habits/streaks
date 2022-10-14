@@ -255,8 +255,36 @@ export class User {
 	}
 
 	//#endregion API
-}
 
+	//#region NOTIFICATIONS
+
+	/**
+	 * CUpdate the notifications.streaks_done.sent_today field
+	 * with the given value
+	 *
+	 * @param {boolean} val - The value to set
+	 * @returns {Promise<void>} - A promise that resolve(void) or reject(errorMessage)
+	 */
+	setStreaksDoneSentToday(val: boolean): Promise<void> {
+		if (!this.initialized) {
+			console.error(chalk.red('The user has not been initialized.'))
+			process.exit(1)
+		}
+
+		return new Promise((resolve, reject) => {
+			MUser.findByIdAndUpdate(this.id, { $set: { 'notifications.streaks_done.sent_today': val } }, (err, result) => {
+				if (err) return reject({code: 500, message: err.message})
+				if (!result) return reject({code: 404, message: 'User doesn\'t exists'})
+
+				if (this.notifications)
+					this.notifications.streaks_done.sent_today = val
+				resolve()
+			})
+		})
+	}
+
+	//#endregion NOTIFICATIONS
+}
 
 /**
  * Add the specified user to the database. The password is stored hashed

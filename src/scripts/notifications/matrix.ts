@@ -154,4 +154,16 @@ export class MatrixNotifications {
 		const htmlMessage = `🟢 <strong>${calendar.name?.toUpperCase()}</strong> {${calendar.countStreaks()}🔥}  Task completed!`
 		await this.sendMessage(roomID, message, htmlMessage)
 	}
+
+	/**
+	 * Send the message "🎉 All the streaks are done!! 🎉"
+	 * in the given room
+	 *
+	 * @param {string} roomID - The id of the room to send the message to.
+	 */
+	async sendStreaksDone(roomID: string) {
+		const message = '🎉 All the streaks are done!! 🎉'
+		const htmlMessage = '🎉 <strong>All the streaks are done!!</strong> 🎉'
+		await this.sendMessage(roomID, message, htmlMessage)
+	}
 }
