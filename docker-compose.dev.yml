@@ -4,11 +4,13 @@ services:
     image : mongo:5.0.8
     container_name: mongodb
     restart: always
+    ports:
+      - 27017:27017
     volumes:
     - ./database:/data/db
 
   streaks:
-    image: "registry.chevro.fr/streaks/streaks:latest"
+    build: .
     container_name: "streaks"
     restart: always
     depends_on:
