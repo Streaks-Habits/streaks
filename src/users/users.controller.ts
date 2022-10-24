@@ -9,6 +9,7 @@ import {
 	Put,
 	Res,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
@@ -17,6 +18,7 @@ import { UsersService } from './users.service';
 export class UsersController {
 	constructor(private readonly usersService: UsersService) {}
 
+	@ApiTags('users')
 	@Post('/add')
 	async createUser(@Res() response, @Body() createUserDto: CreateUserDto) {
 		try {
@@ -30,6 +32,7 @@ export class UsersController {
 		}
 	}
 
+	@ApiTags('users')
 	@Put('/update/:id')
 	async updateUser(
 		@Res() response,
@@ -50,6 +53,7 @@ export class UsersController {
 		}
 	}
 
+	@ApiTags('users')
 	@Get('/list')
 	async getUsers(@Res() response) {
 		try {
@@ -63,6 +67,7 @@ export class UsersController {
 		}
 	}
 
+	@ApiTags('users')
 	@Get('/user/:id')
 	async getUser(@Res() response, @Param('id') userId: string) {
 		try {
@@ -76,6 +81,7 @@ export class UsersController {
 		}
 	}
 
+	@ApiTags('users')
 	@Delete('/delete/:id')
 	async deleteUser(@Res() response, @Param('id') userId: string) {
 		try {
