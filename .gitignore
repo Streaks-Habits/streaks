@@ -1,6 +1,7 @@
-/database/
-/dist/
-/node_modules/
-/store/
+/dist
+/node_modules
 
 .env
+
+/test
+*.spec.ts

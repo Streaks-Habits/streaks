@@ -1,204 +1,73 @@
-![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)
-![Gitlab pipeline status (self-hosted)](https://img.shields.io/gitlab/pipeline-status/streaks/streaks?branch=main&gitlab_url=https%3A%2F%2Fgit.chevro.fr&style=flat-square)
-![Maintenance](https://img.shields.io/maintenance/yes/2022?style=flat-square)
+<p align="center">
+  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
+</p>
 
-<img src="src/public/icons/logo.svg" height="60" width="60" align="right">
+[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
+[circleci-url]: https://circleci.com/gh/nestjs/nest
 
-Streaks
-=======
+  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
+    <p align="center">
+<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
+<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
+<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
+<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
+<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
+<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
+<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
+<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
+  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
+    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
+  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
+</p>
+  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
+  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
-Streaks is a habit-tracking app that relies on streaks (like Duolingo or Snapchat), to help you build habits.
+## Description
 
-The principle is simple, when you accomplish your goal of the day you accumulate streaks, and the more streaks you have, the less you want to lose them (by not accomplishing your goal).
+[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
-![Streaks's dashboard](dashboard.png)
+## Installation
 
-There is also [Streaks Runner](https://git.chevro.fr/streaks/runner), to automate your tasks.
-
-Installation
-============
-
-With Docker (recommended)
--------------------------
-Download the `docker-compose.yml`
 ```bash
-mkdir streaks && cd "$_"
-wget https://git.chevro.fr/streaks/runner/-/raw/main/docker-compose.yml
+$ npm install
 ```
 
-Edit the `docker-compose.yml` to suit your needs.
+## Running the app
 
-**Go to the [Configuration](#configuration) section to edit your `.env` file, then come back here.**
-
-Start your container with:
 ```bash
-docker-compose up -d
+# development
+$ npm run start
+
+# watch mode
+$ npm run start:dev
+
+# production mode
+$ npm run start:prod
 ```
 
-You can check that everything went well by looking at the container logs:
+## Test
+
 ```bash
-docker-compose logs
+# unit tests
+$ npm run test
+
+# e2e tests
+$ npm run test:e2e
+
+# test coverage
+$ npm run test:cov
 ```
 
-Manual install
---------------
-Officially supported on Linux, may work on another platform.
+## Support
 
-Install the following dependencies on your server:
-- NodeJS (with npm)
+Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
 
-Clone the repository:
-```bash
-git clone https://git.chevro.fr/streaks/streaks.git streaks && cd streaks
-```
+## Stay in touch
 
-You can now install the runner dependencies:
-```bash
-npm i
-```
+- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
+- Website - [https://nestjs.com](https://nestjs.com/)
+- Twitter - [@nestframework](https://twitter.com/nestframework)
 
-**Go to the [Configuration](#configuration) section to edit your `.env` file, then come back here.**
+## License
 
-Build and start the server with:
-```bash
-npm run build
-npm run start
-```
-
-Configuration
-=============
-
-Use the creation script to create your `.env` file.
-
-If you use docker, run:
-```bash
-docker-compose exec streaks node user_scripts/set_env.js
-```
-Otherwise, run:
-```bash
-node user_scripts/set_env.js
-```
-
-This script should create an `.env` file that looks like this:
-```env
-PORT=80
-TZ=Europe/Paris
-JWT_KEY=random
-MONGO_URI=mongodb+srv://your-mongodb-connection-string
-```
-Edit-it to suit your needs.
-
-**If the MongoDB database is the one deployed by the `docker-compose.yml`, leave `MONGO_URI` empty.**
-
-CLI Scripts
-===========
-
-A number of cli scripts are available to simplify the life of administrators. Here they are:
-
-The scripts can be launched via nodejs, with the command:
-```bash
-node path/to/script.js
-```
-or if you use docker:
-```bash
-docker-compose exec streaks node path/to/script.js
-```
-
-Instance
---------
-
-### **Set env**
-Script: **user_scripts/set_env.js**
-
-Create a sample `.env`
-
-```
-node user_scripts/set_env.js
-```
-
-### **Run daemons**
-Script: **user_scripts/run_daemons.js**
-
-Launch the daemons. The daemons are the tasks that send reminders, define breakdays...
-
-```
-node user_scripts/run_daemons.js
-```
-
-### **Send reminders**
-Script: **user_scripts/run_daemons.js**
-
-Sends a reminder to users who have uncompleted tasks, via the notification service(s) they have defined.
-
-```
-node user_scripts/send_reminders.js
-```
-
-Calendars
----------
-
-### **Add calendar**
-Script: **user_scripts/calendars/add.js**
-
-Create a calendar for a user
-
-```
-node user_scripts/calendars/add.js
-```
-
-### **List calendars**
-Script: **user_scripts/calendars/list.js**
-
-Lists the calendars of the instance, their owner and the current streak
-
-```
-node user_scripts/calendars/list.js
-```
-
-### **Set state**
-Script: **user_scripts/calendars/set_state.js**
-
-Defines the state of a day for a calendar. The state can be *success*, *fail*, *freeze*, or *breakday*
-
-```
-node user_scripts/calendars/set_state.js <calendar id> <YYYY-MM-DD> <state>
-```
-
-### **Set notifications state**
-Script: **user_scripts/calendars/set_notifications_state.js**
-
-Enable or disable reminders and congratulations notifications for the calendar
-
-```
-node user_scripts/calendars/set_notifications_state.js
-```
-
-Users
------
-
-### **Add user**
-Script: **user_scripts/users/add.js**
-
-Create a user
-
-```
-node user_scripts/users/add.js
-```
-
-### **List users**
-Script: **user_scripts/users/list.js**
-
-Lists the users of the instance
-
-```
-node user_scripts/users/list.js
-```
-
-### **Create API key**
-Script: **user_scripts/users/list.js**
-
-Create an API for a user
-
-```
-node user_scripts/users/api_key.js
-```
+Nest is [MIT licensed](LICENSE).
