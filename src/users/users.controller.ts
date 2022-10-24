@@ -23,12 +23,12 @@ export class UsersController {
 	async createUser(@Res() response, @Body() createUserDto: CreateUserDto) {
 		try {
 			const newUser = await this.usersService.createUser(createUserDto);
-			return response.status(HttpStatus.CREATED).json({
+			return response.status(HttpStatus.CREATED).send({
 				message: 'User has been created successfully',
 				user: newUser,
 			});
 		} catch (err) {
-			return response.status(err.status).json(err.response);
+			return response.status(err.status).send(err.response);
 		}
 	}
 
@@ -44,12 +44,12 @@ export class UsersController {
 				userId,
 				updateUserDto,
 			);
-			return response.status(HttpStatus.OK).json({
+			return response.status(HttpStatus.OK).send({
 				message: 'User has been successfully updated',
 				user: existingUser,
 			});
 		} catch (err) {
-			return response.status(err.status).json(err.response);
+			return response.status(err.status).send(err.response);
 		}
 	}
 
@@ -58,12 +58,12 @@ export class UsersController {
 	async getUsers(@Res() response) {
 		try {
 			const userData = await this.usersService.getAllUsers();
-			return response.status(HttpStatus.OK).json({
+			return response.status(HttpStatus.OK).send({
 				message: 'All users data found successfully',
 				users: userData,
 			});
 		} catch (err) {
-			return response.status(err.status).json(err.response);
+			return response.status(err.status).send(err.response);
 		}
 	}
 
@@ -72,12 +72,12 @@ export class UsersController {
 	async getUser(@Res() response, @Param('id') userId: string) {
 		try {
 			const existingUser = await this.usersService.getUser(userId);
-			return response.status(HttpStatus.OK).json({
+			return response.status(HttpStatus.OK).send({
 				message: 'User found successfully',
 				user: existingUser,
 			});
 		} catch (err) {
-			return response.status(err.status).json(err.response);
+			return response.status(err.status).send(err.response);
 		}
 	}
 
@@ -86,12 +86,12 @@ export class UsersController {
 	async deleteUser(@Res() response, @Param('id') userId: string) {
 		try {
 			const deletedUser = await this.usersService.deleteUser(userId);
-			return response.status(HttpStatus.OK).json({
+			return response.status(HttpStatus.OK).send({
 				message: 'User deleted successfully',
 				user: deletedUser,
 			});
 		} catch (err) {
-			return response.status(err.status).json(err.response);
+			return response.status(err.status).send(err.response);
 		}
 	}
 }
