@@ -4,11 +4,15 @@ import {
 	Delete,
 	Get,
 	HttpStatus,
+	InternalServerErrorException,
 	Param,
 	Post,
 	Put,
+	Req,
 	Res,
+	UseGuards,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { ApiTags } from '@nestjs/swagger';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -19,8 +23,13 @@ export class UsersController {
 	constructor(private readonly usersService: UsersService) {}
 
 	@ApiTags('users')
+	@UseGuards(AuthGuard('api-key'))
 	@Post('/add')
-	async createUser(@Res() response, @Body() createUserDto: CreateUserDto) {
+	async createUser(
+		@Res() response,
+		@Req() request,
+		@Body() createUserDto: CreateUserDto,
+	) {
 		try {
 			const newUser = await this.usersService.createUser(createUserDto);
 			return response.status(HttpStatus.CREATED).send({
@@ -28,7 +37,8 @@ export class UsersController {
 				user: newUser,
 			});
 		} catch (err) {
-			return response.status(err.status).send(err.response);
+			console.error(err);
+			throw new InternalServerErrorException();
 		}
 	}
 
@@ -49,7 +59,8 @@ export class UsersController {
 				user: existingUser,
 			});
 		} catch (err) {
-			return response.status(err.status).send(err.response);
+			console.error(err);
+			throw new InternalServerErrorException();
 		}
 	}
 
@@ -63,11 +74,13 @@ export class UsersController {
 				users: userData,
 			});
 		} catch (err) {
-			return response.status(err.status).send(err.response);
+			console.error(err);
+			throw new InternalServerErrorException();
 		}
 	}
 
 	@ApiTags('users')
+	@UseGuards(AuthGuard('api-key'))
 	@Get('/user/:id')
 	async getUser(@Res() response, @Param('id') userId: string) {
 		try {
@@ -77,7 +90,8 @@ export class UsersController {
 				user: existingUser,
 			});
 		} catch (err) {
-			return response.status(err.status).send(err.response);
+			console.error(err);
+			throw new InternalServerErrorException();
 		}
 	}
 
@@ -91,7 +105,23 @@ export class UsersController {
 				user: deletedUser,
 			});
 		} catch (err) {
-			return response.status(err.status).send(err.response);
+			console.error(err);
+			throw new InternalServerErrorException();
+		}
+	}
+
+	@ApiTags('users')
+	@Put('/api_key/generate/:id')
+	async generateApiKey(@Res() response, @Param('id') userId: string) {
+		try {
+			const api_key = await this.usersService.generateApiKey(userId);
+			return response.status(HttpStatus.OK).send({
+				message: 'Api key generated successfully',
+				api_key,
+			});
+		} catch (err) {
+			console.error(err);
+			throw new InternalServerErrorException();
 		}
 	}
 }

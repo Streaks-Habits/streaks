@@ -1,6 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import * as bcrypt from 'bcrypt';
+import * as crypto from 'crypto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { IUser } from './interface/user.interface';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -51,5 +53,20 @@ export class UsersService {
 			throw new NotFoundException(`User #${UserId} not found`);
 		}
 		return deletedUser;
+	}
+
+	async generateApiKey(userId: string): Promise<string> {
+		const api_key = `${userId}:${crypto.randomBytes(16).toString('hex')}`;
+		const api_key_hash = await bcrypt.hash(api_key, 10);
+
+		const existingUser = await this.UserModel.findByIdAndUpdate(
+			userId,
+			{ api_key_hash },
+			{ new: true },
+		);
+		if (!existingUser) {
+			throw new NotFoundException(`User #${userId} not found`);
+		}
+		return api_key;
 	}
 }
