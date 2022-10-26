@@ -12,7 +12,7 @@ export class CreateUserDto {
 	@ApiProperty()
 	@IsString()
 	@IsNotEmpty()
-	readonly password_hash: string;
+	readonly password: string;
 
 	@ApiProperty()
 	@IsEnum(Role)

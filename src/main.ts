@@ -6,6 +6,7 @@ import {
 	NestFastifyApplication,
 } from '@nestjs/platform-fastify';
 import { AppModule } from './app.module';
+import { MongoExceptionFilter } from './mongoose-exception.filter';
 
 async function bootstrap() {
 	const app = await NestFactory.create<NestFastifyApplication>(
@@ -14,6 +15,7 @@ async function bootstrap() {
 	);
 
 	app.useGlobalPipes(new ValidationPipe());
+	app.useGlobalFilters(new MongoExceptionFilter());
 
 	const config = new DocumentBuilder()
 		.setTitle('Streaks')

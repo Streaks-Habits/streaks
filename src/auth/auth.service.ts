@@ -11,7 +11,7 @@ export class AuthService {
 		const userId = apiKey.split(':')[0];
 
 		if (!isValidObjectId(userId)) return null;
-		const user = await this.usersService.getUser(userId);
+		const user = await this.usersService.getUser(userId, '');
 
 		if (
 			user &&
