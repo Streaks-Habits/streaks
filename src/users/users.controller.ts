@@ -14,8 +14,11 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiTags } from '@nestjs/swagger';
+import { Roles } from 'src/auth/roles/roles.decorator';
+import { RolesGuard } from 'src/auth/roles/roles.guard';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { Role } from './enum/roles.enum';
 import { UsersService } from './users.service';
 
 @Controller('/api/v1/users')
@@ -80,7 +83,8 @@ export class UsersController {
 	}
 
 	@ApiTags('users')
-	@UseGuards(AuthGuard('api-key'))
+	@UseGuards(AuthGuard('api-key'), RolesGuard)
+	@Roles(Role.Admin)
 	@Get('/user/:id')
 	async getUser(@Res() response, @Param('id') userId: string) {
 		try {

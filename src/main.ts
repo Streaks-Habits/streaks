@@ -24,6 +24,7 @@ async function bootstrap() {
 	SwaggerModule.setup('api', app, document, {
 		// Hide the Swagger UI top bar
 		customCss: '.swagger-ui .topbar { display: none }',
+		customSiteTitle: 'Streaks API documentation',
 	});
 
 	await app.listen(3000);
