@@ -27,7 +27,7 @@ export class UsersService {
 
 		const newUser = await new this.UserModel(createUser).save();
 		// return getUser instead of newUser to apply fields selection
-		return this.getUser(newUser._id, fields);
+		return this.getUser(newUser._id.toString(), fields);
 	}
 
 	async updateUser(
