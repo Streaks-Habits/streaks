@@ -2,6 +2,7 @@ import {
 	BadRequestException,
 	Injectable,
 	NotFoundException,
+	UnauthorizedException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
@@ -12,6 +13,9 @@ import { UpdateCalendarDto } from './dto/update-calendar.dto';
 import { isValidObjectId, sortMapByKeys } from 'src/utils';
 import { UsersService } from 'src/users/users.service';
 import { State } from './enum/state.enum';
+import { Role } from 'src/users/enum/roles.enum';
+import { IUser } from 'src/users/interface/user.interface';
+import { asCalendarAccess, checkCalendarAccess } from './calendars.utils';
 
 @Injectable()
 export class CalendarsService {
@@ -23,12 +27,23 @@ export class CalendarsService {
 	defaultFields = '_id name agenda';
 
 	async createCalendar(
+		requester: IUser,
 		createCalendarDto: CreateCalendarDto,
 		fields = this.defaultFields,
 	): Promise<ICalendar> {
 		// using getUser to check if user exists (will throw NotFoundException if not)
 		const owner = await this.usersService.getUser(createCalendarDto.user);
 
+		// check that requester is the owner (except for admin)
+		if (
+			requester.role != Role.Admin &&
+			owner._id.toString() != requester._id.toString()
+		)
+			throw new UnauthorizedException(
+				'you are not allowed to create a calendar for this user',
+			);
+
+		// create a new calendar object with given parameters
 		const createCalendar: Omit<ICalendar, '_id'> = {
 			name: createCalendarDto.name,
 			user: new Types.ObjectId(owner._id),
@@ -36,10 +51,11 @@ export class CalendarsService {
 
 		const newCalendar = await new this.CalendarModel(createCalendar).save();
 		// return getCalendar instead of newCalendar to apply fields selection
-		return this.getCalendar(newCalendar._id.toString(), fields);
+		return this.getCalendar(requester, newCalendar._id.toString(), fields);
 	}
 
 	async updateCalendar(
+		requester: IUser,
 		calendarId: string,
 		updateCalendarDto: UpdateCalendarDto,
 		fields = this.defaultFields,
@@ -47,6 +63,9 @@ export class CalendarsService {
 		// Check given parameters
 		if (!isValidObjectId(calendarId))
 			throw new NotFoundException('Calendar not found');
+
+		// check that requester is the owner (except for admin)
+		await checkCalendarAccess(requester, calendarId, this.CalendarModel);
 
 		// Create a new calendar object with given parameters
 		const updateCalendar: Omit<ICalendar, '_id'> = {
@@ -81,39 +100,51 @@ export class CalendarsService {
 	}
 
 	async getCalendar(
+		requester: IUser,
 		calendarId: string,
 		fields = this.defaultFields,
 	): Promise<ICalendar> {
 		// Check given parameters
 		if (!isValidObjectId(calendarId))
 			throw new NotFoundException('Calendar not found');
+
 		// Get calendar
 		const existingCalendar = await this.CalendarModel.findById(
 			calendarId,
-			fields,
+			fields + ' user',
 		);
 		if (!existingCalendar)
 			throw new NotFoundException('Calendar not found');
+
+		// check that creator is the owner (except for admin)
+		asCalendarAccess(requester, existingCalendar);
+
+		existingCalendar.user = undefined; // remove user from calendar
 		return existingCalendar;
 	}
 
 	async deleteCalendar(
+		requester: IUser,
 		calendarId: string,
 		fields = this.defaultFields,
 	): Promise<ICalendar> {
 		// Check given parameters
 		if (!isValidObjectId(calendarId))
 			throw new NotFoundException('Calendar not found');
+
+		// check that requester is the owner (except for admin)
+		await checkCalendarAccess(requester, calendarId, this.CalendarModel);
+
 		// Delete calendar
 		const deletedCalendar = await this.CalendarModel.findByIdAndDelete(
 			calendarId,
-			{ fields: fields },
-		);
+		).select(fields);
 		if (!deletedCalendar) throw new NotFoundException('Calendar not found');
 		return deletedCalendar;
 	}
 
 	async setState(
+		requester: IUser,
 		calendarId: string,
 		dateString: string,
 		state: string,
@@ -122,6 +153,9 @@ export class CalendarsService {
 		// Check given parameters
 		if (!isValidObjectId(calendarId))
 			throw new NotFoundException('Calendar not found');
+
+		// check that requester is the owner (except for admin)
+		await checkCalendarAccess(requester, calendarId, this.CalendarModel);
 
 		const date = DateTime.fromFormat(dateString, 'yyyy-MM-dd');
 		if (!date.isValid)
@@ -149,6 +183,7 @@ export class CalendarsService {
 	}
 
 	async getMonth(
+		requester: IUser,
 		calendarId: string,
 		monthString: string,
 		fields = this.defaultFields,
@@ -156,6 +191,9 @@ export class CalendarsService {
 		// Check given parameters
 		if (!isValidObjectId(calendarId))
 			throw new NotFoundException('Calendar not found');
+
+		// check that requester is the owner (except for admin)
+		await checkCalendarAccess(requester, calendarId, this.CalendarModel);
 
 		const month = DateTime.fromFormat(monthString, 'yyyy-MM');
 		if (!month.isValid)
