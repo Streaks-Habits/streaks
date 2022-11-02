@@ -7,3 +7,13 @@ export function isValidObjectId(id) {
 	}
 	return false;
 }
+
+export function sortMapByKeys(map) {
+	return new Map(
+		[...map.entries()].sort((a, b) => {
+			if (a[0] < b[0]) return -1;
+			if (a[0] > b[0]) return 1;
+			return 0;
+		}),
+	);
+}

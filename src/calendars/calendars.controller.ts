@@ -137,4 +137,24 @@ export class CalendarsController {
 				),
 			);
 	}
+
+	@ApiTags('calendars')
+	@ApiHeader({ name: 'x-api-key', description: 'Your api key' })
+	@ApiOkResponse({
+		description: 'TODO',
+	})
+	@UseGuards(AuthGuard('api-key'), RolesGuard)
+	@Roles(Role.Admin)
+	@Get('/month/:id/:month')
+	async getMonth(
+		@Res() response,
+		@Param('id') calendarId: string,
+		@Param('month') monthString: string,
+	) {
+		return response
+			.status(HttpStatus.OK)
+			.send(
+				await this.calendarsService.getMonth(calendarId, monthString),
+			);
+	}
 }

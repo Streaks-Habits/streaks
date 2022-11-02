@@ -9,7 +9,7 @@ import { DateTime } from 'luxon';
 import { CreateCalendarDto } from './dto/create-calendar.dto';
 import { ICalendar } from './interface/calendar.interface';
 import { UpdateCalendarDto } from './dto/update-calendar.dto';
-import { isValidObjectId } from 'src/utils';
+import { isValidObjectId, sortMapByKeys } from 'src/utils';
 import { UsersService } from 'src/users/users.service';
 import { State } from './enum/state.enum';
 
@@ -20,7 +20,7 @@ export class CalendarsService {
 		private readonly usersService: UsersService,
 	) {}
 
-	defaultFields = '_id name agenda days';
+	defaultFields = '_id name agenda';
 
 	async createCalendar(
 		createCalendarDto: CreateCalendarDto,
@@ -44,9 +44,11 @@ export class CalendarsService {
 		updateCalendarDto: UpdateCalendarDto,
 		fields = this.defaultFields,
 	): Promise<ICalendar> {
+		// Check given parameters
 		if (!isValidObjectId(calendarId))
 			throw new NotFoundException('Calendar not found');
 
+		// Create a new calendar object with given parameters
 		const updateCalendar: Omit<ICalendar, '_id'> = {
 			name: updateCalendarDto.name,
 			user: undefined,
@@ -57,6 +59,7 @@ export class CalendarsService {
 				(await this.usersService.getUser(updateCalendarDto.user))._id,
 			);
 
+		// Update calendar with the new object
 		const existingCalendar = await this.CalendarModel.findByIdAndUpdate(
 			calendarId,
 			updateCalendar,
@@ -72,9 +75,8 @@ export class CalendarsService {
 			{},
 			fields,
 		).populate('user', this.usersService.defaultFields);
-		if (!calendarsData || calendarsData.length == 0) {
+		if (!calendarsData || calendarsData.length == 0)
 			throw new NotFoundException('No calendars found');
-		}
 		return calendarsData;
 	}
 
@@ -82,12 +84,14 @@ export class CalendarsService {
 		calendarId: string,
 		fields = this.defaultFields,
 	): Promise<ICalendar> {
+		// Check given parameters
 		if (!isValidObjectId(calendarId))
 			throw new NotFoundException('Calendar not found');
+		// Get calendar
 		const existingCalendar = await this.CalendarModel.findById(
 			calendarId,
 			fields,
-		).populate('user', this.usersService.defaultFields);
+		);
 		if (!existingCalendar)
 			throw new NotFoundException('Calendar not found');
 		return existingCalendar;
@@ -97,8 +101,10 @@ export class CalendarsService {
 		calendarId: string,
 		fields = this.defaultFields,
 	): Promise<ICalendar> {
+		// Check given parameters
 		if (!isValidObjectId(calendarId))
 			throw new NotFoundException('Calendar not found');
+		// Delete calendar
 		const deletedCalendar = await this.CalendarModel.findByIdAndDelete(
 			calendarId,
 			{ fields: fields },
@@ -113,6 +119,7 @@ export class CalendarsService {
 		state: string,
 		fields = this.defaultFields,
 	): Promise<{ [d: string]: string }> {
+		// Check given parameters
 		if (!isValidObjectId(calendarId))
 			throw new NotFoundException('Calendar not found');
 
@@ -129,6 +136,7 @@ export class CalendarsService {
 				).join(', ')}`,
 			);
 
+		// Update calendar with given state
 		const updatedCalendar = await this.CalendarModel.findByIdAndUpdate(
 			calendarId,
 			{ $set: { [`days.${date.startOf('day').toISODate()}`]: state } },
@@ -136,6 +144,47 @@ export class CalendarsService {
 		);
 		if (!updatedCalendar) throw new NotFoundException('Calendar not found');
 
+		// Return updated state
 		return { [date.startOf('day').toISODate()]: state };
+	}
+
+	async getMonth(
+		calendarId: string,
+		monthString: string,
+		fields = this.defaultFields,
+	): Promise<ICalendar> {
+		// Check given parameters
+		if (!isValidObjectId(calendarId))
+			throw new NotFoundException('Calendar not found');
+
+		const month = DateTime.fromFormat(monthString, 'yyyy-MM');
+		if (!month.isValid)
+			throw new BadRequestException(month.invalidExplanation);
+		if (month.endOf('month') > DateTime.now().endOf('month'))
+			throw new BadRequestException("can't get data of future months");
+
+		// Create a fields string to select only the days of the given month
+		let daysFields = '';
+		const last_day = month.endOf('month');
+		let current_day = month.startOf('month');
+
+		while (current_day < last_day) {
+			daysFields += ` days.${current_day.toISODate()}`;
+			current_day = current_day.plus({ days: 1 });
+		}
+
+		// Get the calendar (with previously created fields string)
+		const existingCalendar = await this.CalendarModel.findById(
+			calendarId,
+			fields + daysFields,
+		);
+		if (!existingCalendar)
+			throw new NotFoundException('Calendar not found');
+
+		// Sort the days by date
+		existingCalendar.days = sortMapByKeys(
+			existingCalendar.days,
+		) as ICalendar['days'];
+		return existingCalendar;
 	}
 }
