@@ -1,11 +1,17 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+	BadRequestException,
+	Injectable,
+	NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
+import { DateTime } from 'luxon';
 import { CreateCalendarDto } from './dto/create-calendar.dto';
 import { ICalendar } from './interface/calendar.interface';
 import { UpdateCalendarDto } from './dto/update-calendar.dto';
 import { isValidObjectId } from 'src/utils';
 import { UsersService } from 'src/users/users.service';
+import { State } from './enum/state.enum';
 
 @Injectable()
 export class CalendarsService {
@@ -99,5 +105,37 @@ export class CalendarsService {
 		);
 		if (!deletedCalendar) throw new NotFoundException('Calendar not found');
 		return deletedCalendar;
+	}
+
+	async setState(
+		calendarId: string,
+		dateString: string,
+		state: string,
+		fields = this.defaultFields,
+	): Promise<{ [d: string]: string }> {
+		if (!isValidObjectId(calendarId))
+			throw new NotFoundException('Calendar not found');
+
+		const date = DateTime.fromFormat(dateString, 'yyyy-MM-dd');
+		if (!date.isValid)
+			throw new BadRequestException(date.invalidExplanation);
+		if (date.startOf('day') > DateTime.now().startOf('day'))
+			throw new BadRequestException("can't set state for future dates");
+
+		if (!Object.values(State).includes(state as State))
+			throw new BadRequestException(
+				`state must be one of the following values: ${Object.values(
+					State,
+				).join(', ')}`,
+			);
+
+		const updatedCalendar = await this.CalendarModel.findByIdAndUpdate(
+			calendarId,
+			{ $set: { [`days.${date.startOf('day').toISODate()}`]: state } },
+			{ new: true, fields: fields },
+		);
+		if (!updatedCalendar) throw new NotFoundException('Calendar not found');
+
+		return { [date.startOf('day').toISODate()]: state };
 	}
 }

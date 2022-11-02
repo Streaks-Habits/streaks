@@ -112,4 +112,29 @@ export class CalendarsController {
 			.status(HttpStatus.OK)
 			.send(await this.calendarsService.deleteCalendar(calendarId));
 	}
+
+	@ApiTags('calendars')
+	@ApiHeader({ name: 'x-api-key', description: 'Your api key' })
+	@ApiOkResponse({
+		description: 'TODO',
+	})
+	@UseGuards(AuthGuard('api-key'), RolesGuard)
+	@Roles(Role.Admin)
+	@Put('/set_state/:id/:date/:state')
+	async setState(
+		@Res() response,
+		@Param('id') calendarId: string,
+		@Param('date') dateString: string,
+		@Param('state') state: string,
+	) {
+		return response
+			.status(HttpStatus.OK)
+			.send(
+				await this.calendarsService.setState(
+					calendarId,
+					dateString,
+					state,
+				),
+			);
+	}
 }
