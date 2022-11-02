@@ -1,7 +1,7 @@
 import { NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { Model } from 'mongoose';
-import { Role } from 'src/users/enum/roles.enum';
-import { IUser } from 'src/users/interface/user.interface';
+import { Role } from '../users/enum/roles.enum';
+import { IUser } from '../users/interface/user.interface';
 import { ICalendar } from './interface/calendar.interface';
 
 export function asCalendarAccess(user: IUser, calendar: ICalendar): void {

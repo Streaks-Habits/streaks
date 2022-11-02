@@ -2,10 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 import { Types } from 'mongoose';
-import { Role } from 'src/users/enum/roles.enum';
-import { IUser } from 'src/users/interface/user.interface';
-import { UsersService } from 'src/users/users.service';
-import { isValidObjectId } from 'src/utils';
+import { Role } from '../users/enum/roles.enum';
+import { IUser } from '../users/interface/user.interface';
+import { UsersService } from '../users/users.service';
+import { isValidObjectId } from '../utils';
 
 @Injectable()
 export class AuthService {

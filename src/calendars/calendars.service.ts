@@ -10,11 +10,11 @@ import { DateTime } from 'luxon';
 import { CreateCalendarDto } from './dto/create-calendar.dto';
 import { ICalendar } from './interface/calendar.interface';
 import { UpdateCalendarDto } from './dto/update-calendar.dto';
-import { isValidObjectId, sortMapByKeys } from 'src/utils';
-import { UsersService } from 'src/users/users.service';
+import { isValidObjectId, sortMapByKeys } from '../utils';
+import { UsersService } from '../users/users.service';
 import { State } from './enum/state.enum';
-import { Role } from 'src/users/enum/roles.enum';
-import { IUser } from 'src/users/interface/user.interface';
+import { Role } from '../users/enum/roles.enum';
+import { IUser } from '../users/interface/user.interface';
 import { asCalendarAccess, checkCalendarAccess } from './calendars.utils';
 
 @Injectable()

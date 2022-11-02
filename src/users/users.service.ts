@@ -6,7 +6,7 @@ import * as crypto from 'crypto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { IUser } from './interface/user.interface';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { isValidObjectId } from 'src/utils';
+import { isValidObjectId } from '../utils';
 
 @Injectable()
 export class UsersService {
