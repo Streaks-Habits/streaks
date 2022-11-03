@@ -24,6 +24,7 @@ import { GetUserDto } from './dto/get-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Role } from './enum/roles.enum';
 import { UsersService } from './users.service';
+import { MultiAuthGuard } from '../auth/guard/multi-auth.guard';
 
 @Controller('/api/v1/users')
 export class UsersController {
@@ -35,7 +36,7 @@ export class UsersController {
 		description: "The created user's data",
 		type: GetUserDto,
 	})
-	@UseGuards(ApiKeyGuard, RolesGuard)
+	@UseGuards(MultiAuthGuard, RolesGuard)
 	@Roles(Role.Admin)
 	@Post('/add')
 	async createUser(@Res() response, @Body() createUserDto: CreateUserDto) {
@@ -50,7 +51,7 @@ export class UsersController {
 		description: "The updated user's data",
 		type: GetUserDto,
 	})
-	@UseGuards(ApiKeyGuard, RolesGuard)
+	@UseGuards(MultiAuthGuard, RolesGuard)
 	@Roles(Role.Admin)
 	@Put('/update/:id')
 	async updateUser(
@@ -70,7 +71,7 @@ export class UsersController {
 		type: GetUserDto,
 		isArray: true,
 	})
-	@UseGuards(ApiKeyGuard, RolesGuard)
+	@UseGuards(MultiAuthGuard, RolesGuard)
 	@Roles(Role.Admin)
 	@Get('/list')
 	async getUsers(@Res() response) {
@@ -85,7 +86,7 @@ export class UsersController {
 		description: "The user's data",
 		type: GetUserDto,
 	})
-	@UseGuards(ApiKeyGuard, RolesGuard)
+	@UseGuards(MultiAuthGuard, RolesGuard)
 	@Roles(Role.Admin)
 	@Get('/user/:id')
 	async getUser(@Res() response, @Param('id') userId: string) {
@@ -100,7 +101,7 @@ export class UsersController {
 		description: "The deleted user's data",
 		type: GetUserDto,
 	})
-	@UseGuards(ApiKeyGuard, RolesGuard)
+	@UseGuards(MultiAuthGuard, RolesGuard)
 	@Roles(Role.Admin)
 	@Delete('/delete/:id')
 	async deleteUser(@Res() response, @Param('id') userId: string) {
@@ -115,7 +116,7 @@ export class UsersController {
 		description: 'The generated api key',
 		type: String,
 	})
-	@UseGuards(ApiKeyGuard, RolesGuard)
+	@UseGuards(MultiAuthGuard, RolesGuard)
 	@Roles(Role.Admin)
 	@Put('/api_key/generate/:id')
 	async generateApiKey(@Res() response, @Param('id') userId: string) {
