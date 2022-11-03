@@ -18,8 +18,8 @@ import {
 	ApiOkResponse,
 	ApiTags,
 } from '@nestjs/swagger';
-import { Roles } from '../auth/roles/roles.decorator';
-import { RolesGuard } from '../auth/roles/roles.guard';
+import { Roles } from '../auth/decorator/roles.decorator';
+import { RolesGuard } from '../auth/guard/roles.guard';
 import { CreateCalendarDto } from './dto/create-calendar.dto';
 import { UpdateCalendarDto } from './dto/update-calendar.dto';
 import { Role } from '../users/enum/roles.enum';

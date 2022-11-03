@@ -10,15 +10,15 @@ import {
 	Res,
 	UseGuards,
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
 import {
 	ApiCreatedResponse,
 	ApiHeader,
 	ApiOkResponse,
 	ApiTags,
 } from '@nestjs/swagger';
-import { Roles } from '../auth/roles/roles.decorator';
-import { RolesGuard } from '../auth/roles/roles.guard';
+import { ApiKeyGuard } from '../auth/guard/api-key.guard';
+import { Roles } from '../auth/decorator/roles.decorator';
+import { RolesGuard } from '../auth/guard/roles.guard';
 import { CreateUserDto } from './dto/create-user.dto';
 import { GetUserDto } from './dto/get-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -35,7 +35,7 @@ export class UsersController {
 		description: "The created user's data",
 		type: GetUserDto,
 	})
-	@UseGuards(AuthGuard('api-key'), RolesGuard)
+	@UseGuards(ApiKeyGuard, RolesGuard)
 	@Roles(Role.Admin)
 	@Post('/add')
 	async createUser(@Res() response, @Body() createUserDto: CreateUserDto) {
@@ -50,7 +50,7 @@ export class UsersController {
 		description: "The updated user's data",
 		type: GetUserDto,
 	})
-	@UseGuards(AuthGuard('api-key'), RolesGuard)
+	@UseGuards(ApiKeyGuard, RolesGuard)
 	@Roles(Role.Admin)
 	@Put('/update/:id')
 	async updateUser(
@@ -70,7 +70,7 @@ export class UsersController {
 		type: GetUserDto,
 		isArray: true,
 	})
-	@UseGuards(AuthGuard('api-key'), RolesGuard)
+	@UseGuards(ApiKeyGuard, RolesGuard)
 	@Roles(Role.Admin)
 	@Get('/list')
 	async getUsers(@Res() response) {
@@ -85,7 +85,7 @@ export class UsersController {
 		description: "The user's data",
 		type: GetUserDto,
 	})
-	@UseGuards(AuthGuard('api-key'), RolesGuard)
+	@UseGuards(ApiKeyGuard, RolesGuard)
 	@Roles(Role.Admin)
 	@Get('/user/:id')
 	async getUser(@Res() response, @Param('id') userId: string) {
@@ -100,7 +100,7 @@ export class UsersController {
 		description: "The deleted user's data",
 		type: GetUserDto,
 	})
-	@UseGuards(AuthGuard('api-key'), RolesGuard)
+	@UseGuards(ApiKeyGuard, RolesGuard)
 	@Roles(Role.Admin)
 	@Delete('/delete/:id')
 	async deleteUser(@Res() response, @Param('id') userId: string) {
@@ -115,7 +115,7 @@ export class UsersController {
 		description: 'The generated api key',
 		type: String,
 	})
-	@UseGuards(AuthGuard('api-key'), RolesGuard)
+	@UseGuards(ApiKeyGuard, RolesGuard)
 	@Roles(Role.Admin)
 	@Put('/api_key/generate/:id')
 	async generateApiKey(@Res() response, @Param('id') userId: string) {

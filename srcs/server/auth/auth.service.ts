@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { Types } from 'mongoose';
 import { Role } from '../users/enum/roles.enum';
@@ -12,6 +13,7 @@ export class AuthService {
 	constructor(
 		private usersService: UsersService,
 		private configService: ConfigService,
+		private jwtService: JwtService,
 	) {}
 
 	async validateApiKey(apiKey: string): Promise<IUser | null> {
@@ -41,5 +43,30 @@ export class AuthService {
 		}
 
 		return null;
+	}
+
+	async validateCredentials(
+		username: string,
+		password: string,
+	): Promise<IUser | null> {
+		const user = await this.usersService.getUserByUsername(
+			username,
+			'_id username role password_hash',
+		);
+
+		if (user && (await bcrypt.compare(password, user.password_hash))) {
+			user.password_hash = undefined;
+			return user;
+		}
+		return null;
+	}
+
+	async login(user: IUser): Promise<string> {
+		const payload = {
+			username: user.username,
+			sub: user._id,
+			role: user.role,
+		};
+		return this.jwtService.sign(payload);
 	}
 }

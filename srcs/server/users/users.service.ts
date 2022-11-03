@@ -79,6 +79,18 @@ export class UsersService {
 		return existingUser;
 	}
 
+	async getUserByUsername(
+		username: string,
+		fields = this.defaultFields,
+	): Promise<IUser> {
+		const existingUser = await this.UserModel.findOne(
+			{ username: username },
+			fields,
+		).exec();
+		if (!existingUser) throw new NotFoundException('User not found');
+		return existingUser;
+	}
+
 	async deleteUser(
 		userId: string,
 		fields = this.defaultFields,
