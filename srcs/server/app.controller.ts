@@ -48,6 +48,16 @@ export class AppController {
 	}
 
 	@UseGuards(JwtAuthGuard)
+	@Get('/logout')
+	async logout(@Res() response) {
+		response.cookie('auth-token', '', {
+			httpOnly: true,
+			maxAge: 0,
+		});
+		return response.status(HttpStatus.OK).send('auth-token deleted');
+	}
+
+	@UseGuards(JwtAuthGuard)
 	@Get('/profile')
 	getProfile(@Request() request) {
 		return request.user;
