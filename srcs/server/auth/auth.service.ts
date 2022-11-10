@@ -29,7 +29,7 @@ export class AuthService {
 
 		if (!isValidObjectId(userId)) return null;
 		try {
-			const user = await this.usersService.getUser(userId, '');
+			const user = await this.usersService.findOne(userId, '');
 
 			if (
 				user &&
@@ -49,7 +49,7 @@ export class AuthService {
 		username: string,
 		password: string,
 	): Promise<IUser | null> {
-		const user = await this.usersService.getUserByUsername(
+		const user = await this.usersService.findOneByUsername(
 			username,
 			'_id username role password_hash',
 		);

@@ -32,7 +32,7 @@ export class CalendarsService {
 		fields = this.defaultFields,
 	): Promise<ICalendar> {
 		// using getUser to check if user exists (will throw NotFoundException if not)
-		const owner = await this.usersService.getUser(createCalendarDto.user);
+		const owner = await this.usersService.findOne(createCalendarDto.user);
 
 		// check that requester is the owner (except for admin)
 		if (
@@ -75,7 +75,7 @@ export class CalendarsService {
 		if (updateCalendarDto.user)
 			// using getUser to check if user exists (will throw NotFoundException if not)
 			updateCalendar.user = new Types.ObjectId(
-				(await this.usersService.getUser(updateCalendarDto.user))._id,
+				(await this.usersService.findOne(updateCalendarDto.user))._id,
 			);
 
 		// Update calendar with the new object

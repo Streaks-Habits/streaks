@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="256mm"
+   height="256mm"
+   viewBox="0 0 256 256"
+   version="1.1"
+   id="svg5"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs2">
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath7028">
+      <path
+         style="fill:#22373c;fill-opacity:0.385737;stroke:none;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         d="m 193.51087,113.81832 -31.98675,31.55007 9.33842,42.74493 -87.166632,84.58595 -101.433366,-72.4436 99.699961,-120.092339 21.166677,26.881659 31.75003,-46.778325 22.06655,57.645205 9.68345,-10.86688 z"
+         id="path7030" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath7932">
+      <circle
+         style="fill:#19292d;fill-opacity:1;stroke:none;stroke-width:0.43299;stroke-linecap:round;stroke-linejoin:round;stroke-dashoffset:45.3543"
+         id="circle7934"
+         cx="128"
+         cy="128"
+         r="128"
+         clip-path="url(#clipPath7028)"
+         transform="translate(-6.8791796,2.1166767)" />
+    </clipPath>
+  </defs>
+  <g
+     id="layer1">
+    <circle
+       style="fill:#131f22;fill-opacity:1;stroke:none;stroke-width:0.43299;stroke-linecap:round;stroke-linejoin:round;stroke-dashoffset:45.3543"
+       id="path7076-4"
+       cx="128"
+       cy="128"
+       r="128" />
+    <circle
+       style="fill:#19292d;fill-opacity:1;stroke:none;stroke-width:0.43299;stroke-linecap:round;stroke-linejoin:round;stroke-dashoffset:45.3543"
+       id="path7076"
+       cx="128"
+       cy="128"
+       r="128"
+       clip-path="url(#clipPath7932)" />
+    <g
+       id="g1390"
+       transform="translate(2.3212712,-41.256686)">
+      <polygon
+         style="fill:#ffc114"
+         points="248,496 112,483.2 35.2,283.2 235.2,360 "
+         id="polygon1223"
+         transform="matrix(0.26458333,0,0,0.26458333,60.062063,103.64002)" />
+      <polyline
+         style="fill:#ffcd50"
+         points="248,496 112,483.2 35.2,283.2 "
+         id="polyline1225"
+         transform="matrix(0.26458333,0,0,0.26458333,60.062063,103.64002)" />
+      <polygon
+         style="fill:#f9a035"
+         points="248,496 240,414.4 120,368 166.4,488 "
+         id="polygon1227"
+         transform="matrix(0.26458333,0,0,0.26458333,60.062063,103.64002)" />
+      <polyline
+         style="fill:#ff9a15"
+         points="248,496 240,414.4 120,368 "
+         id="polyline1229"
+         transform="matrix(0.26458333,0,0,0.26458333,60.062063,103.64002)" />
+      <polygon
+         style="fill:#ffc114"
+         points="248,496 260.8,360 460.8,283.2 384,483.2 "
+         id="polygon1231"
+         transform="matrix(0.26458333,0,0,0.26458333,60.062063,103.64002)" />
+      <polyline
+         style="fill:#ffcd50"
+         points="248,496 260.8,360 460.8,283.2 "
+         id="polyline1233"
+         transform="matrix(0.26458333,0,0,0.26458333,60.062063,103.64002)" />
+      <polygon
+         style="fill:#f9a035"
+         points="248,496 329.6,488 376,368 256,414.4 "
+         id="polygon1235"
+         transform="matrix(0.26458333,0,0,0.26458333,60.062063,103.64002)" />
+      <polyline
+         style="fill:#ff9a15"
+         points="248,496 329.6,488 376,368 "
+         id="polyline1237"
+         transform="matrix(0.26458333,0,0,0.26458333,60.062063,103.64002)" />
+      <polygon
+         style="fill:#eaad13"
+         points="248,496 104.8,322.4 248,0 391.2,322.4 "
+         id="polygon1239"
+         transform="matrix(0.26458333,0,0,0.26458333,60.062063,103.64002)" />
+      <polyline
+         style="fill:#ffcd50"
+         points="248,496 104.8,322.4 248,0 "
+         id="polyline1241"
+         transform="matrix(0.26458333,0,0,0.26458333,60.062063,103.64002)" />
+      <polygon
+         style="fill:#f9a035"
+         points="248,496 333.6,392 248,197.6 162.4,392 "
+         id="polygon1243"
+         transform="matrix(0.26458333,0,0,0.26458333,60.062063,103.64002)" />
+      <polyline
+         style="fill:#ef8a11"
+         points="248,496 333.6,392 248,197.6 "
+         id="polyline1245"
+         transform="matrix(0.26458333,0,0,0.26458333,60.062063,103.64002)" />
+      <polygon
+         style="fill:#ffc114"
+         points="92.8,250.4 26.4,202.4 48,75.2 128,176.8 "
+         id="polygon1247"
+         transform="matrix(0.26458333,0,0,0.26458333,60.062063,103.64002)" />
+      <polyline
+         style="fill:#ffcd50"
+         points="92.8,250.4 26.4,202.4 48,75.2 "
+         id="polyline1249"
+         transform="matrix(0.26458333,0,0,0.26458333,60.062063,103.64002)" />
+      <polygon
+         style="fill:#f9a035"
+         points="92.8,250.4 113.6,206.4 65.6,145.6 52.8,221.6 "
+         id="polygon1251"
+         transform="matrix(0.26458333,0,0,0.26458333,60.062063,103.64002)" />
+      <polyline
+         style="fill:#ff9a15"
+         points="92.8,250.4 113.6,206.4 65.6,145.6 "
+         id="polyline1253"
+         transform="matrix(0.26458333,0,0,0.26458333,60.062063,103.64002)" />
+      <polygon
+         style="fill:#ffc114"
+         points="403.2,250.4 469.6,202.4 448,75.2 368,176.8 "
+         id="polygon1255"
+         transform="matrix(0.26458333,0,0,0.26458333,60.062063,103.64002)" />
+      <polyline
+         style="fill:#ffcd50"
+         points="403.2,250.4 469.6,202.4 448,75.2 "
+         id="polyline1257"
+         transform="matrix(0.26458333,0,0,0.26458333,60.062063,103.64002)" />
+      <polygon
+         style="fill:#f9a035"
+         points="403.2,250.4 382.4,206.4 430.4,145.6 443.2,221.6 "
+         id="polygon1259"
+         transform="matrix(0.26458333,0,0,0.26458333,60.062063,103.64002)" />
+      <polyline
+         style="fill:#ff9a15"
+         points="403.2,250.4 382.4,206.4 430.4,145.6 "
+         id="polyline1261"
+         transform="matrix(0.26458333,0,0,0.26458333,60.062063,103.64002)" />
+    </g>
+    <g
+       id="g1263"
+       transform="matrix(0.26458333,0,0,0.26458333,60.062063,103.64002)">
+</g>
+    <g
+       id="g1265"
+       transform="matrix(0.26458333,0,0,0.26458333,60.062063,103.64002)">
+</g>
+    <g
+       id="g1267"
+       transform="matrix(0.26458333,0,0,0.26458333,60.062063,103.64002)">
+</g>
+    <g
+       id="g1269"
+       transform="matrix(0.26458333,0,0,0.26458333,60.062063,103.64002)">
+</g>
+    <g
+       id="g1271"
+       transform="matrix(0.26458333,0,0,0.26458333,60.062063,103.64002)">
+</g>
+    <g
+       id="g1273"
+       transform="matrix(0.26458333,0,0,0.26458333,60.062063,103.64002)">
+</g>
+    <g
+       id="g1275"
+       transform="matrix(0.26458333,0,0,0.26458333,60.062063,103.64002)">
+</g>
+    <g
+       id="g1277"
+       transform="matrix(0.26458333,0,0,0.26458333,60.062063,103.64002)">
+</g>
+    <g
+       id="g1279"
+       transform="matrix(0.26458333,0,0,0.26458333,60.062063,103.64002)">
+</g>
+    <g
+       id="g1281"
+       transform="matrix(0.26458333,0,0,0.26458333,60.062063,103.64002)">
+</g>
+    <g
+       id="g1283"
+       transform="matrix(0.26458333,0,0,0.26458333,60.062063,103.64002)">
+</g>
+    <g
+       id="g1285"
+       transform="matrix(0.26458333,0,0,0.26458333,60.062063,103.64002)">
+</g>
+    <g
+       id="g1287"
+       transform="matrix(0.26458333,0,0,0.26458333,60.062063,103.64002)">
+</g>
+    <g
+       id="g1289"
+       transform="matrix(0.26458333,0,0,0.26458333,60.062063,103.64002)">
+</g>
+    <g
+       id="g1291"
+       transform="matrix(0.26458333,0,0,0.26458333,60.062063,103.64002)">
+</g>
+  </g>
+</svg>

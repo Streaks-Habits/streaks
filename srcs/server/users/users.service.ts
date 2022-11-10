@@ -14,7 +14,7 @@ export class UsersService {
 
 	defaultFields = '_id username role';
 
-	async createUser(
+	async create(
 		createUserDto: CreateUserDto,
 		fields = this.defaultFields,
 	): Promise<IUser> {
@@ -27,10 +27,10 @@ export class UsersService {
 
 		const newUser = await new this.UserModel(createUser).save();
 		// return getUser instead of newUser to apply fields selection
-		return this.getUser(newUser._id.toString(), fields);
+		return this.findOne(newUser._id.toString(), fields);
 	}
 
-	async updateUser(
+	async update(
 		userId: string,
 		updateUserDto: UpdateUserDto,
 		fields = this.defaultFields,
@@ -60,7 +60,7 @@ export class UsersService {
 		return existingUser;
 	}
 
-	async getAllUsers(fields = this.defaultFields): Promise<IUser[]> {
+	async find(fields = this.defaultFields): Promise<IUser[]> {
 		const userData = await this.UserModel.find({}, fields);
 		if (!userData || userData.length == 0) {
 			throw new NotFoundException('No users found');
@@ -68,7 +68,7 @@ export class UsersService {
 		return userData;
 	}
 
-	async getUser(userId: string, fields = this.defaultFields): Promise<IUser> {
+	async findOne(userId: string, fields = this.defaultFields): Promise<IUser> {
 		if (!isValidObjectId(userId))
 			throw new NotFoundException('User not found');
 		const existingUser = await this.UserModel.findById(
@@ -79,7 +79,7 @@ export class UsersService {
 		return existingUser;
 	}
 
-	async getUserByUsername(
+	async findOneByUsername(
 		username: string,
 		fields = this.defaultFields,
 	): Promise<IUser> {
@@ -91,10 +91,7 @@ export class UsersService {
 		return existingUser;
 	}
 
-	async deleteUser(
-		userId: string,
-		fields = this.defaultFields,
-	): Promise<IUser> {
+	async delete(userId: string, fields = this.defaultFields): Promise<IUser> {
 		if (!isValidObjectId(userId))
 			throw new NotFoundException('User not found');
 		const deletedUser = await this.UserModel.findByIdAndDelete(userId, {

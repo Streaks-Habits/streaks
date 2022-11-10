@@ -16,7 +16,6 @@ import {
 	ApiOkResponse,
 	ApiTags,
 } from '@nestjs/swagger';
-import { ApiKeyGuard } from '../auth/guard/api-key.guard';
 import { Roles } from '../auth/decorator/roles.decorator';
 import { RolesGuard } from '../auth/guard/roles.guard';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -39,10 +38,10 @@ export class UsersController {
 	@UseGuards(MultiAuthGuard, RolesGuard)
 	@Roles(Role.Admin)
 	@Post('/add')
-	async createUser(@Res() response, @Body() createUserDto: CreateUserDto) {
+	async create(@Res() response, @Body() createUserDto: CreateUserDto) {
 		return response
 			.status(HttpStatus.CREATED)
-			.send(await this.usersService.createUser(createUserDto));
+			.send(await this.usersService.create(createUserDto));
 	}
 
 	@ApiTags('users')
@@ -54,14 +53,14 @@ export class UsersController {
 	@UseGuards(MultiAuthGuard, RolesGuard)
 	@Roles(Role.Admin)
 	@Put('/update/:id')
-	async updateUser(
+	async update(
 		@Res() response,
 		@Param('id') userId: string,
 		@Body() updateUserDto: UpdateUserDto,
 	) {
 		return response
 			.status(HttpStatus.OK)
-			.send(await this.usersService.updateUser(userId, updateUserDto));
+			.send(await this.usersService.update(userId, updateUserDto));
 	}
 
 	@ApiTags('users')
@@ -74,10 +73,10 @@ export class UsersController {
 	@UseGuards(MultiAuthGuard, RolesGuard)
 	@Roles(Role.Admin)
 	@Get('/list')
-	async getUsers(@Res() response) {
+	async find(@Res() response) {
 		return response
 			.status(HttpStatus.OK)
-			.send(await this.usersService.getAllUsers());
+			.send(await this.usersService.find());
 	}
 
 	@ApiTags('users')
@@ -89,10 +88,10 @@ export class UsersController {
 	@UseGuards(MultiAuthGuard, RolesGuard)
 	@Roles(Role.Admin)
 	@Get('/user/:id')
-	async getUser(@Res() response, @Param('id') userId: string) {
+	async findOne(@Res() response, @Param('id') userId: string) {
 		return response
 			.status(HttpStatus.OK)
-			.send(await this.usersService.getUser(userId));
+			.send(await this.usersService.findOne(userId));
 	}
 
 	@ApiTags('users')
@@ -104,10 +103,10 @@ export class UsersController {
 	@UseGuards(MultiAuthGuard, RolesGuard)
 	@Roles(Role.Admin)
 	@Delete('/delete/:id')
-	async deleteUser(@Res() response, @Param('id') userId: string) {
+	async delete(@Res() response, @Param('id') userId: string) {
 		return response
 			.status(HttpStatus.OK)
-			.send(await this.usersService.deleteUser(userId));
+			.send(await this.usersService.delete(userId));
 	}
 
 	@ApiTags('users')

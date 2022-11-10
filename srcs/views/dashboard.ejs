@@ -5,32 +5,31 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" href="/styles/general.css">
-	<link rel="stylesheet" href="/styles/login.css">
+	<link rel="stylesheet" href="/styles/dashboard.css">
 	<%- include("partial/favicon.ejs") %>
-	<title>Account - Streaks</title>
+	<title>Dashboard - Streaks</title>
 </head>
 <body>
-
-	<img id="logo" src="/public/icons/logoname.svg" alt="streaks.json logo">
-
-	<noscript>
-		<strong>We're sorry but Streaks doesn't work
-		properly without JavaScript enabled. Please enable it to
-		continue.</strong>
-	</noscript>
-
 	<div id="app">
-		<Login starting-type="<%= type %>" />
+		<Calendar />
 	</div>
+	<!-- <div id="calendar"></div> -->
 
+	<script src="/public/libs/luxon.min.js"></script>
 	<script type="module">
 		import { createApp } from '/public/libs/vue.esm-browser.prod.js'
-		import Login from '/public/components/login/login.js'
+		import Calendar from '/public/components/dashboard/calendar/calendar.js'
+
+		const user = {
+			_id: '<%= user._id %>',
+			username: '<%= user.username %>',
+			role: '<%= user.role %>',
+		}
 
 		createApp({
 			components: {
-				Login
-			}
+				Calendar
+			},
 		}).mount('#app')
 	</script>
 </body>

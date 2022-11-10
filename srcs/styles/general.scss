@@ -1,0 +1,60 @@
+@import './partials/variables';
+@import './partials/fonts';
+
+html {
+	background-color: $secondary_color;
+	font-family: $font-family;
+	outline: none;
+	color: $white;
+}
+
+html, body {
+	margin: 0;
+}
+
+a {
+	text-decoration: none;
+	color: $primary_color;
+
+	&:hover {
+		text-decoration: underline;
+	}
+}
+
+input {
+	background: $secondary_color_light;
+	border: none;
+	border-radius: 5px;
+	padding: 3px 7px 5px 7px;
+	color: $white;
+	margin: 0 0 15px 0;
+	font-size: 1em;
+	width: 100%;
+	box-sizing: border-box;
+
+	&:focus {
+		outline: $white 2px solid;
+	}
+}
+
+button {
+	background-color: $primary_color;
+	border: none;
+	border-radius: 5px;
+	font-size: 1em;
+	color: $secondary_color;
+	font-weight: bold;
+	padding: 3px 7px 5px 7px;
+}
+
+svg.spinner {
+	@keyframes spin {
+		from {
+			transform: rotate(0deg);
+		}
+		to {
+			transform: rotate(360deg);
+		}
+	}
+	animation: spin 1s ease-in-out infinite;
+}

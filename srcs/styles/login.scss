@@ -1,0 +1,55 @@
+@import './partials/variables';
+
+body {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+#logo {
+	margin: 25px auto 45px auto;
+	width: 13em;
+	display: block;
+}
+
+#app {
+	margin: 0 15px;
+}
+
+.form_box {
+	max-width: 15em;
+	margin: 0 auto;
+
+	border: solid 2px $secondary_color_light;
+	border-radius: 15px;
+	padding: 20px;
+
+	h1 {
+		margin: 0 0 20px 0;
+		color: $primary_color;
+	}
+
+	ul.errors {
+		background: $error_color_light;
+		color: $error_color;
+		padding: 5px 5px 5px 25px;
+		border-radius: 5px;
+		margin: 15px 0;
+	}
+
+	.submit_loading {
+		display: flex;
+		align-items: center;
+
+		svg.spinner {
+			margin-left: 15px;
+			width: 1.5em;
+			height: 1.5em;
+			fill: $white;
+		}
+	}
+
+	p.change_type {
+		margin: 1em 0 0 0;
+	}
+}

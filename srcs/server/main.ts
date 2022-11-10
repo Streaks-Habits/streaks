@@ -29,6 +29,11 @@ async function bootstrap() {
 		root: join(__dirname, '..', 'public'),
 		prefix: '/public/',
 	});
+	app.useStaticAssets({
+		root: join(__dirname, '..', 'styles'),
+		prefix: '/styles/',
+		decorateReply: false,
+	});
 
 	app.setViewEngine({
 		engine: {
