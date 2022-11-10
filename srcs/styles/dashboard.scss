@@ -1,7 +1,171 @@
-.calendar_grid {
-	display: grid;
-	grid-template-columns: repeat(7, 1fr);
-	width: fit-content;
-	grid-gap: 5px 3px;
-	list-style-type: none;
+@import './partials/variables';
+
+div.calendar {
+	display: inline-block;
+
+	div.calendar_header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 10px;
+
+		p.name {
+			color: $white;
+			margin: 0 5px 0 0;
+			font-weight: bold;
+			font-size: 1.2em;
+			overflow: hidden;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+		}
+
+		div.calendar_controls {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+
+			svg {
+				fill: $secondary_color_light;
+				animation: fill .3s ease-in-out;
+
+				:hover {
+					fill: $secondary_color_lighter;
+				}
+				&.caret {
+					width: 1.6em;
+					height: 1.6em;
+
+					&.right {
+						transform: rotate(180deg);
+					}
+				}
+				&.today {
+					width: 1.2em;
+					height: 1.2em;
+					margin: 0 3px;
+				}
+			}
+		}
+	}
+
+	div.calendar_body {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		width: 14em;
+		height: 16em;
+		border: solid 2px $secondary_color_light;
+		border-radius: 15px;
+		padding: 20px;
+
+		div.calendar_info {
+			display: flex;
+			align-items: baseline;
+			justify-content: space-between;
+			width: 100%;
+			margin: -5px 0 10px 0;
+
+			p.calendar_month {
+				color: $white;
+				margin: 0;
+				font-size: 1em;
+			}
+
+			div.streaks {
+				display: flex;
+				align-items: center;
+
+				p {
+					color: $secondary_color_lighter;
+					margin: 0;
+					font-size: 1.3em;
+					margin: 0 2px 0 0;
+				}
+				svg {
+					width: 1.7em;
+					height: 1.7em;
+					fill: $secondary_color_light;
+
+					&.expended {
+						fill: $primary_color;
+					}
+				}
+			}
+		}
+
+		div.calendar_days {
+			display: grid;
+			grid-template-columns: repeat(7, 1fr);
+			width: fit-content;
+			grid-gap: 5px;
+			list-style-type: none;
+			padding: 0;
+
+			button.calendar_day, div.calendar_dayname {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+
+				width: 1.8em;
+				height: 1.8em;
+			}
+
+			div.calendar_dayname {
+				font-weight: bold;
+				font-size: .9em;
+				color: $secondary_color_light;
+			}
+
+			button.calendar_day {
+				border-radius: 50%;
+				background: none;
+				color: $secondary_color_lighter;
+
+				span {
+					border: none;
+					background: none;
+				}
+
+				&.future {
+					cursor: auto;
+				}
+
+				&.loading:not(.future) {
+					$loading_start_color: $secondary_color_light;
+					$loading_end_color: #384b50;
+
+					background: $loading_start_color;
+					@keyframes spin {
+						from {
+							background: $loading_start_color;
+						}
+						50% {
+							background: $loading_end_color;
+						}
+						to {
+							transform: $loading_start_color;
+						}
+					}
+					animation: spin 1s ease-in-out infinite;
+				}
+
+				&.success:not(.future) {
+					color: $success_color;
+					background: $success_background;
+				}
+				&.fail:not(.future) {
+					color: $fail_color;
+					background: $fail_background;
+				}
+				&.freeze:not(.future) {
+					color: $freeze_color;
+					background: $freeze_background;
+				}
+				&.breakday:not(.future) {
+					color: $breakday_color;
+					background: $breakday_background;
+				}
+			}
+		}
+	}
 }

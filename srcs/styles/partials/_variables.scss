@@ -1,27 +1,19 @@
-$font-family: FiraCode, sans-serif;
+$font-family: 'Fira Code', sans-serif;
 
 $white: #fff;
 $primary_color: #ff9c13;
 $secondary_color: #131f22;
 $secondary_color_light: #425d64;
+$secondary_color_lighter: #a2c8d3;
 
 $error_color: #690101;
 $error_color_light: #eb5a5a;
 
-// // Calendar header
-// --c_caret: #fff;
-// --c_title: #fff;
-// // Calendar month
-// --c_month: #fff;
-// // Calendar grid
-// --c_day: #a2c8d3;
-// --c_dayname: #425d64;
-// --c_border: #425d64;
-// --c_fail_background: #ff000030;
-// --c_fail_color: var(--c_day);
-// --c_success_background: #ff9c13;
-// --c_success_color: var(--c_background);
-// --c_freeze_background: #6bcbf9;
-// --c_freeze_color: var(--c_background);
-// --c_breakday_background: #00b7ff54;
-// --c_breakday_color: var(--c_day);
+$success_color: $secondary_color;
+$success_background: $primary_color;
+$fail_color: $secondary_color_lighter;
+$fail_background: #3f191c;
+$freeze_color: $secondary_color;
+$freeze_background: #6bcbf9;
+$breakday_color: $secondary_color_lighter;
+$breakday_background: #0d516b;

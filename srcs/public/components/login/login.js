@@ -25,6 +25,8 @@ export default {
 	},
 	methods: {
 		changeType(type) {
+			if (this.loading) return;
+
 			this.type = type;
 			if (type === 'login') {
 				window.history.pushState({ type: 'login' }, '', '/login');
@@ -156,7 +158,7 @@ export default {
 					<li v-for="error in errors">{{ error }}</li>
 				</ul>
 			</form>
-			<p class="change_type">Already have an ? <a href="/login" @click.prevent="changeType('login')">Login</a> !</p>
+			<p class="change_type">Already have an account ? <a href="/login" @click.prevent="changeType('login')">Login</a> !</p>
 		</div>
 	</div>
 	`,

@@ -1,6 +1,6 @@
 export default {
 	props: {
-		day: {
+		dayProp: {
 			// { date: Luxon Date, isToday: boolean, gridColumn: number }
 			type: Object,
 			required: true,
@@ -10,16 +10,27 @@ export default {
 		date() {
 			return luxon.DateTime.fromISO(this.day.date).day;
 		},
+		day() {
+			return this.dayProp;
+		},
 	},
-	methods: {},
+	methods: {
+		setState() {
+			console.log('setState, day:', this.date, this.day.status);
+		},
+	},
 	template: `
-		<li
+		<button @click="setState()"
+			class="calendar_day"
 			:class="{
-				'calendar-day--today': day.isToday
+				'today': day.isToday,
+				'future': !day.isOver,
+				[day.status]: true,
 			}"
 			:style="{
 				gridColumn: day.gridColumn
 			}"
-		>{{ date }}</li>
+			:disabled="!day.isOver"
+		><span>{{ date }}</span></button>
 	`,
 };

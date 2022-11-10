@@ -24,6 +24,8 @@ body {
 	border-radius: 15px;
 	padding: 20px;
 
+	overflow: hidden;
+
 	h1 {
 		margin: 0 0 20px 0;
 		color: $primary_color;
@@ -45,7 +47,7 @@ body {
 			margin-left: 15px;
 			width: 1.5em;
 			height: 1.5em;
-			fill: $white;
+			fill: $white
 		}
 	}
 
