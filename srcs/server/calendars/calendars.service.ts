@@ -10,7 +10,7 @@ import { DateTime } from 'luxon';
 import { CreateCalendarDto } from './dto/create-calendar.dto';
 import { ICalendar } from './interface/calendar.interface';
 import { UpdateCalendarDto } from './dto/update-calendar.dto';
-import { isValidObjectId, sortMapByKeys } from '../utils';
+import { isValidObjectId } from '../utils';
 import { UsersService } from '../users/users.service';
 import { State } from './enum/state.enum';
 import { Role } from '../users/enum/roles.enum';
@@ -96,6 +96,25 @@ export class CalendarsService {
 		).populate('user', this.usersService.defaultFields);
 		if (!calendarsData || calendarsData.length == 0)
 			throw new NotFoundException('No calendars found');
+		return calendarsData;
+	}
+
+	async getUserCalendars(
+		requester: IUser,
+		userId: string,
+		fields = this.defaultFields,
+	): Promise<ICalendar[]> {
+		const calendarsData = await this.CalendarModel.find(
+			{
+				user: userId,
+			},
+			fields + ' user',
+		);
+		if (!calendarsData || calendarsData.length == 0)
+			throw new NotFoundException('No calendars found');
+
+		for (const calendar of calendarsData)
+			asCalendarAccess(requester, calendar);
 		return calendarsData;
 	}
 
@@ -231,10 +250,6 @@ export class CalendarsService {
 		if (!existingCalendar)
 			throw new NotFoundException('Calendar not found');
 
-		// Sort the days by date (useless, but why not)
-		existingCalendar.days = sortMapByKeys(
-			existingCalendar.days,
-		) as ICalendar['days'];
 		return existingCalendar;
 	}
 

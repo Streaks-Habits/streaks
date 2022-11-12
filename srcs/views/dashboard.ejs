@@ -11,23 +11,22 @@
 </head>
 <body>
 	<div id="app">
-		<Calendar name="Calendrier" id="6362a6e7ae2d5018967d43cd" />
+		<Dashboard :user="{
+				_id: '<%= user._id %>',
+				username: '<%= user.username %>',
+				role: '<%= user.role %>',
+			}"
+		/>
 	</div>
 
 	<script src="/public/libs/luxon.min.js"></script>
 	<script type="module">
 		import { createApp } from '/public/libs/vue.esm-browser.prod.js'
-		import Calendar from '/public/components/dashboard/calendar/calendar.js'
-
-		const user = {
-			_id: '<%= user._id %>',
-			username: '<%= user.username %>',
-			role: '<%= user.role %>',
-		}
+		import Dashboard from '/public/components/dashboard/dashboard.js'
 
 		createApp({
 			components: {
-				Calendar
+				Dashboard
 			},
 		}).mount('#app')
 	</script>

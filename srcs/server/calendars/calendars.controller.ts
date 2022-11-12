@@ -95,6 +95,29 @@ export class CalendarsController {
 	@ApiTags('calendars')
 	@ApiHeader({ name: 'x-api-key', description: 'Your api key' })
 	@ApiOkResponse({
+		description: 'All user calendars',
+	})
+	@UseGuards(MultiAuthGuard, RolesGuard)
+	@Roles(Role.Admin, Role.User) // User allowed, will check after that user can only get his own calendar
+	@Get('/list/:id')
+	async getUserCalendars(
+		@Res() response,
+		@Request() request,
+		@Param('id') userId: string,
+	) {
+		return response
+			.status(HttpStatus.OK)
+			.send(
+				await this.calendarsService.getUserCalendars(
+					request.user,
+					userId,
+				),
+			);
+	}
+
+	@ApiTags('calendars')
+	@ApiHeader({ name: 'x-api-key', description: 'Your api key' })
+	@ApiOkResponse({
 		description: 'The calendar',
 	})
 	@UseGuards(MultiAuthGuard, RolesGuard)

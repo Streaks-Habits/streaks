@@ -109,7 +109,6 @@ export default {
 			})
 				.then((res) => res.json())
 				.then((res) => {
-					console.log(res);
 					if (!res.hasOwnProperty('auth-token')) {
 						if (res.statusCode === 409)
 							this.errors.push('Username already taken');

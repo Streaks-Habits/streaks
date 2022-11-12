@@ -5,12 +5,8 @@ export default {
 		CalendarDayItem,
 	},
 	props: {
-		name: {
-			type: String,
-			required: true,
-		},
-		id: {
-			type: String,
+		calendarData: {
+			type: Object,
 			required: true,
 		},
 		month: {
@@ -22,11 +18,10 @@ export default {
 	},
 	data() {
 		return {
+			calendar: this.calendarData,
 			days: [],
 			monthDate: luxon.DateTime.fromISO(this.month),
 			monthString: '', // defined in created(),
-			currentStreak: 1000,
-			streakExpendedToday: false,
 		};
 	},
 	created() {
@@ -85,9 +80,9 @@ export default {
 		},
 		retrieveStatus() {
 			fetch(
-				`/api/v1/calendars/month/${this.id}/${this.monthDate.toFormat(
-					'yyyy-MM',
-				)}`,
+				`/api/v1/calendars/month/${
+					this.calendar._id
+				}/${this.monthDate.toFormat('yyyy-MM')}`,
 				{
 					method: 'GET',
 					headers: {
@@ -110,7 +105,7 @@ export default {
 	template: `
 		<div class="calendar">
 			<div class="calendar_header">
-				<p class="name">{{ name }}</p>
+				<p class="name">{{ calendar.name }}</p>
 				<div class="calendar_controls">
 					<svg @click="prevMonth()" class="caret left"><use xlink:href="/public/icons/caret.svg#icon"></use></svg>
 					<svg @click="currentMonth()" class="today"><use xlink:href="/public/icons/today.svg#icon"></use></svg>
