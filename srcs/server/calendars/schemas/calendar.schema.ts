@@ -21,6 +21,12 @@ export class Calendar {
 
 	@Prop({ required: false })
 	days: Map<string, string>;
+
+	@Prop({ required: false })
+	current_streak: string;
+
+	@Prop({ required: false })
+	streak_expended_today: string;
 }
 
 export const CalendarSchema = SchemaFactory.createForClass(Calendar);

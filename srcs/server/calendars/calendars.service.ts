@@ -24,7 +24,7 @@ export class CalendarsService {
 		private readonly usersService: UsersService,
 	) {}
 
-	defaultFields = '_id name agenda';
+	defaultFields = '_id name agenda current_streak streak_expended_today';
 
 	async createCalendar(
 		requester: IUser,
@@ -178,6 +178,9 @@ export class CalendarsService {
 		);
 		if (!updatedCalendar) throw new NotFoundException('Calendar not found');
 
+		// Update streak count
+		await this.computeStreak(requester, calendarId, fields);
+
 		// Return updated state
 		return { [date.startOf('day').toISODate()]: state };
 	}
@@ -219,10 +222,70 @@ export class CalendarsService {
 		if (!existingCalendar)
 			throw new NotFoundException('Calendar not found');
 
-		// Sort the days by date
+		// Sort the days by date (useless, but why not)
 		existingCalendar.days = sortMapByKeys(
 			existingCalendar.days,
 		) as ICalendar['days'];
 		return existingCalendar;
+	}
+
+	async computeStreak(
+		requester: IUser,
+		calendarId: string,
+		fields = this.defaultFields,
+	): Promise<ICalendar> {
+		// Check given parameters
+		if (!isValidObjectId(calendarId))
+			throw new NotFoundException('Calendar not found');
+
+		// check that requester is the owner (except for admin)
+		await checkCalendarAccess(requester, calendarId, this.CalendarModel);
+
+		// Get the calendar
+		const existingCalendar = await this.CalendarModel.findById(
+			calendarId,
+			'days',
+		);
+		if (!existingCalendar)
+			throw new NotFoundException('Calendar not found');
+
+		// Compute streak
+		let streak = 0;
+		const streak_expended_today =
+			existingCalendar.days.get(DateTime.now().toISODate()) ===
+			State.Success;
+		let yesterday = DateTime.now().minus({ days: 1 }).startOf('day');
+
+		let continueWhile = true;
+		while (continueWhile) {
+			const currentSate = existingCalendar.days.get(
+				yesterday.toISODate(),
+			);
+			if (currentSate === State.Success) {
+				streak++;
+			} else if (
+				currentSate !== State.Freeze &&
+				currentSate !== State.Breakday
+			)
+				continueWhile = false;
+
+			yesterday = yesterday.minus({ days: 1 });
+		}
+		if (streak_expended_today) streak++;
+
+		// Update calendar
+		const updatedCalendar = await this.CalendarModel.findByIdAndUpdate(
+			calendarId,
+			{
+				$set: {
+					current_streak: streak,
+					streak_expended_today: streak_expended_today,
+				},
+			},
+			{ new: true, fields: fields },
+		);
+		if (!updatedCalendar) throw new NotFoundException('Calendar not found');
+
+		return updatedCalendar;
 	}
 }

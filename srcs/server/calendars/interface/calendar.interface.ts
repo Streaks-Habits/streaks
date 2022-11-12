@@ -6,4 +6,6 @@ export interface ICalendar {
 	user: Types.ObjectId;
 	agenda?: Array<boolean>;
 	days?: Map<string, string>;
+	current_streak?: number;
+	streak_expended_today?: boolean;
 }

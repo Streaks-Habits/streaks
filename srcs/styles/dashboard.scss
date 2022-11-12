@@ -118,8 +118,10 @@ div.calendar {
 
 			button.calendar_day {
 				border-radius: 50%;
-				background: none;
+				background: $secondary_color;
 				color: $secondary_color_lighter;
+
+				transition: background .2s ease-in-out;
 
 				span {
 					border: none;
@@ -134,7 +136,7 @@ div.calendar {
 					$loading_start_color: $secondary_color_light;
 					$loading_end_color: #384b50;
 
-					background: $loading_start_color;
+					background: $secondary_color;
 					@keyframes spin {
 						from {
 							background: $loading_start_color;
@@ -147,6 +149,7 @@ div.calendar {
 						}
 					}
 					animation: spin 1s ease-in-out infinite;
+					//animation-delay: 500ms;
 				}
 
 				&.success:not(.future) {
