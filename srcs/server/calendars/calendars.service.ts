@@ -149,7 +149,7 @@ export class CalendarsService {
 		dateString: string,
 		state: string,
 		fields = this.defaultFields,
-	): Promise<{ [d: string]: string }> {
+	): Promise<ICalendar> {
 		// Check given parameters
 		if (!isValidObjectId(calendarId))
 			throw new NotFoundException('Calendar not found');
@@ -179,10 +179,19 @@ export class CalendarsService {
 		if (!updatedCalendar) throw new NotFoundException('Calendar not found');
 
 		// Update streak count
-		await this.computeStreak(requester, calendarId, fields);
+		const streakUpdated = await this.computeStreak(
+			requester,
+			calendarId,
+			fields,
+		);
 
 		// Return updated state
-		return { [date.startOf('day').toISODate()]: state };
+		return {
+			...streakUpdated['_doc'],
+			days: {
+				[dateString]: state,
+			},
+		};
 	}
 
 	async getMonth(
