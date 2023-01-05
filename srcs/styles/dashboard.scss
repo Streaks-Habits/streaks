@@ -133,23 +133,28 @@ div.calendar {
 				}
 
 				&.loading:not(.future) {
-					$loading_start_color: $secondary_color_light;
-					$loading_end_color: #384b50;
+					$loading_start_color: #354246;
+					$loading_end_color: $secondary_color_light;
 
-					background: $secondary_color;
-					@keyframes spin {
-						from {
+					background: $loading_start_color;
+					@keyframes blink {
+						0% {
 							background: $loading_start_color;
 						}
-						50% {
+						25% {
 							background: $loading_end_color;
 						}
-						to {
+						50% {
+							background: $loading_start_color;
+						}
+						75% {
+							background: $loading_end_color;
+						}
+						100% {
 							transform: $loading_start_color;
 						}
 					}
-					animation: spin 1s ease-in-out infinite;
-					//animation-delay: 500ms;
+					animation: blink 2s ease-in-out infinite;
 				}
 
 				&.success:not(.future) {
@@ -168,6 +173,116 @@ div.calendar {
 					color: $breakday_color;
 					background: $breakday_background;
 				}
+			}
+		}
+	}
+
+	div.set_state_overlay {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100vw;
+		height: 100vh;
+		background: #0000003b;
+
+		div.set_state_box {
+			display: block;
+			background: #2f4044;
+			position: absolute;
+			padding: 15px;
+			border: solid 2px $secondary_color_light;
+			border-radius: 15px;
+			z-index: 1;
+
+			button {
+				display: block;
+				margin: 0;
+				font-weight: bold;
+				background: 0;
+				border: none;
+				width: initial;
+				padding: 0;
+
+				&:not(:last-child) {
+					margin-bottom: 7px;
+				}
+
+				&::before {
+					content: "";
+					display: inline-block;
+					width: 1.2em;
+					height: 1.2em;
+					margin-right: 5px;
+					vertical-align: sub;
+					border-radius: 50%;
+				}
+
+				&.set_success {
+					color: $success_text;
+					&::before {
+						background: $success_text
+					}
+				}
+				&.set_freeze {
+					color: $freeze_text;
+					&::before {
+						background: $freeze_text
+					}
+				}
+				&.set_fail {
+					color: $fail_text;
+					&::before {
+						background: $fail_text
+					}
+				}
+			}
+
+			div {
+				display: flex;
+				cursor: pointer;
+
+				p {
+					margin: 0 0 0 5px;
+					font-weight: bold;
+				}
+				svg {
+					width: 1.2em;
+					height: 1.2em;
+				}
+
+				&:not(:last-child) {
+					margin-bottom: 5px;
+				}
+
+				&.set_success {
+					p {
+						color: $success_background;
+					}
+					svg {
+						fill: $success_background;
+					}
+				}
+				&.set_freeze {
+					p {
+						color: $success_background;
+					}
+					svg {
+						fill: $success_background;
+					}
+				}
+				&.set_fail {
+					p {
+						color: $success_background;
+					}
+					svg {
+						fill: $success_background;
+					}
+				}
+			}
+			svg.spinner {
+				width: 1.3em;
+				height: 1.3em;
+				fill: $secondary_color_lighter;
 			}
 		}
 	}

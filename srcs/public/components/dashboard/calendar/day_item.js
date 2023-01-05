@@ -14,17 +14,12 @@ export default {
 			return this.dayProp;
 		},
 	},
-	methods: {
-		setState() {
-			console.log('setState, day:', this.date, this.day.status);
-		},
-	},
 	template: `
-		<button @click="setState()"
+		<button @click="$emit('showSetState', $event)"
 			class="calendar_day"
 			:class="{
-				'today': day.isToday,
-				'future': !day.isOver,
+				'today': day.isToday === true,
+				'future': day.isOver === false,
 				[day.status]: true,
 			}"
 			:style="{

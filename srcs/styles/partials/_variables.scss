@@ -11,9 +11,15 @@ $error_color_light: #eb5a5a;
 
 $success_color: $secondary_color;
 $success_background: $primary_color;
+$success_text: $primary_color;
+
 $fail_color: $secondary_color_lighter;
 $fail_background: #3f191c;
+$fail_text: #e02323;
+
 $freeze_color: $secondary_color;
 $freeze_background: #6bcbf9;
+$freeze_text: $freeze_background;
+
 $breakday_color: $secondary_color_lighter;
 $breakday_background: #0d516b;

@@ -16,29 +16,25 @@ export default {
 		};
 	},
 	created() {
-		console.log('dashboard created');
 		this.updateCalendars();
 	},
 	methods: {
-		updateCalendars() {
-			fetch(`/api/v1/calendars/list`, {
+		async updateCalendars() {
+			let res = await fetch(`/api/v1/calendars/list/${this.user._id}`, {
 				method: 'GET',
 				headers: {
 					Accept: 'application/json',
 				},
-			})
-				.then((res) => res.json())
-				.then((res) => {
-					console.log('calendars:', res);
+			});
 
-					if (!Array.isArray(res)) {
-						// TODO: error message
-					}
-					this.calendars = res;
-				})
-				.catch(() => {
-					console.log("Couldn't connect to server");
-				});
+			if (res.ok) {
+				res = await res.json();
+				this.calendars = res;
+			} else {
+				// TODO: show error to user
+				if (res.hasOwnProperty('message')) console.error(res.message);
+				else console.error("Error while retrieving user's calendars");
+			}
 		},
 	},
 	template: `

@@ -57,13 +57,13 @@ export default {
 			}
 			return false;
 		},
-		login() {
+		async login() {
 			this.errors = [];
 			if (!this.isSubmitAuthorized()) return;
 
 			this.loading = true;
 
-			fetch('/login', {
+			let res = await fetch('/login', {
 				method: 'POST',
 				headers: {
 					Accept: 'application/json',
@@ -73,29 +73,24 @@ export default {
 					username: this.username,
 					password: this.password,
 				}),
-			})
-				.then((res) => res.json())
-				.then((res) => {
-					if (!res.hasOwnProperty('auth-token')) {
-						this.errors.push('Invalid credentials');
-						return;
-					}
-					window.location.href = '/dashboard';
-				})
-				.catch(() => {
-					this.errors.push("Couldn't connect to server");
-				})
-				.finally(() => {
-					this.loading = false;
-				});
+			});
+
+			if (res.ok) {
+				window.location.href = '/dashboard';
+			} else if (res.status === 404 || res.status === 401) {
+				this.errors.push('Wrong username or password');
+			} else {
+				this.errors.push('An error occured');
+			}
+			this.loading = false;
 		},
-		register() {
+		async register() {
 			this.errors = [];
 			if (!this.isSubmitAuthorized()) return;
 
 			this.loading = true;
 
-			fetch('/register', {
+			const res = await fetch('/register', {
 				method: 'POST',
 				headers: {
 					Accept: 'application/json',
@@ -106,24 +101,19 @@ export default {
 					password: this.password,
 					passwordRepeat: this.passwordRepeat,
 				}),
-			})
-				.then((res) => res.json())
-				.then((res) => {
-					if (!res.hasOwnProperty('auth-token')) {
-						if (res.statusCode === 409)
-							this.errors.push('Username already taken');
-						else if (res.message) this.errors.push(res.message);
-						else this.errors.push('An error occured');
-						return;
-					}
-					window.location.href = '/dashboard';
-				})
-				.catch(() => {
-					this.errors.push("Couldn't connect to server");
-				})
-				.finally(() => {
-					this.loading = false;
-				});
+			});
+
+			const data = await res.json();
+			if (res.ok) {
+				window.location.href = '/dashboard';
+			} else if (res.status === 409) {
+				this.errors.push('Username already taken');
+			} else if (data.hasOwnProperty('message')) {
+				this.errors.push(data.message);
+			} else {
+				this.errors.push('An error occured');
+			}
+			this.loading = false;
 		},
 	},
 	template: `

@@ -22,6 +22,15 @@ export default {
 			days: [],
 			monthDate: luxon.DateTime.fromISO(this.month),
 			monthString: '', // defined in created(),
+			setState: {
+				show: false,
+				date: undefined,
+				loading: false,
+				pos: {
+					x: 0,
+					y: 0,
+				},
+			},
 		};
 	},
 	created() {
@@ -70,7 +79,7 @@ export default {
 				days.push({
 					date: firstDay,
 					isToday: firstDay == today,
-					isOver: firstDay < today,
+					isOver: firstDay <= today,
 					gridColumn: days.length === 0 ? firstDay.weekday : null, // 1 = Monday, 7 = Sunday, null = not first day of month
 					status: 'loading',
 				});
@@ -78,8 +87,8 @@ export default {
 			}
 			this.days = days;
 		},
-		retrieveStatus() {
-			fetch(
+		async retrieveStatus() {
+			const res = await fetch(
 				`/api/v1/calendars/month/${
 					this.calendar._id
 				}/${this.monthDate.toFormat('yyyy-MM')}`,
@@ -89,21 +98,111 @@ export default {
 						Accept: 'application/json',
 					},
 				},
-			)
-				.then((res) => res.json())
-				.then((res) => {
-					for (const day of this.days) {
+			);
+
+			const data = await res.json();
+			if (res.ok) {
+				this.days = this.days.map((day) => {
+					if (data.hasOwnProperty('days'))
 						day.status =
-							res.days[day.date.toFormat('yyyy-MM-dd')] || 'fail';
-					}
-				})
-				.catch(() => {
-					console.log("Couldn't connect to server");
+							data.days[day.date.toFormat('yyyy-MM-dd')] ||
+							'fail';
+					else day.status = 'fail';
+					return day;
 				});
+			} else if (data.hasOwnProperty('message')) {
+				// TODO: show error to user
+				console.error(res.message);
+			} else {
+				// TODO: show error to user
+				console.error("Error while retrieving calendar's status");
+			}
+		},
+		async setDayState(state) {
+			console.log(this.setState.pos);
+			this.setState.loading = true;
+
+			let dayToSet = undefined;
+			for (const day of this.days) {
+				if (day.date == this.setState.date) {
+					dayToSet = day;
+					break;
+				}
+			}
+
+			if (!dayToSet) {
+				this.hideSetState();
+				return;
+			}
+
+			dayToSet.status = 'loading';
+			const res = await fetch(
+				`/api/v1/calendars/set_state/${
+					this.calendar._id
+				}/${dayToSet.date.toFormat('yyyy-MM-dd')}/${state}`,
+				{
+					method: 'PUT',
+					headers: {
+						Accept: 'application/json',
+					},
+				},
+			);
+
+			const data = await res.json();
+			if (res.ok) {
+				dayToSet.status = state;
+				this.calendar.current_streak = data.current_streak;
+				this.calendar.streak_expended_today =
+					data.streak_expended_today;
+			} else if (data.hasOwnProperty('message')) {
+				// TODO: show error to user
+				console.error(res.message);
+			} else {
+				// TODO: show error to user
+				console.error("Error while setting day's state");
+			}
+			this.hideSetState();
+		},
+		hideSetState() {
+			this.setState.show = false;
+			this.setState.date = undefined;
+			this.setState.loading = false;
+			this.setState.pos.x = 0;
+			this.setState.pos.y = 0;
 		},
 	},
 	template: `
 		<div class="calendar">
+			<div class="set_state_overlay" v-if="setState.show" @click="this.hideSetState()">
+				<div
+					class="set_state_box"
+					:style="{ left: this.setState.pos.x + 'px', top: this.setState.pos.y + 'px' }"
+				>
+					<svg v-show="this.setState.loading" class="spinner"><use xlink:href="/public/icons/spinner.svg#icon"></use></svg>
+					<button
+						v-show="!this.setState.loading"
+						@click="setDayState('success')"
+						class="set_success"
+					>
+						SUCCESS
+					</button>
+					<button
+						v-show="!this.setState.loading"
+						@click="setDayState('freeze')"
+						class="set_freeze"
+					>
+						FREEZE
+					</button>
+					<button
+						v-show="!this.setState.loading"
+						@click="setDayState('fail')"
+						class="set_fail"
+					>
+						FAIL
+					</button>
+				</div>
+			</div>
+
 			<div class="calendar_header">
 				<p class="name">{{ calendar.name }}</p>
 				<div class="calendar_controls">
@@ -117,10 +216,11 @@ export default {
 				<div class="calendar_info">
 					<p class="calendar_month">{{ monthString }}</p>
 					<div class="streaks">
-						<p>{{ currentStreak }}</p>
+						<p>{{ this.calendar.current_streak }}</p>
+						{{ this.calendar.streak_expended }}
 						<svg
 							:class="{
-								'expended': streakExpendedToday
+								'expended': this.calendar.streak_expended_today === true,
 							}"
 						><use xlink:href="/public/icons/streak.svg#icon"></use></svg>
 					</div>
@@ -133,6 +233,12 @@ export default {
 						v-for="day in days"
 						:key="day.date"
 						:day-prop="day"
+						@show-set-state="(event) => {
+							this.setState.show = true;
+							this.setState.date = day.date;
+							this.setState.pos.x = event.clientX;
+							this.setState.pos.y = event.clientY;
+						}"
 					/>
 				</div>
 			</div>
