@@ -19,7 +19,6 @@ import {
 import { Roles } from '../auth/decorator/roles.decorator';
 import { RolesGuard } from '../auth/guard/roles.guard';
 import { CreateUserDto } from './dto/create-user.dto';
-import { GetUserDto } from './dto/get-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Role } from './enum/roles.enum';
 import { UsersService } from './users.service';
@@ -29,30 +28,77 @@ import { MultiAuthGuard } from '../auth/guard/multi-auth.guard';
 export class UsersController {
 	constructor(private readonly usersService: UsersService) {}
 
-	@ApiTags('users')
+	/*
+	 * CREATE
+	 */
+	@Post()
+	@UseGuards(MultiAuthGuard, RolesGuard)
+	@Roles(Role.Admin)
+	// #region doc
+	@ApiTags('Users')
 	@ApiHeader({ name: 'x-api-key', description: 'Your api key' })
 	@ApiCreatedResponse({
 		description: "The created user's data",
-		type: GetUserDto,
 	})
-	@UseGuards(MultiAuthGuard, RolesGuard)
-	@Roles(Role.Admin)
-	@Post('/add')
+	// #endregion doc
 	async create(@Res() response, @Body() createUserDto: CreateUserDto) {
 		return response
 			.status(HttpStatus.CREATED)
 			.send(await this.usersService.create(createUserDto));
 	}
 
-	@ApiTags('users')
+	/*
+	 * READ ALL
+	 */
+	@Get()
+	@UseGuards(MultiAuthGuard, RolesGuard)
+	@Roles(Role.Admin)
+	// #region doc
+	@ApiTags('Users')
+	@ApiHeader({ name: 'x-api-key', description: 'Your api key' })
+	@ApiOkResponse({
+		description: "All users' data",
+		isArray: true,
+	})
+	// #endregion doc
+	async findAll(@Res() response) {
+		return response
+			.status(HttpStatus.OK)
+			.send(await this.usersService.findAll());
+	}
+
+	/*
+	 * READ ONE
+	 */
+	@Get(':id')
+	@UseGuards(MultiAuthGuard, RolesGuard)
+	@Roles(Role.Admin)
+	// #region doc
+	@ApiTags('Users')
+	@ApiHeader({ name: 'x-api-key', description: 'Your api key' })
+	@ApiOkResponse({
+		description: "The user's data",
+	})
+	// #endregion doc
+	async findOne(@Res() response, @Param('id') userId: string) {
+		return response
+			.status(HttpStatus.OK)
+			.send(await this.usersService.findOne(userId));
+	}
+
+	/*
+	 * UPDATE
+	 */
+	@Put(':id')
+	@UseGuards(MultiAuthGuard, RolesGuard)
+	@Roles(Role.Admin)
+	// #region doc
+	@ApiTags('Users')
 	@ApiHeader({ name: 'x-api-key', description: 'Your api key' })
 	@ApiOkResponse({
 		description: "The updated user's data",
-		type: GetUserDto,
 	})
-	@UseGuards(MultiAuthGuard, RolesGuard)
-	@Roles(Role.Admin)
-	@Put('/update/:id')
+	// #endregion doc
 	async update(
 		@Res() response,
 		@Param('id') userId: string,
@@ -63,61 +109,39 @@ export class UsersController {
 			.send(await this.usersService.update(userId, updateUserDto));
 	}
 
-	@ApiTags('users')
-	@ApiHeader({ name: 'x-api-key', description: 'Your api key' })
-	@ApiOkResponse({
-		description: "All users' data",
-		type: GetUserDto,
-		isArray: true,
-	})
+	/*
+	 * DELETE
+	 */
+	@Delete(':id')
 	@UseGuards(MultiAuthGuard, RolesGuard)
 	@Roles(Role.Admin)
-	@Get('/list')
-	async find(@Res() response) {
-		return response
-			.status(HttpStatus.OK)
-			.send(await this.usersService.find());
-	}
-
-	@ApiTags('users')
-	@ApiHeader({ name: 'x-api-key', description: 'Your api key' })
-	@ApiOkResponse({
-		description: "The user's data",
-		type: GetUserDto,
-	})
-	@UseGuards(MultiAuthGuard, RolesGuard)
-	@Roles(Role.Admin)
-	@Get('/user/:id')
-	async findOne(@Res() response, @Param('id') userId: string) {
-		return response
-			.status(HttpStatus.OK)
-			.send(await this.usersService.findOne(userId));
-	}
-
-	@ApiTags('users')
+	// #region doc
+	@ApiTags('Users')
 	@ApiHeader({ name: 'x-api-key', description: 'Your api key' })
 	@ApiOkResponse({
 		description: "The deleted user's data",
-		type: GetUserDto,
 	})
-	@UseGuards(MultiAuthGuard, RolesGuard)
-	@Roles(Role.Admin)
-	@Delete('/delete/:id')
+	// #endregion doc
 	async delete(@Res() response, @Param('id') userId: string) {
 		return response
 			.status(HttpStatus.OK)
 			.send(await this.usersService.delete(userId));
 	}
 
-	@ApiTags('users')
+	/*
+	 * GENERATE API KEY
+	 */
+	@UseGuards(MultiAuthGuard, RolesGuard)
+	@Roles(Role.Admin)
+	@Get('/api_key/:id')
+	// #region doc
+	@ApiTags('Users')
 	@ApiHeader({ name: 'x-api-key', description: 'Your api key' })
 	@ApiOkResponse({
 		description: 'The generated api key',
 		type: String,
 	})
-	@UseGuards(MultiAuthGuard, RolesGuard)
-	@Roles(Role.Admin)
-	@Put('/api_key/generate/:id')
+	// #endregion doc
 	async generateApiKey(@Res() response, @Param('id') userId: string) {
 		return response
 			.status(HttpStatus.OK)

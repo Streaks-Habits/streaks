@@ -1,7 +1,81 @@
 @import './partials/variables';
 
+#logo {
+	margin-bottom: 0;
+}
+
+p.sentence {
+	text-align: center;
+	margin: 35px 0 55px 0;
+	font-weight: bold;
+}
+
+h1 {
+	text-align: center;
+	margin: 25px 0 0 0;
+
+	span {
+		color: $primary_color;
+	}
+}
+
+div.controls {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	svg {
+		fill: $secondary_color_light;
+		animation: fill .3s ease-in-out;
+
+		:hover {
+			fill: $secondary_color_lighter;
+		}
+		&.caret {
+			width: 1.6em;
+			height: 1.6em;
+
+			&.right {
+				transform: rotate(180deg);
+			}
+		}
+		&.today {
+			width: 1.2em;
+			height: 1.2em;
+			margin: 0 3px;
+		}
+	}
+}
+
+div.calendars {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 25px;
+	padding: 25px 0;
+	justify-content: center;
+}
+
 div.calendar {
 	display: inline-block;
+	// calendar size + padding + border
+	max-width: calc(14em + 44px);
+
+	div.header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 10px;
+
+		p.name {
+			color: $white;
+			margin: 0 5px 0 0;
+			font-weight: bold;
+			font-size: 1.2em;
+			overflow: hidden;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+		}
+	}
 
 	div.calendar_header {
 		display: flex;
@@ -77,14 +151,16 @@ div.calendar {
 
 				p {
 					color: $secondary_color_lighter;
+					font-weight: bold;
 					margin: 0;
 					font-size: 1.3em;
-					margin: 0 2px 0 0;
+					margin: 0 3px 0 0;
 				}
 				svg {
 					width: 1.7em;
 					height: 1.7em;
 					fill: $secondary_color_light;
+					margin-top: -5px;
 
 					&.expended {
 						fill: $primary_color;
@@ -126,6 +202,7 @@ div.calendar {
 				span {
 					border: none;
 					background: none;
+					margin-top: 3px;
 				}
 
 				&.future {
@@ -183,7 +260,8 @@ div.calendar {
 		left: 0;
 		width: 100vw;
 		height: 100vh;
-		background: #0000003b;
+		background: $overlay_background;
+		z-index: 1;
 
 		div.set_state_box {
 			display: block;
@@ -192,7 +270,6 @@ div.calendar {
 			padding: 15px;
 			border: solid 2px $secondary_color_light;
 			border-radius: 15px;
-			z-index: 1;
 
 			button {
 				display: block;
@@ -279,6 +356,145 @@ div.calendar {
 					}
 				}
 			}
+			svg.spinner {
+				width: 1.3em;
+				height: 1.3em;
+				fill: $secondary_color_lighter;
+			}
+		}
+	}
+}
+
+div.progresses {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 25px;
+	padding: 25px 0;
+	justify-content: center;
+
+	div.progress {
+		flex: 1;
+	}
+}
+
+div.progress {
+	max-width: 25em;
+	min-width: 14em;
+	border: solid 2px #425d64;
+	border-radius: 15px;
+	padding: 20px;
+
+	margin-top: 14px;
+
+	div.header_wrapper {
+		display: flex;
+		justify-content: center;
+		margin-top: -34px;
+		margin-right: 5px;
+		margin-left: 5px;
+
+		div.header {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			background: $secondary_color;
+			padding: 0 10px;
+			max-width: 100%;
+
+			p.name {
+				margin: 0 10px;
+				font-size: 1.2em;
+				font-weight: bold;
+				overflow: hidden;
+				white-space: nowrap;
+				text-overflow: ellipsis;
+			}
+
+			button.add_measure {
+				background: unset;
+				padding: unset;
+				border: unset;
+				border-radius: unset;
+				width: 1.7em;
+				height: 1.7em;
+
+				&:hover {
+					svg {
+						fill: $secondary_color_lighter;
+					}
+				}
+
+				svg {
+					width: 1.5em;
+					height: 1.5em;
+					fill: $primary_color;
+					animation: fill .3s ease-in-out;
+				}
+			}
+		}
+	}
+
+	div.date_controls_wrapper {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		margin: 10px 0 15px 0;
+
+		span.time_range {
+			flex: 1;
+			margin-right: 15px;
+		}
+	}
+
+	.progress_bar {
+		position: relative;
+		height: 20px;
+		background: $secondary_color_light;
+		border-radius: 50px;
+		overflow: hidden;
+
+		.progress_bar_fill {
+			background: $primary_color;
+			border-radius: 50px;
+			height: 100%;
+		}
+
+		.progress_bar_label {
+			position: absolute;
+			font-weight: bold;
+			left: 50%;
+			top: 50%;
+			transform: translate(-50%, -50%);
+		}
+	}
+
+	div.progress_details {
+		margin-top: 15px;
+
+		p {
+			margin: 0;
+		}
+	}
+
+	div.add_measure_overlay {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100vw;
+		height: 100vh;
+		background: $overlay_background;
+		z-index: 1;
+
+		div.add_measure_box {
+			position: absolute;
+			transform: translate(-50%, -50%);
+			display: block;
+			background: #2f4044;
+			padding: 15px;
+			border: solid 2px $secondary_color_light;
+			border-radius: 15px;
+			width: 9em;
+
 			svg.spinner {
 				width: 1.3em;
 				height: 1.3em;

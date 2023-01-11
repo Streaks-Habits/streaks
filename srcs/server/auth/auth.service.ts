@@ -4,7 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { Types } from 'mongoose';
 import { Role } from '../users/enum/roles.enum';
-import { IUser } from '../users/interface/user.interface';
+import { RUser, UserDoc } from '../users/schemas/user.schema';
 import { UsersService } from '../users/users.service';
 import { isValidObjectId } from '../utils';
 
@@ -16,20 +16,24 @@ export class AuthService {
 		private jwtService: JwtService,
 	) {}
 
-	async validateApiKey(apiKey: string): Promise<IUser | null> {
+	async validateApiKey(apiKey: string): Promise<UserDoc | null> {
 		if (apiKey === this.configService.get('ADMIN_API_KEY'))
 			return {
 				_id: new Types.ObjectId(0),
 				role: Role.Admin,
 				username: '',
 				password_hash: '',
+				api_key_hash: '',
 			};
 
 		const userId = apiKey.split(':')[0];
 
 		if (!isValidObjectId(userId)) return null;
 		try {
-			const user = await this.usersService.findOne(userId, '');
+			const user = await this.usersService.userModel.findById(
+				userId,
+				'api_hey_hash',
+			);
 
 			if (
 				user &&
@@ -48,9 +52,9 @@ export class AuthService {
 	async validateCredentials(
 		username: string,
 		password: string,
-	): Promise<IUser | null> {
-		const user = await this.usersService.findOneByUsername(
-			username,
+	): Promise<UserDoc | null> {
+		const user = await this.usersService.userModel.findOne(
+			{ username: username },
 			'_id username role password_hash',
 		);
 
@@ -61,7 +65,7 @@ export class AuthService {
 		return null;
 	}
 
-	async login(user: IUser): Promise<string> {
+	async login(user: RUser | UserDoc): Promise<string> {
 		const payload = {
 			username: user.username,
 			sub: user._id,

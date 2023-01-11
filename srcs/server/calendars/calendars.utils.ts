@@ -1,10 +1,13 @@
 import { NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { Role } from '../users/enum/roles.enum';
-import { IUser } from '../users/interface/user.interface';
-import { ICalendar } from './interface/calendar.interface';
+import { UserDoc } from '../users/schemas/user.schema';
+import { Calendar, CalendarDoc, RCalendar } from './schemas/calendar.schema';
 
-export function asCalendarAccess(user: IUser, calendar: ICalendar): void {
+export function asCalendarAccess(
+	user: UserDoc,
+	calendar: RCalendar | CalendarDoc,
+): void {
 	if (
 		user.role != Role.Admin &&
 		calendar.user.toString() != user._id.toString()
@@ -15,11 +18,14 @@ export function asCalendarAccess(user: IUser, calendar: ICalendar): void {
 }
 
 export async function checkCalendarAccess(
-	user: IUser,
+	user: UserDoc,
 	calendarId: string,
-	CalendarModel: Model<ICalendar>,
+	CalendarModel: Model<Calendar>,
 ): Promise<void> {
-	const existingCalendar = await CalendarModel.findById(calendarId, 'user');
+	const existingCalendar = (await CalendarModel.findById(
+		calendarId,
+		'user',
+	)) as CalendarDoc;
 	if (!existingCalendar) throw new NotFoundException('Calendar not found');
 
 	asCalendarAccess(user, existingCalendar);

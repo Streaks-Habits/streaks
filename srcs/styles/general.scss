@@ -1,6 +1,10 @@
 @import './partials/variables';
 @import './partials/fonts';
 
+html, body {
+	margin: 0;
+}
+
 html {
 	background-color: $secondary_color;
 	font-family: $font-family;
@@ -8,8 +12,12 @@ html {
 	color: $white;
 }
 
-html, body {
-	margin: 0;
+body {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	max-width: 75rem;
+	margin: auto;
 }
 
 a {
@@ -25,7 +33,7 @@ input {
 	background: $secondary_color_light;
 	border: none;
 	border-radius: 5px;
-	padding: 3px 7px 5px 7px;
+	padding: 5px 7px;
 	color: $white;
 	margin: 0 0 15px 0;
 	font-size: 1em;
@@ -49,6 +57,10 @@ button {
 	cursor: pointer;
 }
 
+svg {
+	vertical-align: sub;
+}
+
 svg.spinner {
 	@keyframes spin {
 		from {
@@ -59,4 +71,15 @@ svg.spinner {
 		}
 	}
 	animation: spin 1s ease-in-out infinite;
+}
+
+/* APP */
+#logo {
+	margin: 25px auto 45px auto;
+	width: 13em;
+	display: block;
+}
+
+#app {
+	margin: 0 25px;
 }

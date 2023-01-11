@@ -4,21 +4,22 @@ import { Model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
 import { CreateUserDto } from './dto/create-user.dto';
-import { IUser } from './interface/user.interface';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { isValidObjectId } from '../utils';
+import { RUser, User } from './schemas/user.schema';
 
 @Injectable()
 export class UsersService {
-	constructor(@InjectModel('User') private UserModel: Model<IUser>) {}
+	constructor(@InjectModel('User') private UserModel: Model<User>) {}
 
 	defaultFields = '_id username role';
+	userModel = this.UserModel;
 
 	async create(
 		createUserDto: CreateUserDto,
 		fields = this.defaultFields,
-	): Promise<IUser> {
-		const createUser: Omit<IUser, '_id'> = {
+	): Promise<RUser> {
+		const createUser: User = {
 			username: createUserDto.username,
 			password_hash: await bcrypt.hash(createUserDto.password, 10),
 			role: createUserDto.role,
@@ -30,15 +31,34 @@ export class UsersService {
 		return this.findOne(newUser._id.toString(), fields);
 	}
 
+	async findAll(fields = this.defaultFields): Promise<RUser[]> {
+		const userData = await this.UserModel.find({}, fields);
+		if (!userData || userData.length == 0) {
+			throw new NotFoundException('No users found');
+		}
+		return userData;
+	}
+
+	async findOne(userId: string, fields = this.defaultFields): Promise<RUser> {
+		if (!isValidObjectId(userId))
+			throw new NotFoundException('User not found');
+		const existingUser = await this.UserModel.findById(
+			userId,
+			fields,
+		).exec();
+		if (!existingUser) throw new NotFoundException('User not found');
+		return existingUser;
+	}
+
 	async update(
 		userId: string,
 		updateUserDto: UpdateUserDto,
 		fields = this.defaultFields,
-	): Promise<IUser> {
+	): Promise<RUser> {
 		if (!isValidObjectId(userId))
 			throw new NotFoundException('User not found');
 
-		const updateUser: Omit<IUser, '_id'> = {
+		const updateUser: User = {
 			username: updateUserDto.username,
 			password_hash: undefined,
 			role: updateUserDto.role,
@@ -60,38 +80,7 @@ export class UsersService {
 		return existingUser;
 	}
 
-	async find(fields = this.defaultFields): Promise<IUser[]> {
-		const userData = await this.UserModel.find({}, fields);
-		if (!userData || userData.length == 0) {
-			throw new NotFoundException('No users found');
-		}
-		return userData;
-	}
-
-	async findOne(userId: string, fields = this.defaultFields): Promise<IUser> {
-		if (!isValidObjectId(userId))
-			throw new NotFoundException('User not found');
-		const existingUser = await this.UserModel.findById(
-			userId,
-			fields,
-		).exec();
-		if (!existingUser) throw new NotFoundException('User not found');
-		return existingUser;
-	}
-
-	async findOneByUsername(
-		username: string,
-		fields = this.defaultFields,
-	): Promise<IUser> {
-		const existingUser = await this.UserModel.findOne(
-			{ username: username },
-			fields,
-		).exec();
-		if (!existingUser) throw new NotFoundException('User not found');
-		return existingUser;
-	}
-
-	async delete(userId: string, fields = this.defaultFields): Promise<IUser> {
+	async delete(userId: string, fields = this.defaultFields): Promise<RUser> {
 		if (!isValidObjectId(userId))
 			throw new NotFoundException('User not found');
 		const deletedUser = await this.UserModel.findByIdAndDelete(userId, {

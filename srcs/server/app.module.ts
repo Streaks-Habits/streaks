@@ -6,6 +6,7 @@ import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { CalendarsModule } from './calendars/calendars.module';
+import { ProgressesModule } from './progresses/progresses.module';
 
 @Module({
 	imports: [
@@ -20,9 +21,10 @@ import { CalendarsModule } from './calendars/calendars.module';
 			}),
 			inject: [ConfigService],
 		}),
+		AuthModule,
 		UsersModule,
 		CalendarsModule,
-		AuthModule,
+		ProgressesModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],

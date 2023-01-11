@@ -7,6 +7,7 @@ import {
 	Param,
 	Post,
 	Put,
+	Query,
 	Request,
 	Res,
 	UseGuards,
@@ -29,15 +30,21 @@ import { MultiAuthGuard } from '../auth/guard/multi-auth.guard';
 export class CalendarsController {
 	constructor(private readonly calendarsService: CalendarsService) {}
 
-	@ApiTags('calendars')
+	/*
+	 * CREATE
+	 */
+	@Post()
+	@UseGuards(MultiAuthGuard, RolesGuard)
+	// User allowed, will check after that user can only create a calendar for himself
+	@Roles(Role.Admin, Role.User)
+	// #region doc
+	@ApiTags('Calendars')
 	@ApiHeader({ name: 'x-api-key', description: 'Your api key' })
 	@ApiCreatedResponse({
 		description: 'The created calendar',
 	})
-	@UseGuards(MultiAuthGuard, RolesGuard)
-	@Roles(Role.Admin, Role.User) // User allowed, will check after that user can only create a calendar for himself
-	@Post('/add')
-	async createCalendar(
+	// #endregion doc
+	async create(
 		@Res() response,
 		@Request() request,
 		@Body() createCalendarDto: CreateCalendarDto,
@@ -45,22 +52,103 @@ export class CalendarsController {
 		return response
 			.status(HttpStatus.CREATED)
 			.send(
-				await this.calendarsService.createCalendar(
+				await this.calendarsService.create(
 					request.user,
 					createCalendarDto,
 				),
 			);
 	}
 
-	@ApiTags('calendars')
+	/*
+	 * READ ALL
+	 */
+	@Get()
+	@UseGuards(MultiAuthGuard, RolesGuard)
+	@Roles(Role.Admin)
+	// #region doc
+	@ApiTags('Calendars')
+	@ApiHeader({ name: 'x-api-key', description: 'Your api key' })
+	@ApiOkResponse({
+		description: 'All calendars',
+		isArray: true,
+	})
+	// #endregion doc
+	async findAll(@Res() response, @Request() request) {
+		return response
+			.status(HttpStatus.OK)
+			.send(await this.calendarsService.findAll(request.user));
+	}
+
+	/*
+	 * READ ALL FOR USER
+	 */
+	@Get('/user/:id')
+	@UseGuards(MultiAuthGuard, RolesGuard)
+	// User allowed, will check after that user can only get his own calendar
+	@Roles(Role.Admin, Role.User)
+	// #region doc
+	@ApiTags('Calendars')
+	@ApiHeader({ name: 'x-api-key', description: 'Your api key' })
+	@ApiOkResponse({
+		description: 'All user calendars',
+	})
+	// #endregion doc
+	async findAllForUser(
+		@Res() response,
+		@Request() request,
+		@Param('id') userId: string,
+	) {
+		return response
+			.status(HttpStatus.OK)
+			.send(
+				await this.calendarsService.findAllForUser(
+					request.user,
+					userId,
+				),
+			);
+	}
+
+	/*
+	 * READ ONE
+	 */
+	@Get(':id')
+	@UseGuards(MultiAuthGuard, RolesGuard)
+	// User allowed, will check after that user can only get his own calendar
+	@Roles(Role.Admin, Role.User)
+	// #region doc
+	@ApiTags('Calendars')
+	@ApiHeader({ name: 'x-api-key', description: 'Your api key' })
+	@ApiOkResponse({
+		description: 'The calendar',
+	})
+	// #endregion doc
+	async findOne(
+		@Res() response,
+		@Request() request,
+		@Param('id') calendarId: string,
+	) {
+		return response
+			.status(HttpStatus.OK)
+			.send(
+				await this.calendarsService.findOne(request.user, calendarId),
+			);
+	}
+
+	/*
+	 * UPDATE
+	 */
+	@Put(':id')
+	@UseGuards(MultiAuthGuard, RolesGuard)
+	// User allowed, will check after that user can only update his own calendar
+	@Roles(Role.Admin, Role.User)
+	// #region doc
+	@ApiTags('Calendars')
 	@ApiHeader({ name: 'x-api-key', description: 'Your api key' })
 	@ApiOkResponse({
 		description: 'The updated calendar',
 	})
-	@UseGuards(MultiAuthGuard, RolesGuard)
-	@Roles(Role.Admin, Role.User) // User allowed, will check after that user can only update his own calendar
-	@Put('/update/:id')
-	async updateCalendar(
+	// #endregion doc
+	async update(
 		@Res() response,
 		@Request() request,
 		@Param('id') calendarId: string,
@@ -69,7 +157,7 @@ export class CalendarsController {
 		return response
 			.status(HttpStatus.OK)
 			.send(
-				await this.calendarsService.updateCalendar(
+				await this.calendarsService.update(
 					request.user,
 					calendarId,
 					updateCalendarDto,
@@ -77,104 +165,50 @@ export class CalendarsController {
 			);
 	}
 
-	@ApiTags('calendars')
-	@ApiHeader({ name: 'x-api-key', description: 'Your api key' })
-	@ApiOkResponse({
-		description: 'All calendars',
-		isArray: true,
-	})
+	/*
+	 * DELETE
+	 */
+	@Delete(':id')
 	@UseGuards(MultiAuthGuard, RolesGuard)
-	@Roles(Role.Admin)
-	@Get('/list')
-	async getCalendars(@Res() response) {
-		return response
-			.status(HttpStatus.OK)
-			.send(await this.calendarsService.getAllCalendars());
-	}
-
-	@ApiTags('calendars')
-	@ApiHeader({ name: 'x-api-key', description: 'Your api key' })
-	@ApiOkResponse({
-		description: 'All user calendars',
-	})
-	@UseGuards(MultiAuthGuard, RolesGuard)
-	@Roles(Role.Admin, Role.User) // User allowed, will check after that user can only get his own calendar
-	@Get('/list/:id')
-	async getUserCalendars(
-		@Res() response,
-		@Request() request,
-		@Param('id') userId: string,
-	) {
-		return response
-			.status(HttpStatus.OK)
-			.send(
-				await this.calendarsService.getUserCalendars(
-					request.user,
-					userId,
-				),
-			);
-	}
-
-	@ApiTags('calendars')
-	@ApiHeader({ name: 'x-api-key', description: 'Your api key' })
-	@ApiOkResponse({
-		description: 'The calendar',
-	})
-	@UseGuards(MultiAuthGuard, RolesGuard)
-	@Roles(Role.Admin, Role.User) // User allowed, will check after that user can only get his own calendar
-	@Get('/calendar/:id')
-	async getCalendar(
-		@Res() response,
-		@Request() request,
-		@Param('id') calendarId: string,
-	) {
-		return response
-			.status(HttpStatus.OK)
-			.send(
-				await this.calendarsService.getCalendar(
-					request.user,
-					calendarId,
-				),
-			);
-	}
-
-	@ApiTags('calendars')
+	// User allowed, will check after that user can only delete his own calendar
+	@Roles(Role.Admin, Role.User)
+	// #region doc
+	@ApiTags('Calendars')
 	@ApiHeader({ name: 'x-api-key', description: 'Your api key' })
 	@ApiOkResponse({
 		description: 'The deleted calendar',
 	})
-	@UseGuards(MultiAuthGuard, RolesGuard)
-	@Roles(Role.Admin, Role.User) // User allowed, will check after that user can only delete his own calendar
-	@Delete('/delete/:id')
-	async deleteCalendar(
+	// #endregion doc
+	async delete(
 		@Res() response,
 		@Request() request,
 		@Param('id') calendarId: string,
 	) {
 		return response
 			.status(HttpStatus.OK)
-			.send(
-				await this.calendarsService.deleteCalendar(
-					request.user,
-					calendarId,
-				),
-			);
+			.send(await this.calendarsService.delete(request.user, calendarId));
 	}
 
-	@ApiTags('calendars')
+	/*
+	 * SET STATE
+	 */
+	@Post('/state/:id/:state')
+	@UseGuards(MultiAuthGuard, RolesGuard)
+	// User allowed, will check after that user can only set a state in his own calendar
+	@Roles(Role.Admin, Role.User)
+	// #region doc
+	@ApiTags('Calendars')
 	@ApiHeader({ name: 'x-api-key', description: 'Your api key' })
 	@ApiOkResponse({
 		description: 'TODO',
 	})
-	@UseGuards(MultiAuthGuard, RolesGuard)
-	@Roles(Role.Admin, Role.User) // User allowed, will check after that user can only set a state in his own calendar
-	@Put('/set_state/:id/:date/:state')
+	// #endregion doc
 	async setState(
 		@Res() response,
 		@Request() request,
 		@Param('id') calendarId: string,
-		@Param('date') dateString: string,
 		@Param('state') state: string,
+		@Query('for') forQuery: string, // YYYY-MM-DD
 	) {
 		return response
 			.status(HttpStatus.OK)
@@ -182,25 +216,30 @@ export class CalendarsController {
 				await this.calendarsService.setState(
 					request.user,
 					calendarId,
-					dateString,
 					state,
+					forQuery,
 				),
 			);
 	}
 
-	@ApiTags('calendars')
+	/*
+	 * GET MONTH
+	 */
+	@UseGuards(MultiAuthGuard, RolesGuard)
+	@Roles(Role.Admin, Role.User) // User allowed, will check after that user can only get a month of his own calendar
+	@Get('/month/:id')
+	// #region doc
+	@ApiTags('Calendars')
 	@ApiHeader({ name: 'x-api-key', description: 'Your api key' })
 	@ApiOkResponse({
 		description: 'TODO',
 	})
-	@UseGuards(MultiAuthGuard, RolesGuard)
-	@Roles(Role.Admin, Role.User) // User allowed, will check after that user can only get a month of his own calendar
-	@Get('/month/:id/:month')
+	// #endregion doc
 	async getMonth(
 		@Res() response,
 		@Request() request,
 		@Param('id') calendarId: string,
-		@Param('month') monthString: string,
+		@Query('month') monthQuery: string, // YYYY-MM
 	) {
 		return response
 			.status(HttpStatus.OK)
@@ -208,7 +247,7 @@ export class CalendarsController {
 				await this.calendarsService.getMonth(
 					request.user,
 					calendarId,
-					monthString,
+					monthQuery,
 				),
 			);
 	}

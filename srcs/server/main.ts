@@ -55,6 +55,6 @@ async function bootstrap() {
 		customSiteTitle: 'Streaks API documentation',
 	});
 
-	await app.listen(config.get<number>('PORT'));
+	await app.listen(config.get<number>('PORT'), '::');
 }
 bootstrap();

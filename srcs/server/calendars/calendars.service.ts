@@ -8,29 +8,29 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { DateTime } from 'luxon';
 import { CreateCalendarDto } from './dto/create-calendar.dto';
-import { ICalendar } from './interface/calendar.interface';
 import { UpdateCalendarDto } from './dto/update-calendar.dto';
 import { isValidObjectId } from '../utils';
 import { UsersService } from '../users/users.service';
 import { State } from './enum/state.enum';
 import { Role } from '../users/enum/roles.enum';
-import { IUser } from '../users/interface/user.interface';
 import { asCalendarAccess, checkCalendarAccess } from './calendars.utils';
+import { Calendar, RCalendar } from './schemas/calendar.schema';
+import { UserDoc } from '../users/schemas/user.schema';
 
 @Injectable()
 export class CalendarsService {
 	constructor(
-		@InjectModel('Calendar') private CalendarModel: Model<ICalendar>,
+		@InjectModel('Calendar') private CalendarModel: Model<Calendar>,
 		private readonly usersService: UsersService,
 	) {}
 
 	defaultFields = '_id name agenda current_streak streak_expended_today';
 
-	async createCalendar(
-		requester: IUser,
+	async create(
+		requester: UserDoc,
 		createCalendarDto: CreateCalendarDto,
 		fields = this.defaultFields,
-	): Promise<ICalendar> {
+	): Promise<RCalendar> {
 		// using getUser to check if user exists (will throw NotFoundException if not)
 		const owner = await this.usersService.findOne(createCalendarDto.user);
 
@@ -44,22 +44,104 @@ export class CalendarsService {
 			);
 
 		// create a new calendar object with given parameters
-		const createCalendar: Omit<ICalendar, '_id'> = {
+		const createCalendar: Calendar = {
 			name: createCalendarDto.name,
 			user: new Types.ObjectId(owner._id),
 		};
 
 		const newCalendar = await new this.CalendarModel(createCalendar).save();
 		// return getCalendar instead of newCalendar to apply fields selection
-		return this.getCalendar(requester, newCalendar._id.toString(), fields);
+		return this.findOne(requester, newCalendar._id.toString(), fields);
 	}
 
-	async updateCalendar(
-		requester: IUser,
+	async findAll(
+		requester: UserDoc,
+		fields = this.defaultFields,
+	): Promise<RCalendar[]> {
+		const calendarsData = (await this.CalendarModel.find({}, fields)
+			.populate('user', this.usersService.defaultFields)
+			.lean()) as RCalendar[];
+
+		for (const calendar of calendarsData) {
+			// Compute streak
+			const streakUpdated = await this.computeStreak(
+				requester,
+				calendar._id.toString(),
+			);
+			calendar.current_streak = streakUpdated.current_streak;
+			calendar.streak_expended_today =
+				streakUpdated.streak_expended_today;
+		}
+
+		return calendarsData;
+	}
+
+	async findAllForUser(
+		requester: UserDoc,
+		userId: string,
+		fields = this.defaultFields,
+	): Promise<RCalendar[]> {
+		const calendarsData = (await this.CalendarModel.find(
+			{
+				user: userId,
+			},
+			fields + ' user',
+		)
+			.populate('user', this.usersService.defaultFields)
+			.lean()) as RCalendar[];
+		if (!calendarsData || calendarsData.length == 0)
+			throw new NotFoundException('No calendars found');
+
+		for (const calendar of calendarsData) {
+			// Compute streak
+			const streakUpdated = await this.computeStreak(
+				requester,
+				calendar._id.toString(),
+			);
+			calendar.current_streak = streakUpdated.current_streak;
+			calendar.streak_expended_today =
+				streakUpdated.streak_expended_today;
+		}
+		return calendarsData;
+	}
+
+	async findOne(
+		requester: UserDoc,
+		calendarId: string,
+		fields = this.defaultFields,
+	): Promise<RCalendar> {
+		// Check given parameters
+		if (!isValidObjectId(calendarId))
+			throw new NotFoundException('Calendar not found');
+
+		// Get calendar
+		const existingCalendar = (await this.CalendarModel.findById(
+			calendarId,
+			fields + ' user',
+		)
+			.populate('user', this.usersService.defaultFields)
+			.lean()) as RCalendar;
+		if (!existingCalendar)
+			throw new NotFoundException('Calendar not found');
+
+		// check that creator is the owner (except for admin)
+		asCalendarAccess(requester, existingCalendar);
+
+		// Compute streak
+		const streakUpdated = await this.computeStreak(requester, calendarId);
+		existingCalendar.current_streak = streakUpdated.current_streak;
+		existingCalendar.streak_expended_today =
+			streakUpdated.streak_expended_today;
+
+		return existingCalendar;
+	}
+
+	async update(
+		requester: UserDoc,
 		calendarId: string,
 		updateCalendarDto: UpdateCalendarDto,
 		fields = this.defaultFields,
-	): Promise<ICalendar> {
+	): Promise<RCalendar> {
 		// Check given parameters
 		if (!isValidObjectId(calendarId))
 			throw new NotFoundException('Calendar not found');
@@ -68,7 +150,7 @@ export class CalendarsService {
 		await checkCalendarAccess(requester, calendarId, this.CalendarModel);
 
 		// Create a new calendar object with given parameters
-		const updateCalendar: Omit<ICalendar, '_id'> = {
+		const updateCalendar: Calendar = {
 			name: updateCalendarDto.name,
 			user: undefined,
 		};
@@ -79,74 +161,30 @@ export class CalendarsService {
 			);
 
 		// Update calendar with the new object
-		const existingCalendar = await this.CalendarModel.findByIdAndUpdate(
+		const existingCalendar = (await this.CalendarModel.findByIdAndUpdate(
 			calendarId,
 			updateCalendar,
 			{ new: true, fields: fields },
-		);
-		if (!existingCalendar)
-			throw new NotFoundException('Calendar not found');
-		return existingCalendar;
-	}
-
-	async getAllCalendars(fields = this.defaultFields): Promise<ICalendar[]> {
-		const calendarsData = await this.CalendarModel.find(
-			{},
-			fields,
-		).populate('user', this.usersService.defaultFields);
-		if (!calendarsData || calendarsData.length == 0)
-			throw new NotFoundException('No calendars found');
-		return calendarsData;
-	}
-
-	async getUserCalendars(
-		requester: IUser,
-		userId: string,
-		fields = this.defaultFields,
-	): Promise<ICalendar[]> {
-		const calendarsData = await this.CalendarModel.find(
-			{
-				user: userId,
-			},
-			fields + ' user',
-		);
-		if (!calendarsData || calendarsData.length == 0)
-			throw new NotFoundException('No calendars found');
-
-		for (const calendar of calendarsData)
-			asCalendarAccess(requester, calendar);
-		return calendarsData;
-	}
-
-	async getCalendar(
-		requester: IUser,
-		calendarId: string,
-		fields = this.defaultFields,
-	): Promise<ICalendar> {
-		// Check given parameters
-		if (!isValidObjectId(calendarId))
-			throw new NotFoundException('Calendar not found');
-
-		// Get calendar
-		const existingCalendar = await this.CalendarModel.findById(
-			calendarId,
-			fields + ' user',
-		);
+		)
+			.populate('user', this.usersService.defaultFields)
+			.lean()) as RCalendar;
 		if (!existingCalendar)
 			throw new NotFoundException('Calendar not found');
 
-		// check that creator is the owner (except for admin)
-		asCalendarAccess(requester, existingCalendar);
+		// Compute streak
+		const streakUpdated = await this.computeStreak(requester, calendarId);
+		existingCalendar.current_streak = streakUpdated.current_streak;
+		existingCalendar.streak_expended_today =
+			streakUpdated.streak_expended_today;
 
-		existingCalendar.user = undefined; // remove user from calendar
 		return existingCalendar;
 	}
 
-	async deleteCalendar(
-		requester: IUser,
+	async delete(
+		requester: UserDoc,
 		calendarId: string,
 		fields = this.defaultFields,
-	): Promise<ICalendar> {
+	): Promise<RCalendar> {
 		// Check given parameters
 		if (!isValidObjectId(calendarId))
 			throw new NotFoundException('Calendar not found');
@@ -155,20 +193,23 @@ export class CalendarsService {
 		await checkCalendarAccess(requester, calendarId, this.CalendarModel);
 
 		// Delete calendar
-		const deletedCalendar = await this.CalendarModel.findByIdAndDelete(
+		const deletedCalendar = (await this.CalendarModel.findByIdAndDelete(
 			calendarId,
-		).select(fields);
+		)
+			.select(fields)
+			.populate('user', this.usersService.defaultFields)
+			.lean()) as RCalendar;
 		if (!deletedCalendar) throw new NotFoundException('Calendar not found');
 		return deletedCalendar;
 	}
 
 	async setState(
-		requester: IUser,
+		requester: UserDoc,
 		calendarId: string,
-		dateString: string,
 		state: string,
+		forQuery: string,
 		fields = this.defaultFields,
-	): Promise<ICalendar> {
+	): Promise<RCalendar> {
 		// Check given parameters
 		if (!isValidObjectId(calendarId))
 			throw new NotFoundException('Calendar not found');
@@ -176,11 +217,17 @@ export class CalendarsService {
 		// check that requester is the owner (except for admin)
 		await checkCalendarAccess(requester, calendarId, this.CalendarModel);
 
-		const date = DateTime.fromFormat(dateString, 'yyyy-MM-dd');
-		if (!date.isValid)
-			throw new BadRequestException(date.invalidExplanation);
-		if (date.startOf('day') > DateTime.now().startOf('day'))
-			throw new BadRequestException("can't set state for future dates");
+		// Check that the date is valid
+		let date = DateTime.now();
+		if (forQuery !== undefined) {
+			date = DateTime.fromFormat(forQuery, 'yyyy-MM-dd');
+			if (!date.isValid)
+				throw new BadRequestException(date.invalidExplanation);
+			if (date.startOf('day') > DateTime.now().startOf('day'))
+				throw new BadRequestException(
+					"can't set state for future dates",
+				);
+		} else forQuery = date.toFormat('yyyy-MM-dd');
 
 		if (!Object.values(State).includes(state as State))
 			throw new BadRequestException(
@@ -194,31 +241,29 @@ export class CalendarsService {
 			calendarId,
 			{ $set: { [`days.${date.startOf('day').toISODate()}`]: state } },
 			{ new: true, fields: fields },
-		);
+		).populate('user', this.usersService.defaultFields);
 		if (!updatedCalendar) throw new NotFoundException('Calendar not found');
 
 		// Update streak count
-		const streakUpdated = await this.computeStreak(
-			requester,
-			calendarId,
-			fields,
-		);
+		const streakUpdated = await this.computeStreak(requester, calendarId);
 
 		// Return updated state
 		return {
-			...streakUpdated['_doc'],
+			...updatedCalendar['_doc'],
+			current_streak: streakUpdated.current_streak,
+			streak_expended_today: streakUpdated.streak_expended_today,
 			days: {
-				[dateString]: state,
+				[forQuery]: state,
 			},
 		};
 	}
 
 	async getMonth(
-		requester: IUser,
+		requester: UserDoc,
 		calendarId: string,
-		monthString: string,
+		monthQuery: string,
 		fields = this.defaultFields,
-	): Promise<ICalendar> {
+	): Promise<RCalendar> {
 		// Check given parameters
 		if (!isValidObjectId(calendarId))
 			throw new NotFoundException('Calendar not found');
@@ -226,11 +271,17 @@ export class CalendarsService {
 		// check that requester is the owner (except for admin)
 		await checkCalendarAccess(requester, calendarId, this.CalendarModel);
 
-		const month = DateTime.fromFormat(monthString, 'yyyy-MM');
-		if (!month.isValid)
-			throw new BadRequestException(month.invalidExplanation);
-		if (month.endOf('month') > DateTime.now().endOf('month'))
-			throw new BadRequestException("can't get data of future months");
+		// Check that the month is valid
+		let month = DateTime.now();
+		if (monthQuery !== undefined) {
+			month = DateTime.fromFormat(monthQuery, 'yyyy-MM');
+			if (!month.isValid)
+				throw new BadRequestException(month.invalidExplanation);
+			if (month.endOf('month') > DateTime.now().endOf('month'))
+				throw new BadRequestException(
+					"can't get data of future months",
+				);
+		}
 
 		// Create a fields string to select only the days of the given month
 		let daysFields = '';
@@ -243,21 +294,28 @@ export class CalendarsService {
 		}
 
 		// Get the calendar (with previously created fields string)
-		const existingCalendar = await this.CalendarModel.findById(
+		const existingCalendar = (await this.CalendarModel.findById(
 			calendarId,
 			fields + daysFields,
-		);
+		)
+			.populate('user', this.usersService.defaultFields)
+			.lean()) as RCalendar;
 		if (!existingCalendar)
 			throw new NotFoundException('Calendar not found');
+
+		// Compute streak
+		const streakUpdated = await this.computeStreak(requester, calendarId);
+		existingCalendar.current_streak = streakUpdated.current_streak;
+		existingCalendar.streak_expended_today =
+			streakUpdated.streak_expended_today;
 
 		return existingCalendar;
 	}
 
 	async computeStreak(
-		requester: IUser,
+		requester: UserDoc,
 		calendarId: string,
-		fields = this.defaultFields,
-	): Promise<ICalendar> {
+	): Promise<{ current_streak: number; streak_expended_today: boolean }> {
 		// Check given parameters
 		if (!isValidObjectId(calendarId))
 			throw new NotFoundException('Calendar not found');
@@ -274,6 +332,13 @@ export class CalendarsService {
 			throw new NotFoundException('Calendar not found');
 
 		// Compute streak
+		if (existingCalendar.days === undefined) {
+			return {
+				current_streak: 0,
+				streak_expended_today: false,
+			};
+		}
+
 		let streak = 0;
 		const streak_expended_today =
 			existingCalendar.days.get(DateTime.now().toISODate()) ===
@@ -297,19 +362,9 @@ export class CalendarsService {
 		}
 		if (streak_expended_today) streak++;
 
-		// Update calendar
-		const updatedCalendar = await this.CalendarModel.findByIdAndUpdate(
-			calendarId,
-			{
-				$set: {
-					current_streak: streak,
-					streak_expended_today: streak_expended_today,
-				},
-			},
-			{ new: true, fields: fields },
-		);
-		if (!updatedCalendar) throw new NotFoundException('Calendar not found');
-
-		return updatedCalendar;
+		return {
+			current_streak: streak,
+			streak_expended_today,
+		};
 	}
 }

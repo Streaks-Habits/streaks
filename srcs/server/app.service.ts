@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { Role } from './users/enum/roles.enum';
-import { IUser } from './users/interface/user.interface';
+import { RUser } from './users/schemas/user.schema';
 import { UsersService } from './users/users.service';
 
 @Injectable()
@@ -11,7 +11,7 @@ export class AppService {
 		username: string,
 		password: string,
 		passwordRepeat: string,
-	): Promise<IUser> {
+	): Promise<RUser> {
 		if (!username || username.length == 0)
 			throw new BadRequestException('Username cannot be empty');
 		if (!password || password.length == 0)

@@ -1,17 +1,5 @@
 @import './partials/variables';
 
-body {
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-}
-
-#logo {
-	margin: 25px auto 45px auto;
-	width: 13em;
-	display: block;
-}
-
 #app {
 	margin: 0 15px;
 }

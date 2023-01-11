@@ -91,7 +91,7 @@ export default {
 			const res = await fetch(
 				`/api/v1/calendars/month/${
 					this.calendar._id
-				}/${this.monthDate.toFormat('yyyy-MM')}`,
+				}?month=${this.monthDate.toFormat('yyyy-MM')}`,
 				{
 					method: 'GET',
 					headers: {
@@ -131,17 +131,17 @@ export default {
 			}
 
 			if (!dayToSet) {
-				this.hideSetState();
+				this.hideSetState(null);
 				return;
 			}
 
 			dayToSet.status = 'loading';
 			const res = await fetch(
-				`/api/v1/calendars/set_state/${
+				`/api/v1/calendars/state/${
 					this.calendar._id
-				}/${dayToSet.date.toFormat('yyyy-MM-dd')}/${state}`,
+				}/${dayToSet.date.toFormat('yyyy-MM-dd')}?for=${state}`,
 				{
-					method: 'PUT',
+					method: 'POST',
 					headers: {
 						Accept: 'application/json',
 					},
@@ -161,9 +161,16 @@ export default {
 				// TODO: show error to user
 				console.error("Error while setting day's state");
 			}
-			this.hideSetState();
+			this.hideSetState(null);
 		},
-		hideSetState() {
+		hideSetState(e) {
+			// Check that the click is outside the set state box
+			if (
+				e != null &&
+				e.target.closest('.set_state_overlay') !== e.target
+			)
+				return;
+
 			this.setState.show = false;
 			this.setState.date = undefined;
 			this.setState.loading = false;
@@ -173,7 +180,7 @@ export default {
 	},
 	template: `
 		<div class="calendar">
-			<div class="set_state_overlay" v-if="setState.show" @click="this.hideSetState()">
+			<div class="set_state_overlay" v-if="setState.show" @click="hideSetState($event)">
 				<div
 					class="set_state_box"
 					:style="{ left: this.setState.pos.x + 'px', top: this.setState.pos.y + 'px' }"
@@ -203,9 +210,9 @@ export default {
 				</div>
 			</div>
 
-			<div class="calendar_header">
+			<div class="header">
 				<p class="name">{{ calendar.name }}</p>
-				<div class="calendar_controls">
+				<div class="controls">
 					<svg @click="prevMonth()" class="caret left"><use xlink:href="/public/icons/caret.svg#icon"></use></svg>
 					<svg @click="currentMonth()" class="today"><use xlink:href="/public/icons/today.svg#icon"></use></svg>
 					<svg @click="nextMonth()" class="caret right"><use xlink:href="/public/icons/caret.svg#icon"></use></svg>
