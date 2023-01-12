@@ -187,7 +187,7 @@ export default {
 				>
 					<svg v-show="addMeasure.loading" class="spinner"><use xlink:href="/public/icons/spinner.svg#icon"></use></svg>
 					<form v-show="!addMeasure.loading" @submit.prevent="postMeasure()">
-						<input ref="addMeasureInput" type="number" name="measure" v-model="addMeasure.value" />
+						<input ref="addMeasureInput" type="number" step="any" name="measure" v-model="addMeasure.value" />
 						<button type="submit">Add measure</button>
 					</form>
 				</div>
