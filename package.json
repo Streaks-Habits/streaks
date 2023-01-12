@@ -12,7 +12,7 @@
 		"start": "nest start",
 		"start:dev": "nest start --watch",
 		"start:prod": "node dist/server/main",
-		"lint": "eslint \"srcs/**/*.ts\" --fix",
+		"test:lint": "eslint \"srcs/**/*.ts\" --fix",
 		"sass": "sass srcs/styles:dist/styles",
 		"sass:dev": "sass --watch srcs/styles:dist/styles"
 	},
