@@ -7,6 +7,8 @@ eslint:
   image: node:latest
   stage: test
   retry: 2
+  only:
+    - main
   script:
     - npm install @typescript-eslint/eslint-plugin @typescript-eslint/parser eslint
     - npm run test:lint
@@ -14,8 +16,6 @@ eslint:
 sast:
   stage: test
   retry: 2
-  only:
-    - main
 include:
 - template: Security/SAST.gitlab-ci.yml
 - template: Security/Dependency-Scanning.gitlab-ci.yml
