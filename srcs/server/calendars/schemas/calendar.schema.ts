@@ -1,8 +1,23 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
+import { IsBoolean, IsNotEmpty } from 'class-validator';
 import { Types, Schema as MongooseSchema } from 'mongoose';
 import { RUser, User } from '../../users/schemas/user.schema';
 import { State } from '../enum/state.enum';
+
+export class CalendarNotifications {
+	@ApiProperty()
+	@IsNotEmpty()
+	@IsBoolean()
+	@Prop({ required: true })
+	reminders: boolean;
+
+	@ApiProperty()
+	@IsNotEmpty()
+	@IsBoolean()
+	@Prop({ required: true })
+	congrats: boolean;
+}
 
 @Schema()
 export class Calendar {
@@ -16,11 +31,14 @@ export class Calendar {
 	})
 	user: Types.ObjectId;
 
-	@Prop({ required: false, type: Boolean, isArray: true })
+	@Prop({ required: false, type: Array<boolean>, isArray: true })
 	agenda?: Array<boolean>;
 
 	@Prop({ required: false })
 	days?: Map<string, State>;
+
+	@Prop({ required: false })
+	notifications?: CalendarNotifications;
 }
 
 export const CalendarSchema = SchemaFactory.createForClass(Calendar);
@@ -54,4 +72,7 @@ export class RCalendar {
 
 	@ApiProperty({ type: Boolean })
 	streak_expended_today: boolean;
+
+	@ApiProperty({ type: CalendarNotifications })
+	notifications?: CalendarNotifications;
 }

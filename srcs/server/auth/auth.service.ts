@@ -2,11 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { Types } from 'mongoose';
-import { Role } from '../users/enum/roles.enum';
 import { RUser, UserDoc } from '../users/schemas/user.schema';
 import { UsersService } from '../users/users.service';
 import { isValidObjectId } from '../utils';
+import { AdminUser } from './admin.object';
 
 @Injectable()
 export class AuthService {
@@ -18,13 +17,7 @@ export class AuthService {
 
 	async validateApiKey(apiKey: string): Promise<UserDoc | null> {
 		if (apiKey === this.configService.get('ADMIN_API_KEY'))
-			return {
-				_id: new Types.ObjectId(0),
-				role: Role.Admin,
-				username: '',
-				password_hash: '',
-				api_key_hash: '',
-			};
+			return AdminUser;
 
 		const userId = apiKey.split(':')[0];
 
@@ -32,7 +25,7 @@ export class AuthService {
 		try {
 			const user = await this.usersService.userModel.findById(
 				userId,
-				'api_hey_hash',
+				'api_key_hash',
 			);
 
 			if (
@@ -53,6 +46,7 @@ export class AuthService {
 		username: string,
 		password: string,
 	): Promise<UserDoc | null> {
+		// TODO: findOne (pour avoir tout ce qu'il faut)
 		const user = await this.usersService.userModel.findOne(
 			{ username: username },
 			'_id username role password_hash',

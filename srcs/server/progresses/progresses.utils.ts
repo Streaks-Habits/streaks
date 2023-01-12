@@ -8,19 +8,16 @@ export function asProgressAccess(
 	user: UserDoc,
 	progress: RProgress | ProgressDoc,
 ): void {
-	let allowed = false;
-	if (user.role == Role.Admin) allowed = true;
+	if (user.role == Role.Admin) return;
 
-	// If progress is populated with user
-	if (typeof progress.user == 'object') {
-		if (progress.user._id.toString() == user._id.toString()) allowed = true;
-	}
-	// If progress is not populated with user
-	else {
-		if (progress.user == user._id.toString()) allowed = true;
-	}
+	if (!progress.user)
+		throw new UnauthorizedException('this progress is not owned');
 
-	if (!allowed)
+	let progressUser: string;
+	if (typeof progress.user == 'string') progressUser = progress.user;
+	else progressUser = progress.user._id.toString();
+
+	if (progressUser != user._id.toString())
 		throw new UnauthorizedException(
 			'you are not allowed to access this progress',
 		);

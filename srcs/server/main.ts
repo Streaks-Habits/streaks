@@ -22,7 +22,7 @@ async function bootstrap() {
 		secret: 'TODO: load this from a .env file',
 	});
 
-	app.useGlobalPipes(new ValidationPipe());
+	app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
 	app.useGlobalFilters(new MongoExceptionFilter());
 
 	app.useStaticAssets({

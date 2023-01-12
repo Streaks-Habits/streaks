@@ -1,6 +1,15 @@
-import { IsEnum, IsNotEmpty, IsString, MaxLength } from 'class-validator';
+import {
+	IsEnum,
+	IsNotEmpty,
+	IsOptional,
+	IsString,
+	MaxLength,
+	ValidateNested,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Role } from '../enum/roles.enum';
+import { Notifications } from '../schemas/user.schema';
+import { Type } from 'class-transformer';
 
 export class CreateUserDto {
 	@ApiProperty()
@@ -18,4 +27,10 @@ export class CreateUserDto {
 	@IsEnum(Role)
 	@IsNotEmpty()
 	readonly role: Role;
+
+	@ApiProperty()
+	@IsOptional()
+	@Type(() => Notifications)
+	@ValidateNested()
+	readonly notifications?: Notifications;
 }

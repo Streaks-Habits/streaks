@@ -6,8 +6,11 @@ import {
 	IsOptional,
 	IsString,
 	MaxLength,
+	ValidateNested,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { CalendarNotifications } from '../schemas/calendar.schema';
+import { Type } from 'class-transformer';
 
 export class CreateCalendarDto {
 	@ApiProperty()
@@ -25,6 +28,12 @@ export class CreateCalendarDto {
 	@IsBoolean({ each: true })
 	@ArrayMaxSize(7)
 	@ArrayMinSize(7)
+	@IsNotEmpty()
+	readonly agenda: Array<boolean>;
+
+	@ApiProperty()
 	@IsOptional()
-	readonly agenda: boolean[];
+	@Type(() => CalendarNotifications)
+	@ValidateNested()
+	readonly notifications: CalendarNotifications;
 }

@@ -24,7 +24,7 @@ export class CalendarsService {
 		private readonly usersService: UsersService,
 	) {}
 
-	defaultFields = '_id name agenda current_streak streak_expended_today';
+	defaultFields = '_id name agenda notifications';
 
 	async create(
 		requester: UserDoc,
@@ -47,6 +47,8 @@ export class CalendarsService {
 		const createCalendar: Calendar = {
 			name: createCalendarDto.name,
 			user: new Types.ObjectId(owner._id),
+			agenda: createCalendarDto.agenda,
+			notifications: createCalendarDto.notifications,
 		};
 
 		const newCalendar = await new this.CalendarModel(createCalendar).save();
@@ -111,6 +113,7 @@ export class CalendarsService {
 		fields = this.defaultFields,
 	): Promise<RCalendar> {
 		// Check given parameters
+		calendarId = calendarId.toString().trim();
 		if (!isValidObjectId(calendarId))
 			throw new NotFoundException('Calendar not found');
 
@@ -143,6 +146,7 @@ export class CalendarsService {
 		fields = this.defaultFields,
 	): Promise<RCalendar> {
 		// Check given parameters
+		calendarId = calendarId.toString().trim();
 		if (!isValidObjectId(calendarId))
 			throw new NotFoundException('Calendar not found');
 
@@ -153,6 +157,8 @@ export class CalendarsService {
 		const updateCalendar: Calendar = {
 			name: updateCalendarDto.name,
 			user: undefined,
+			agenda: updateCalendarDto.agenda,
+			notifications: updateCalendarDto.notifications,
 		};
 		if (updateCalendarDto.user)
 			// using getUser to check if user exists (will throw NotFoundException if not)
@@ -186,6 +192,7 @@ export class CalendarsService {
 		fields = this.defaultFields,
 	): Promise<RCalendar> {
 		// Check given parameters
+		calendarId = calendarId.toString().trim();
 		if (!isValidObjectId(calendarId))
 			throw new NotFoundException('Calendar not found');
 
@@ -211,6 +218,7 @@ export class CalendarsService {
 		fields = this.defaultFields,
 	): Promise<RCalendar> {
 		// Check given parameters
+		calendarId = calendarId.toString().trim();
 		if (!isValidObjectId(calendarId))
 			throw new NotFoundException('Calendar not found');
 
@@ -265,6 +273,7 @@ export class CalendarsService {
 		fields = this.defaultFields,
 	): Promise<RCalendar> {
 		// Check given parameters
+		calendarId = calendarId.toString().trim();
 		if (!isValidObjectId(calendarId))
 			throw new NotFoundException('Calendar not found');
 
@@ -317,6 +326,7 @@ export class CalendarsService {
 		calendarId: string,
 	): Promise<{ current_streak: number; streak_expended_today: boolean }> {
 		// Check given parameters
+		calendarId = calendarId.toString().trim();
 		if (!isValidObjectId(calendarId))
 			throw new NotFoundException('Calendar not found');
 

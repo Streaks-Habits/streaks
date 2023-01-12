@@ -139,7 +139,7 @@ export default {
 			const res = await fetch(
 				`/api/v1/calendars/state/${
 					this.calendar._id
-				}/${dayToSet.date.toFormat('yyyy-MM-dd')}?for=${state}`,
+				}/${state}?for=${dayToSet.date.toFormat('yyyy-MM-dd')}`,
 				{
 					method: 'POST',
 					headers: {

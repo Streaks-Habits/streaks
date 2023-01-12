@@ -25,6 +25,7 @@ import { UpdateCalendarDto } from './dto/update-calendar.dto';
 import { Role } from '../users/enum/roles.enum';
 import { CalendarsService } from './calendars.service';
 import { MultiAuthGuard } from '../auth/guard/multi-auth.guard';
+import { RCalendar } from './schemas/calendar.schema';
 
 @Controller('/api/v1/calendars')
 export class CalendarsController {
@@ -41,6 +42,7 @@ export class CalendarsController {
 	@ApiTags('Calendars')
 	@ApiHeader({ name: 'x-api-key', description: 'Your api key' })
 	@ApiCreatedResponse({
+		type: RCalendar,
 		description: 'The created calendar',
 	})
 	// #endregion doc

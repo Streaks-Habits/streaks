@@ -8,10 +8,16 @@ export function asCalendarAccess(
 	user: UserDoc,
 	calendar: RCalendar | CalendarDoc,
 ): void {
-	if (
-		user.role != Role.Admin &&
-		calendar.user.toString() != user._id.toString()
-	)
+	if (user.role == Role.Admin) return;
+
+	if (!calendar.user)
+		throw new UnauthorizedException('this calendar is not owned');
+
+	let calendarUser: string;
+	if (typeof calendar.user == 'string') calendarUser = calendar.user;
+	else calendarUser = calendar.user._id.toString();
+
+	if (calendarUser != user._id.toString())
 		throw new UnauthorizedException(
 			'you are not allowed to access this calendar',
 		);

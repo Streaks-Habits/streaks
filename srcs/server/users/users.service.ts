@@ -12,7 +12,7 @@ import { RUser, User } from './schemas/user.schema';
 export class UsersService {
 	constructor(@InjectModel('User') private UserModel: Model<User>) {}
 
-	defaultFields = '_id username role';
+	defaultFields = '_id username role notifications';
 	userModel = this.UserModel;
 
 	async create(
@@ -63,6 +63,7 @@ export class UsersService {
 			password_hash: undefined,
 			role: updateUserDto.role,
 			api_key_hash: undefined,
+			notifications: updateUserDto.notifications,
 		};
 		if (updateUserDto.password) {
 			updateUser.password_hash = await bcrypt.hash(
@@ -70,6 +71,8 @@ export class UsersService {
 				10,
 			);
 		}
+		if (Object.keys(updateUserDto.notifications).length == 0)
+			updateUser.notifications = undefined;
 
 		const existingUser = await this.UserModel.findByIdAndUpdate(
 			userId,
