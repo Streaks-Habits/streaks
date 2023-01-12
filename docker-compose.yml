@@ -1,0 +1,32 @@
+version: "3.9"
+services:
+  db:
+    image : mongo:5.0.8
+    container_name: mongodb
+    restart: always
+    ports:
+      - 27018:27017
+    volumes:
+    - ./database:/data/db
+
+  streaks:
+    build: .
+    container_name: "streaks"
+    restart: always
+    depends_on:
+      - db
+    environment:
+      - TZ=Europe/Paris
+      - MONGO_URI=mongodb://db:27017/streaks?retryWrites=true&w=majority
+      - JWT_SECRET=${JWT_SECRET}
+      - AUTH_COOKIE_EXPIRES=1814400 # three weeks
+      - AUTH_COOKIE_SECRET=${AUTH_COOKIE_SECRET}
+
+      - MATRIX_ENABLED=${MATRIX_ENABLED}
+      - MATRIX_USER=${MATRIX_USER}
+      - MATRIX_URL=${MATRIX_URL}
+      - MATRIX_TOKEN=${MATRIX_TOKEN}
+
+      - ADMIN_API_KEY=${ADMIN_API_KEY}
+    ports:
+      - 3000:80
