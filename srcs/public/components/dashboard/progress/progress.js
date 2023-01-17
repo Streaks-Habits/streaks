@@ -8,7 +8,7 @@ export default {
 			// format: 'YYYY-MM-DD'
 			type: String,
 			required: false,
-			default: luxon.DateTime.now().toFormat('yyyy-MM-dd'),
+			default: luxon.DateTime.now().toISO(),
 		},
 	},
 	data() {
@@ -73,9 +73,6 @@ export default {
 			}
 		},
 		async fetch() {
-			console.log('fetching');
-			console.log(this.recurrenceDelta);
-			console.log(this.referenceDate.toFormat('yyyy-MM-dd'));
 			const res = await fetch(
 				`/api/v1/progresses/${
 					this.progress._id
@@ -115,8 +112,18 @@ export default {
 		async postMeasure() {
 			this.addMeasure.loading = true;
 
+			let forDate = luxon.DateTime.now();
+			if (
+				this.referenceDate.toFormat('yyyy-MM-dd') !==
+				forDate.toFormat('yyyy-MM-dd')
+			) {
+				forDate = this.referenceDate;
+			}
+
 			const res = await fetch(
-				`/api/v1/progresses/measures/${this.progress._id}/${this.addMeasure.value}`,
+				`/api/v1/progresses/measures/${this.progress._id}/${
+					this.addMeasure.value
+				}?for=${forDate.toJSDate().toISOString()}`,
 				{
 					method: 'PUT',
 					headers: {
@@ -157,7 +164,6 @@ export default {
 		},
 		replaceAddMeasure() {
 			if (this.addMeasure.parentBox == null) return;
-			console.log('replacing');
 			this.addMeasure.pos.x =
 				this.addMeasure.parentBox.getBoundingClientRect().x +
 				this.addMeasure.parentBox.offsetWidth / 2;
