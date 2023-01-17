@@ -287,6 +287,64 @@ export class ProgressesService {
 		existingProgress.current_progress = await this.computeProgress(
 			requester,
 			progressId,
+			DateTime.fromJSDate(forDate),
+		);
+
+		return existingProgress;
+	}
+
+	async deleteMeasureRange(
+		requester: UserDoc,
+		progressId: string,
+		fromDateQuery: string,
+		toDateQuery: string,
+	): Promise<RProgress> {
+		// Check given parameters
+		if (!isValidObjectId(progressId))
+			throw new NotFoundException('Progress not found');
+
+		if (fromDateQuery === undefined)
+			throw new BadRequestException('?from query is required');
+		if (toDateQuery === undefined)
+			throw new BadRequestException('?to query is required');
+
+		const fromDate_luxon = DateTime.fromISO(fromDateQuery);
+		if (!fromDate_luxon.isValid)
+			throw new BadRequestException(fromDate_luxon.invalidExplanation);
+		const fromDate = fromDate_luxon.toJSDate();
+
+		const toDate_luxon = DateTime.fromISO(toDateQuery);
+		if (!toDate_luxon.isValid)
+			throw new BadRequestException(toDate_luxon.invalidExplanation);
+		const toDate = toDate_luxon.toJSDate();
+
+		// check that requester is the owner (except for admin)
+		await checkProgressAccess(requester, progressId, this.ProgressModel);
+
+		// Delete measure range
+		const existingProgress = (await this.ProgressModel.findByIdAndUpdate(
+			progressId,
+			{
+				$pull: {
+					measures: {
+						date: {
+							$gte: fromDate,
+							$lte: toDate,
+						},
+					},
+				},
+			},
+			{ new: true, fields: this.defaultFields },
+		)
+			.populate('user', this.usersService.defaultFields)
+			.lean()) as RProgress;
+		if (!existingProgress)
+			throw new NotFoundException('Progress not found');
+
+		// Add current progress
+		existingProgress.current_progress = await this.computeProgress(
+			requester,
+			progressId,
 		);
 
 		return existingProgress;

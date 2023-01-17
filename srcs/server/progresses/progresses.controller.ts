@@ -353,4 +353,65 @@ export class ProgressesController {
 				),
 			);
 	}
+
+	/*
+	 * DELETE MEASURES
+	 */
+	@Delete('/measures/:progress_id')
+	@UseGuards(MultiAuthGuard, RolesGuard)
+	// User allowed, will check after that user can only add a measure to his own progress
+	@Roles(Role.Admin, Role.User)
+	// #region doc
+	@ApiTags('Progresses')
+	@ApiOperation({
+		summary: 'Delete every measure in a time range for a progress',
+	})
+	@ApiHeader({ name: 'x-api-key', description: 'Your api key' })
+	@ApiParam({
+		name: 'progress_id',
+		type: String,
+		required: true,
+		description: 'The id of the progress',
+	})
+	@ApiQuery({
+		name: 'from',
+		type: String,
+		required: true,
+		description:
+			'The start date of the range. Format: ISO Date, e.g. 2023-01-01T00:00:00.000Z',
+	})
+	@ApiQuery({
+		name: 'to',
+		type: String,
+		required: true,
+		description:
+			'The end date of the range. Format: ISO Date, e.g. 2023-01-31T00:00:00.000Z',
+	})
+	@ApiOkResponse({ type: RProgress, description: 'The updated progress' })
+	@ApiUnauthorizedResponse({
+		description: "Unauthorized, you can't add measure to this progress.",
+	})
+	@ApiBadRequestResponse({
+		description:
+			'Bad request, one or more data is badly formatted / missing.',
+	})
+	// #endregion doc
+	async deleteMeasureRange(
+		@Res() response,
+		@Request() request,
+		@Param('progress_id') progressId: string,
+		@Query('from') fromDateQuery: string, // ISO Date, e.g. 2023-01-09T14:09:03.769Z
+		@Query('to') toDateQuery: string, // ISO Date, e.g. 2023-01-09T14:09:03.769Z
+	) {
+		return response
+			.status(HttpStatus.OK)
+			.send(
+				await this.progressesService.deleteMeasureRange(
+					request.user,
+					progressId,
+					fromDateQuery,
+					toDateQuery,
+				),
+			);
+	}
 }
