@@ -1,6 +1,6 @@
 ![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)
 ![Gitlab pipeline status (self-hosted)](https://img.shields.io/gitlab/pipeline-status/streaks/streaks?branch=main&gitlab_url=https%3A%2F%2Fgit.chevro.fr&style=flat-square)
-![Maintenance](https://img.shields.io/maintenance/yes/2022?style=flat-square)
+![Maintenance](https://img.shields.io/maintenance/yes/2023?style=flat-square)
 
 <img src=".readme/logo.svg" height="60" width="60" align="right">
 
