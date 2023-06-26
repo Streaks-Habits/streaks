@@ -31,6 +31,7 @@ import { MultiAuthGuard } from '../auth/guard/multi-auth.guard';
 import { Role } from '../users/enum/roles.enum';
 import { Roles } from '../auth/decorator/roles.decorator';
 import { RProgress } from './schemas/progress.schema';
+import { RefreshJwtGuard } from '../auth/guard/refresh-jwt.guard';
 
 @Controller('/api/v1/progresses')
 export class ProgressesController {
@@ -40,7 +41,7 @@ export class ProgressesController {
 	 * CREATE
 	 */
 	@Post()
-	@UseGuards(MultiAuthGuard, RolesGuard)
+	@UseGuards(MultiAuthGuard, RolesGuard, RefreshJwtGuard)
 	// User allowed, will check after that user can only create a progress for himself
 	@Roles(Role.Admin, Role.User)
 	// #region doc
@@ -78,7 +79,7 @@ export class ProgressesController {
 	 * READ ALL
 	 */
 	@Get()
-	@UseGuards(MultiAuthGuard, RolesGuard)
+	@UseGuards(MultiAuthGuard, RolesGuard, RefreshJwtGuard)
 	@Roles(Role.Admin)
 	// #region doc
 	@ApiTags('Progresses')
@@ -117,7 +118,7 @@ export class ProgressesController {
 	 * READ ALL FOR USER
 	 */
 	@Get('/user/:user_id')
-	@UseGuards(MultiAuthGuard, RolesGuard)
+	@UseGuards(MultiAuthGuard, RolesGuard, RefreshJwtGuard)
 	// User allowed, will check after that user can only get his own progresses
 	@Roles(Role.Admin, Role.User)
 	// #region doc
@@ -170,7 +171,7 @@ export class ProgressesController {
 	 * READ ONE
 	 */
 	@Get(':progress_id')
-	@UseGuards(MultiAuthGuard, RolesGuard)
+	@UseGuards(MultiAuthGuard, RolesGuard, RefreshJwtGuard)
 	// User allowed, will check after that user can only get his own progress
 	@Roles(Role.Admin, Role.User)
 	// #region doc
@@ -219,7 +220,7 @@ export class ProgressesController {
 	 * UPDATE
 	 */
 	@Put(':progress_id')
-	@UseGuards(MultiAuthGuard, RolesGuard)
+	@UseGuards(MultiAuthGuard, RolesGuard, RefreshJwtGuard)
 	// User allowed, will check after that user can only update his own progress
 	@Roles(Role.Admin, Role.User)
 	// #region doc
@@ -262,7 +263,7 @@ export class ProgressesController {
 	 * DELETE
 	 */
 	@Delete(':progress_id')
-	@UseGuards(MultiAuthGuard, RolesGuard)
+	@UseGuards(MultiAuthGuard, RolesGuard, RefreshJwtGuard)
 	// User allowed, will check after that user can only delete his own progress
 	@Roles(Role.Admin, Role.User)
 	// #region doc
@@ -300,7 +301,7 @@ export class ProgressesController {
 	 * ADD MEASURE
 	 */
 	@Put('/measures/:progress_id/:measure')
-	@UseGuards(MultiAuthGuard, RolesGuard)
+	@UseGuards(MultiAuthGuard, RolesGuard, RefreshJwtGuard)
 	// User allowed, will check after that user can only add a measure to his own progress
 	@Roles(Role.Admin, Role.User)
 	// #region doc
@@ -358,7 +359,7 @@ export class ProgressesController {
 	 * DELETE MEASURES
 	 */
 	@Delete('/measures/:progress_id')
-	@UseGuards(MultiAuthGuard, RolesGuard)
+	@UseGuards(MultiAuthGuard, RolesGuard, RefreshJwtGuard)
 	// User allowed, will check after that user can only add a measure to his own progress
 	@Roles(Role.Admin, Role.User)
 	// #region doc

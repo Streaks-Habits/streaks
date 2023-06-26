@@ -46,7 +46,6 @@ export class AuthService {
 		username: string,
 		password: string,
 	): Promise<UserDoc | null> {
-		// TODO: findOne (pour avoir tout ce qu'il faut)
 		const user = await this.usersService.userModel.findOne(
 			{ username: username },
 			'_id username role password_hash',

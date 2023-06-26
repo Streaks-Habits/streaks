@@ -52,8 +52,8 @@ export class AppController {
 		const auth_token = await this.authService.login(request.user);
 		response.cookie('auth-token', auth_token, {
 			httpOnly: true,
-			maxAge:
-				this.configService.get<number>('AUTH_COOKIE_EXPIRES') * 1000,
+			path: '/',
+			maxAge: this.configService.get<number>('AUTH_COOKIE_EXPIRES'),
 		});
 		return response
 			.status(HttpStatus.OK)
@@ -70,8 +70,8 @@ export class AppController {
 		const auth_token = await this.authService.login(new_user);
 		response.cookie('auth-token', auth_token, {
 			httpOnly: true,
-			maxAge:
-				this.configService.get<number>('AUTH_COOKIE_EXPIRES') * 1000,
+			path: '/',
+			maxAge: this.configService.get<number>('AUTH_COOKIE_EXPIRES'),
 		});
 		return response
 			.status(HttpStatus.OK)
@@ -83,6 +83,7 @@ export class AppController {
 	async logout(@Res() response) {
 		response.cookie('auth-token', '', {
 			httpOnly: true,
+			path: '/',
 			maxAge: 0,
 		});
 		return response.status(HttpStatus.TEMPORARY_REDIRECT).redirect('/');

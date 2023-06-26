@@ -10,6 +10,8 @@ import {
 } from '../progresses/schemas/progress.schema';
 import { CalendarsModule } from '../calendars/calendars.module';
 import { UsersModule } from '../users/users.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
 	imports: [
@@ -20,6 +22,16 @@ import { UsersModule } from '../users/users.module';
 		]),
 		UsersModule,
 		CalendarsModule,
+		JwtModule.registerAsync({
+			imports: [ConfigModule],
+			useFactory: async (configService: ConfigService) => ({
+				secret: configService.get<string>('AUTH_JWT_SECRET'),
+				signOptions: {
+					expiresIn: configService.get<number>('AUTH_JWT_EXPIRES'),
+				},
+			}),
+			inject: [ConfigService],
+		}),
 	],
 	providers: [NotificationsService],
 	controllers: [NotificationsController],

@@ -11,6 +11,7 @@ import { MultiAuthGuard } from '../auth/guard/multi-auth.guard';
 import { RolesGuard } from '../auth/guard/roles.guard';
 import { Role } from '../users/enum/roles.enum';
 import { NotificationsService } from './notifications.service';
+import { RefreshJwtGuard } from '../auth/guard/refresh-jwt.guard';
 
 @Controller('/api/v1/notifications')
 export class NotificationsController {
@@ -20,7 +21,7 @@ export class NotificationsController {
 	 * SEND REMINDERS
 	 */
 	@Get('/send')
-	@UseGuards(MultiAuthGuard, RolesGuard)
+	@UseGuards(MultiAuthGuard, RolesGuard, RefreshJwtGuard)
 	@Roles(Role.Admin)
 	async sendNotifications(@Res() response) {
 		return response
@@ -32,7 +33,7 @@ export class NotificationsController {
 	 * SEND REMINDER TO ONE USER
 	 */
 	@Get('/send/:user_id')
-	@UseGuards(MultiAuthGuard, RolesGuard)
+	@UseGuards(MultiAuthGuard, RolesGuard, RefreshJwtGuard)
 	@Roles(Role.Admin)
 	async sendNotificationsToUser(
 		@Res() response,
@@ -47,7 +48,7 @@ export class NotificationsController {
 	 * SEND A CONGRATULATION TO ONE USER
 	 */
 	@Get('/congrats/:calendar_id')
-	@UseGuards(MultiAuthGuard, RolesGuard)
+	@UseGuards(MultiAuthGuard, RolesGuard, RefreshJwtGuard)
 	@Roles(Role.Admin)
 	async sendCongrat(
 		@Res() response,

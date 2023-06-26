@@ -26,6 +26,7 @@ import { Role } from '../users/enum/roles.enum';
 import { CalendarsService } from './calendars.service';
 import { MultiAuthGuard } from '../auth/guard/multi-auth.guard';
 import { RCalendar } from './schemas/calendar.schema';
+import { RefreshJwtGuard } from '../auth/guard/refresh-jwt.guard';
 
 @Controller('/api/v1/calendars')
 export class CalendarsController {
@@ -35,7 +36,7 @@ export class CalendarsController {
 	 * CREATE
 	 */
 	@Post()
-	@UseGuards(MultiAuthGuard, RolesGuard)
+	@UseGuards(MultiAuthGuard, RolesGuard, RefreshJwtGuard)
 	// User allowed, will check after that user can only create a calendar for himself
 	@Roles(Role.Admin, Role.User)
 	// #region doc
@@ -65,7 +66,7 @@ export class CalendarsController {
 	 * READ ALL
 	 */
 	@Get()
-	@UseGuards(MultiAuthGuard, RolesGuard)
+	@UseGuards(MultiAuthGuard, RolesGuard, RefreshJwtGuard)
 	@Roles(Role.Admin)
 	// #region doc
 	@ApiTags('Calendars')
@@ -85,7 +86,7 @@ export class CalendarsController {
 	 * READ ALL FOR USER
 	 */
 	@Get('/user/:id')
-	@UseGuards(MultiAuthGuard, RolesGuard)
+	@UseGuards(MultiAuthGuard, RolesGuard, RefreshJwtGuard)
 	// User allowed, will check after that user can only get his own calendar
 	@Roles(Role.Admin, Role.User)
 	// #region doc
@@ -114,7 +115,7 @@ export class CalendarsController {
 	 * READ ONE
 	 */
 	@Get(':id')
-	@UseGuards(MultiAuthGuard, RolesGuard)
+	@UseGuards(MultiAuthGuard, RolesGuard, RefreshJwtGuard)
 	// User allowed, will check after that user can only get his own calendar
 	@Roles(Role.Admin, Role.User)
 	// #region doc
@@ -140,7 +141,7 @@ export class CalendarsController {
 	 * UPDATE
 	 */
 	@Put(':id')
-	@UseGuards(MultiAuthGuard, RolesGuard)
+	@UseGuards(MultiAuthGuard, RolesGuard, RefreshJwtGuard)
 	// User allowed, will check after that user can only update his own calendar
 	@Roles(Role.Admin, Role.User)
 	// #region doc
@@ -171,7 +172,7 @@ export class CalendarsController {
 	 * DELETE
 	 */
 	@Delete(':id')
-	@UseGuards(MultiAuthGuard, RolesGuard)
+	@UseGuards(MultiAuthGuard, RolesGuard, RefreshJwtGuard)
 	// User allowed, will check after that user can only delete his own calendar
 	@Roles(Role.Admin, Role.User)
 	// #region doc
@@ -195,7 +196,7 @@ export class CalendarsController {
 	 * SET STATE
 	 */
 	@Post('/state/:id/:state')
-	@UseGuards(MultiAuthGuard, RolesGuard)
+	@UseGuards(MultiAuthGuard, RolesGuard, RefreshJwtGuard)
 	// User allowed, will check after that user can only set a state in his own calendar
 	@Roles(Role.Admin, Role.User)
 	// #region doc
@@ -227,7 +228,7 @@ export class CalendarsController {
 	/*
 	 * GET MONTH
 	 */
-	@UseGuards(MultiAuthGuard, RolesGuard)
+	@UseGuards(MultiAuthGuard, RolesGuard, RefreshJwtGuard)
 	@Roles(Role.Admin, Role.User) // User allowed, will check after that user can only get a month of his own calendar
 	@Get('/month/:id')
 	// #region doc

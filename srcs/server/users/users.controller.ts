@@ -23,6 +23,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { Role } from './enum/roles.enum';
 import { UsersService } from './users.service';
 import { MultiAuthGuard } from '../auth/guard/multi-auth.guard';
+import { RefreshJwtGuard } from '../auth/guard/refresh-jwt.guard';
 
 @Controller('/api/v1/users')
 export class UsersController {
@@ -32,7 +33,7 @@ export class UsersController {
 	 * CREATE
 	 */
 	@Post()
-	@UseGuards(MultiAuthGuard, RolesGuard)
+	@UseGuards(MultiAuthGuard, RolesGuard, RefreshJwtGuard)
 	@Roles(Role.Admin)
 	// #region doc
 	@ApiTags('Users')
@@ -51,7 +52,7 @@ export class UsersController {
 	 * READ ALL
 	 */
 	@Get()
-	@UseGuards(MultiAuthGuard, RolesGuard)
+	@UseGuards(MultiAuthGuard, RolesGuard, RefreshJwtGuard)
 	@Roles(Role.Admin)
 	// #region doc
 	@ApiTags('Users')
@@ -71,7 +72,7 @@ export class UsersController {
 	 * READ ONE
 	 */
 	@Get(':id')
-	@UseGuards(MultiAuthGuard, RolesGuard)
+	@UseGuards(MultiAuthGuard, RolesGuard, RefreshJwtGuard)
 	@Roles(Role.Admin)
 	// #region doc
 	@ApiTags('Users')
@@ -90,7 +91,7 @@ export class UsersController {
 	 * UPDATE
 	 */
 	@Put(':id')
-	@UseGuards(MultiAuthGuard, RolesGuard)
+	@UseGuards(MultiAuthGuard, RolesGuard, RefreshJwtGuard)
 	@Roles(Role.Admin)
 	// #region doc
 	@ApiTags('Users')
@@ -113,7 +114,7 @@ export class UsersController {
 	 * DELETE
 	 */
 	@Delete(':id')
-	@UseGuards(MultiAuthGuard, RolesGuard)
+	@UseGuards(MultiAuthGuard, RolesGuard, RefreshJwtGuard)
 	@Roles(Role.Admin)
 	// #region doc
 	@ApiTags('Users')
@@ -131,7 +132,7 @@ export class UsersController {
 	/*
 	 * GENERATE API KEY
 	 */
-	@UseGuards(MultiAuthGuard, RolesGuard)
+	@UseGuards(MultiAuthGuard, RolesGuard, RefreshJwtGuard)
 	@Roles(Role.Admin)
 	@Get('/api_key/:id')
 	// #region doc

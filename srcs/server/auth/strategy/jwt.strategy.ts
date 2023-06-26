@@ -7,7 +7,7 @@ import { Request } from 'express';
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
 	constructor(private configService: ConfigService) {
-		const JWT_SECRET = configService.get<string>('JWT_SECRET');
+		const JWT_SECRET = configService.get<string>('AUTH_JWT_SECRET');
 
 		super({
 			jwtFromRequest: ExtractJwt.fromExtractors([
@@ -19,7 +19,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
 		});
 	}
 
-	private static extractJWT(req: Request): string | null {
+	static extractJWT(req: Request): string | null {
 		if (
 			req.cookies &&
 			'auth-token' in req.cookies &&
