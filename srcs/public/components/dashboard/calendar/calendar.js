@@ -35,6 +35,9 @@ export default {
 	},
 	created() {
 		this.updateMonth();
+		this.refreshInterval = setInterval(() => {
+			this.updateMonth();
+		}, 1000 * 60 * 5); // 5 minutes
 	},
 	computed: {
 		daysLetters() {
@@ -49,6 +52,9 @@ export default {
 			}
 			return daysLetters;
 		},
+	},
+	beforeDestroy() {
+		clearInterval(this.refreshInterval);
 	},
 	methods: {
 		updateMonth() {

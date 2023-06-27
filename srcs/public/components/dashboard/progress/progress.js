@@ -35,6 +35,14 @@ export default {
 		window.addEventListener('resize', this.replaceAddMeasure);
 		window.addEventListener('scroll', this.replaceAddMeasure);
 		this.update();
+		this.refreshInterval = setInterval(() => {
+			this.fetch();
+		}, 1000 * 60 * 5); // 5 minutes
+	},
+	beforeDestroy() {
+		window.removeEventListener('resize', this.replaceAddMeasure);
+		window.removeEventListener('scroll', this.replaceAddMeasure);
+		clearInterval(this.refreshInterval);
 	},
 	computed: {},
 	methods: {
