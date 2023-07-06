@@ -6,7 +6,8 @@ import * as crypto from 'crypto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { isValidObjectId } from '../utils';
-import { RUser, User } from './schemas/user.schema';
+import { RUser, User, UserDoc } from './schemas/user.schema';
+import { AdminUser } from '../auth/admin.object';
 
 @Injectable()
 export class UsersService {
@@ -106,5 +107,19 @@ export class UsersService {
 		);
 		if (!existingUser) throw new NotFoundException('User not found');
 		return api_key;
+	}
+
+	async getCurrentUser(requester: UserDoc): Promise<RUser> {
+		// If the user is the admin, return the admin object (admin.user.ts)
+		if (requester.role == 'admin')
+			return {
+				_id: AdminUser._id,
+				username: AdminUser.username,
+				role: AdminUser.role,
+				notifications: {
+					day_done_notif_sent_today: false,
+				},
+			};
+		return this.findOne(requester._id.toString());
 	}
 }

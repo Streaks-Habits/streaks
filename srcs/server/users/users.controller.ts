@@ -7,6 +7,7 @@ import {
 	Param,
 	Post,
 	Put,
+	Request,
 	Res,
 	UseGuards,
 } from '@nestjs/common';
@@ -24,6 +25,7 @@ import { Role } from './enum/roles.enum';
 import { UsersService } from './users.service';
 import { MultiAuthGuard } from '../auth/guard/multi-auth.guard';
 import { RefreshJwtGuard } from '../auth/guard/refresh-jwt.guard';
+import { RUser } from './schemas/user.schema';
 
 @Controller('/api/v1/users')
 export class UsersController {
@@ -147,5 +149,25 @@ export class UsersController {
 		return response
 			.status(HttpStatus.OK)
 			.send(await this.usersService.generateApiKey(userId));
+	}
+
+	/*
+	 * GET CURRENT USER
+	 */
+	@UseGuards(MultiAuthGuard, RolesGuard, RefreshJwtGuard)
+	@Roles(Role.Admin, Role.User)
+	@Get('/me')
+	// #region doc
+	@ApiTags('Users')
+	@ApiHeader({ name: 'x-api-key', description: 'Your api key' })
+	@ApiOkResponse({
+		description: "The current user's data",
+		type: RUser,
+	})
+	// #endregion doc
+	async getCurrentUser(@Res() response, @Request() request) {
+		return response
+			.status(HttpStatus.OK)
+			.send(await this.usersService.getCurrentUser(request.user));
 	}
 }
