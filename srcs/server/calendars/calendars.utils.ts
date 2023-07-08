@@ -27,12 +27,15 @@ export async function checkCalendarAccess(
 	user: UserDoc,
 	calendarId: string,
 	CalendarModel: Model<Calendar>,
-): Promise<void> {
+	additionalFields = '',
+): Promise<CalendarDoc> {
 	const existingCalendar = (await CalendarModel.findById(
 		calendarId,
-		'user',
+		'user ' + additionalFields,
 	)) as CalendarDoc;
 	if (!existingCalendar) throw new NotFoundException('Calendar not found');
 
+	// Will throw an exception if the user is not allowed to access this calendar
 	asCalendarAccess(user, existingCalendar);
+	return existingCalendar;
 }

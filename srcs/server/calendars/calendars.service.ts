@@ -24,7 +24,7 @@ export class CalendarsService {
 		private readonly usersService: UsersService,
 	) {}
 
-	defaultFields = '_id name agenda notifications';
+	defaultFields = '_id name enabled agenda notifications';
 
 	async create(
 		requester: UserDoc,
@@ -47,6 +47,7 @@ export class CalendarsService {
 		const createCalendar: Calendar = {
 			name: createCalendarDto.name,
 			user: new Types.ObjectId(owner._id),
+			enabled: createCalendarDto.enabled,
 			agenda: createCalendarDto.agenda,
 			notifications: createCalendarDto.notifications,
 		};
@@ -157,6 +158,7 @@ export class CalendarsService {
 		const updateCalendar: Calendar = {
 			name: updateCalendarDto.name,
 			user: undefined,
+			enabled: updateCalendarDto.enabled,
 			agenda: updateCalendarDto.agenda,
 			notifications: updateCalendarDto.notifications,
 		};
@@ -223,7 +225,16 @@ export class CalendarsService {
 			throw new NotFoundException('Calendar not found');
 
 		// check that requester is the owner (except for admin)
-		await checkCalendarAccess(requester, calendarId, this.CalendarModel);
+		const calendar = await checkCalendarAccess(
+			requester,
+			calendarId,
+			this.CalendarModel,
+			'enabled',
+		);
+
+		// Check that the calendar is enabled
+		if (!calendar.enabled)
+			throw new BadRequestException('calendar is disabled');
 
 		// Check that the date is valid
 		let date = DateTime.now();

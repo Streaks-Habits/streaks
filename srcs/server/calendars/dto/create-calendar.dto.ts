@@ -25,6 +25,11 @@ export class CreateCalendarDto {
 	readonly user: string;
 
 	@ApiProperty()
+	@IsOptional()
+	@IsBoolean()
+	readonly enabled: boolean;
+
+	@ApiProperty()
 	@IsBoolean({ each: true })
 	@ArrayMaxSize(7)
 	@ArrayMinSize(7)

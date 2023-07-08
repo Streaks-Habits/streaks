@@ -31,6 +31,9 @@ export class Calendar {
 	})
 	user: Types.ObjectId;
 
+	@Prop({ required: true, type: Boolean, default: true })
+	enabled: boolean;
+
 	@Prop({ required: false, type: Array<boolean>, isArray: true })
 	agenda?: Array<boolean>;
 
