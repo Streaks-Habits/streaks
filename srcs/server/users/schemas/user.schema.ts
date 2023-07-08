@@ -44,12 +44,6 @@ export class Notifications {
 	@IsBoolean()
 	@Prop({ required: false })
 	day_done_notif_sent_today?: boolean;
-
-	@ApiProperty()
-	@IsOptional()
-	@IsBoolean()
-	@Prop({ required: false })
-	send_day_done?: boolean;
 }
 
 @Schema()

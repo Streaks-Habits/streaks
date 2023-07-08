@@ -86,10 +86,7 @@ export class NotificationsService {
 		let results = 'No notifications to send';
 		if (day_done) {
 			// If day is done, send day done notification
-			if (
-				user.notifications.send_day_done !== false &&
-				user.notifications.day_done_notif_sent_today !== true
-			)
+			if (user.notifications.day_done_notif_sent_today !== true)
 				results = await providers.sendDayDone(user);
 			else results = 'Day done notifications already sent today';
 		} else {
