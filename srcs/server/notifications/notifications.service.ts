@@ -55,6 +55,7 @@ export class NotificationsService {
 			AdminUser,
 			user_id,
 			this.calendarsService.defaultFields + ` days.${today}`,
+			true, // Only enabled calendars
 		);
 		if (calendars.length === 0) return 'No calendars found';
 
@@ -126,6 +127,8 @@ export class NotificationsService {
 			this.calendarsService.defaultFields + ` days.${today}`,
 		);
 		if (!calendar) throw new NotFoundException('Calendar not found');
+		// If the calendar is disabled
+		if (!calendar.enabled) return 'Calendar is disabled';
 
 		// Check that today is not a fail
 		const today_status = calendar['days'][today] || State.Fail;

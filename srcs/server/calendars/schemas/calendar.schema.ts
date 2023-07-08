@@ -67,6 +67,9 @@ export class RCalendar {
 	@ApiProperty({ type: RUser })
 	user: RUser;
 
+	@ApiProperty({ type: Boolean })
+	enabled: boolean;
+
 	@ApiProperty({ type: Boolean, isArray: true })
 	agenda: Array<boolean>;
 

@@ -83,10 +83,13 @@ export class CalendarsService {
 		requester: UserDoc,
 		userId: string,
 		fields = this.defaultFields,
+		onlyEnabled = false,
 	): Promise<RCalendar[]> {
+		const enabledFilter = onlyEnabled ? { enabled: true } : {};
 		const calendarsData = (await this.CalendarModel.find(
 			{
 				user: userId,
+				...enabledFilter,
 			},
 			fields + ' user',
 		)

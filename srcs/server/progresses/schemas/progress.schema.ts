@@ -69,6 +69,9 @@ export class RProgress {
 	@ApiProperty({ type: RUser })
 	user: RUser;
 
+	@ApiProperty({ type: Boolean })
+	enabled: boolean;
+
 	@ApiProperty({ type: String, enum: RecurrenceUnit })
 	recurrence_unit: RecurrenceUnit;
 
