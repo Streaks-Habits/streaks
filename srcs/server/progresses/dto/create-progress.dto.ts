@@ -1,4 +1,5 @@
 import {
+	IsBoolean,
 	IsEnum,
 	IsNotEmpty,
 	IsNumber,
@@ -20,6 +21,11 @@ export class CreateProgressDto {
 	@IsString()
 	@IsNotEmpty()
 	readonly user: string;
+
+	@ApiProperty()
+	@IsNotEmpty()
+	@IsBoolean()
+	readonly enabled: boolean;
 
 	@ApiProperty()
 	@IsEnum(RecurrenceUnit)

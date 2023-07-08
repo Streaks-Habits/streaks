@@ -24,7 +24,7 @@ export class ProgressesService {
 		private readonly usersService: UsersService,
 	) {}
 
-	defaultFields = '_id name recurrence recurrence_unit goal';
+	defaultFields = '_id name enabled recurrence recurrence_unit goal';
 
 	async create(
 		requester: UserDoc,
@@ -47,6 +47,7 @@ export class ProgressesService {
 		const createProgress: Progress = {
 			name: createProgressDto.name,
 			user: new Types.ObjectId(owner._id),
+			enabled: createProgressDto.enabled,
 			recurrence_unit: createProgressDto.recurrence_unit,
 			goal: createProgressDto.goal,
 		};
@@ -189,6 +190,7 @@ export class ProgressesService {
 		const updateProgress: Omit<Progress, '_id'> = {
 			name: updateProgressDto.name,
 			user: undefined,
+			enabled: updateProgressDto.enabled,
 			recurrence_unit: updateProgressDto.recurrence_unit,
 			goal: updateProgressDto.goal,
 		};
@@ -263,7 +265,16 @@ export class ProgressesService {
 		}
 
 		// check that requester is the owner (except for admin)
-		await checkProgressAccess(requester, progressId, this.ProgressModel);
+		const progress = await checkProgressAccess(
+			requester,
+			progressId,
+			this.ProgressModel,
+			'enabled',
+		);
+
+		// Check that progress is enabled
+		if (!progress.enabled)
+			throw new BadRequestException('Progress is disabled');
 
 		// Add measure
 		const existingProgress = (await this.ProgressModel.findByIdAndUpdate(
@@ -319,7 +330,16 @@ export class ProgressesService {
 		const toDate = toDate_luxon.toJSDate();
 
 		// check that requester is the owner (except for admin)
-		await checkProgressAccess(requester, progressId, this.ProgressModel);
+		const progress = await checkProgressAccess(
+			requester,
+			progressId,
+			this.ProgressModel,
+			'enabled',
+		);
+
+		// Check that progress is enabled
+		if (!progress.enabled)
+			throw new BadRequestException('Progress is disabled');
 
 		// Delete measure range
 		const existingProgress = (await this.ProgressModel.findByIdAndUpdate(

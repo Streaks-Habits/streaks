@@ -29,6 +29,10 @@ export class Progress {
 	})
 	user: Types.ObjectId;
 
+	@ApiProperty({ type: Boolean })
+	@Prop({ required: true, type: Boolean, default: true })
+	enabled: boolean;
+
 	@ApiProperty({ type: String, enum: RecurrenceUnit })
 	@Prop({ required: true, type: String, enum: RecurrenceUnit })
 	recurrence_unit: RecurrenceUnit;

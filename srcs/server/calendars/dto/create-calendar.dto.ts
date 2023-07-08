@@ -25,7 +25,7 @@ export class CreateCalendarDto {
 	readonly user: string;
 
 	@ApiProperty()
-	@IsOptional()
+	@IsNotEmpty()
 	@IsBoolean()
 	readonly enabled: boolean;
 

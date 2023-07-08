@@ -27,12 +27,15 @@ export async function checkProgressAccess(
 	user: UserDoc,
 	progressId: string,
 	ProgressModel: Model<Progress>,
-): Promise<void> {
+	additionalFields = '',
+): Promise<ProgressDoc> {
 	const existingProgress = (await ProgressModel.findById(
 		progressId,
-		'user',
+		'user ' + additionalFields,
 	)) as ProgressDoc;
 	if (!existingProgress) throw new NotFoundException('Progress not found');
 
+	// Will throw an exception if the user is not allowed to access this progress
 	asProgressAccess(user, existingProgress);
+	return existingProgress;
 }
