@@ -5,10 +5,15 @@ export default {
 			type: String,
 			required: true,
 		},
+		startingRegistrationsEnabled: {
+			type: String,
+			required: true,
+		},
 	},
 	data() {
 		return {
 			type: this.startingType,
+			registrationsEnabled: this.startingRegistrationsEnabled === 'true',
 			loading: false,
 			errors: [],
 			username: '',
@@ -131,9 +136,9 @@ export default {
 					<li v-for="error in errors">{{ error }}</li>
 				</ul>
 			</form>
-			<p class="change_type">I don't have an account, <a href="/register" @click.prevent="changeType('register')">register</a> !</p>
+			<p v-if="registrationsEnabled" class="change_type">I don't have an account, <a href="/register" @click.prevent="changeType('register')">register</a> !</p>
 		</div>
-		<div class="register" v-show=" type == 'register' ">
+		<div class="register" v-show=" type == 'register' " v-if="registrationsEnabled">
 			<form @submit.prevent="register">
 				<h1>Register</h1>
 				<input v-model="username" type="text" placeholder="Username" />

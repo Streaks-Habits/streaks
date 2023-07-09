@@ -10,6 +10,8 @@ import { AppModule } from './app.module';
 import { MongoExceptionFilter } from './mongoose-exception.filter';
 import { join } from 'path';
 import { ConfigService } from '@nestjs/config';
+import { areRegistrationsEnabled } from './utils';
+import { UsersService } from './users/users.service';
 
 async function bootstrap() {
 	const app = await NestFactory.create<NestFastifyApplication>(
@@ -56,5 +58,18 @@ async function bootstrap() {
 	});
 
 	await app.listen(config.get<number>('PORT') || 80, '::');
+
+	console.log(`Application is running on: ${await app.getUrl()}`);
+
+	// Are registrations enabled?
+	// Get users service from imports
+	const usersService = app.get<UsersService>(UsersService);
+	const registrationsEnabled = await areRegistrationsEnabled(
+		config,
+		usersService,
+	);
+	console.log(
+		`Registrations are ${registrationsEnabled ? 'enabled' : 'disabled'}`,
+	);
 }
 bootstrap();

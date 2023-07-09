@@ -122,4 +122,8 @@ export class UsersService {
 			};
 		return this.findOne(requester._id.toString());
 	}
+
+	async count(): Promise<number> {
+		return await this.UserModel.countDocuments();
+	}
 }

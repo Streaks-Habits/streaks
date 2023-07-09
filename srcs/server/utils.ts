@@ -1,4 +1,6 @@
+import { ConfigService } from '@nestjs/config';
 import { ObjectId } from 'mongodb';
+import { UsersService } from './users/users.service';
 
 export const ClassOmit = <T, K extends keyof T>(
 	Class: new () => T,
@@ -21,4 +23,20 @@ export function sortMapByKeys(map) {
 			return 0;
 		}),
 	);
+}
+
+export async function areRegistrationsEnabled(
+	configService: ConfigService,
+	usersService: UsersService,
+) {
+	// Get env, true if not set
+	const envVal = configService.get('REGISTRATIONS_ENABLED') || 'true';
+	if (envVal !== 'true' && envVal !== 'false') {
+		console.error('REGISTRATIONS_ENABLED env variable is not a boolean');
+		process.exit(1);
+	}
+
+	// If env is false and there are users, return false
+	if (envVal === 'false' && (await usersService.count()) > 0) return false;
+	return true;
 }

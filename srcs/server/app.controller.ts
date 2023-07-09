@@ -16,6 +16,8 @@ import { AuthService } from './auth/auth.service';
 import { JwtAuthGuard } from './auth/guard/jwt.guard';
 import { LocalAuthGuard } from './auth/guard/local.guard';
 import { RedirectLoginFilter } from './unauthorized-exception.filter';
+import { areRegistrationsEnabled } from './utils';
+import { UsersService } from './users/users.service';
 
 @Controller()
 export class AppController {
@@ -23,6 +25,7 @@ export class AppController {
 		private readonly appService: AppService,
 		private readonly authService: AuthService,
 		private readonly configService: ConfigService,
+		private readonly usersService: UsersService,
 	) {}
 
 	@Get()
@@ -36,14 +39,31 @@ export class AppController {
 
 	@Get('/login')
 	@Render('login')
-	getLogin() {
-		return { type: 'login' };
+	async getLogin() {
+		return {
+			type: 'login',
+			registrationsEnabled: await areRegistrationsEnabled(
+				this.configService,
+				this.usersService,
+			),
+		};
 	}
 
 	@Get('/register')
 	@Render('login')
-	getRegister() {
-		return { type: 'register' };
+	async getRegister(@Res() response) {
+		const registrationsEnabled = await areRegistrationsEnabled(
+			this.configService,
+			this.usersService,
+		);
+		// If registrations are disabled, redirect to login
+		if (!registrationsEnabled)
+			response.redirect(HttpStatus.TEMPORARY_REDIRECT, '/login');
+
+		return {
+			type: 'register',
+			registrationsEnabled: registrationsEnabled,
+		};
 	}
 
 	@UseGuards(LocalAuthGuard)

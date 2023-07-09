@@ -1,17 +1,35 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+	BadRequestException,
+	Injectable,
+	UnauthorizedException,
+} from '@nestjs/common';
 import { Role } from './users/enum/roles.enum';
 import { RUser } from './users/schemas/user.schema';
 import { UsersService } from './users/users.service';
+import { ConfigService } from '@nestjs/config';
+import { areRegistrationsEnabled } from './utils';
 
 @Injectable()
 export class AppService {
-	constructor(private readonly usersService: UsersService) {}
+	constructor(
+		private readonly usersService: UsersService,
+		private readonly configService: ConfigService,
+	) {}
 
 	async register(
 		username: string,
 		password: string,
 		passwordRepeat: string,
 	): Promise<RUser> {
+		// Check if registrations are enabled
+		if (
+			(await areRegistrationsEnabled(
+				this.configService,
+				this.usersService,
+			)) === false
+		)
+			throw new UnauthorizedException('Registrations are disabled');
+
 		if (!username || username.length == 0)
 			throw new BadRequestException('Username cannot be empty');
 		if (!password || password.length == 0)
