@@ -13,6 +13,12 @@ p.sentence {
 h1 {
 	text-align: center;
 	margin: 25px 0 0 0;
+	font-size: 2em;
+
+	&.disabled {
+		font-size: 1.2em;
+		color: $secondary_color_lighter;
+	}
 
 	span {
 		color: $primary_color;
@@ -53,12 +59,17 @@ div.calendars {
 	gap: 25px;
 	padding: 25px 0;
 	justify-content: center;
+
+	&.disabled {
+		padding: 15px 0;
+		gap: 15px;
+	}
 }
 
 div.calendar {
 	display: inline-block;
 	// calendar size + padding + border
-	max-width: calc(14em + 44px);
+	max-width: calc(16.75em + 44px);
 
 	div.header {
 		display: flex;
@@ -126,11 +137,12 @@ div.calendar {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		width: 14em;
-		height: 16em;
+		width: 16.75em;
+		height: 18.75em;
 		border: solid 2px $secondary_color_light;
 		border-radius: 15px;
 		padding: 20px;
+		box-sizing: border-box;
 
 		div.calendar_info {
 			display: flex;
@@ -365,6 +377,21 @@ div.calendar {
 	}
 }
 
+div.disabled_calendar, div.disabled_progress {
+	display: flex;
+	flex-direction: column;
+	width: 16.75em;
+	box-sizing: border-box;
+	border: solid 2px $secondary_color_light;
+	border-radius: 15px;
+	padding: 10px;
+
+	p.name {
+		margin: 0;
+		color: $secondary_color_lighter;
+	}
+}
+
 div.progresses {
 	display: flex;
 	flex-wrap: wrap;
@@ -374,6 +401,11 @@ div.progresses {
 
 	div.progress {
 		flex: 1;
+	}
+
+	&.disabled {
+		padding: 15px 0;
+		gap: 15px;
 	}
 }
 
