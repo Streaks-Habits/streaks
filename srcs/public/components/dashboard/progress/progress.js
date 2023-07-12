@@ -191,6 +191,10 @@ export default {
 			this.addMeasure.show = false;
 			this.addMeasure.loading = false;
 		},
+		numberToString(number, decimals = 0) {
+			if (number % 1 === 0) return number.toString();
+			return number.toFixed(decimals);
+		},
 	},
 	template: `
 		<div class="progress">
@@ -229,13 +233,13 @@ export default {
 			</div>
 
 			<div class="progress_bar">
-				<span class="progress_bar_label">{{ current_progress_percent.toFixed(2) }} %</span>
+				<span class="progress_bar_label">{{ numberToString(current_progress_percent, 2) }} %</span>
 				<div class="progress_bar_fill" :style="{ width: current_progress_percent + '%' }"></div>
 			</div>
 
 			<div class="progress_details">
-				<p>Goal: <b>{{ progress.goal }}</b></p>
-				<p>Current: <b>{{ progress.current_progress }}</b></p>
+				<p>Goal: <b>{{ numberToString(progress.goal, 2) }}</b></p>
+				<p>Current: <b>{{ numberToString(progress.current_progress, 2) }}</b></p>
 			</div>
 
 		</div>
