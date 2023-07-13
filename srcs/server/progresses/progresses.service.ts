@@ -24,7 +24,7 @@ export class ProgressesService {
 		private readonly usersService: UsersService,
 	) {}
 
-	defaultFields = '_id name enabled recurrence recurrence_unit goal';
+	defaultFields = '_id name enabled recurrence recurrence_unit goal deadline';
 
 	async create(
 		requester: UserDoc,
@@ -76,9 +76,11 @@ export class ProgressesService {
 				throw new BadRequestException(date.invalidExplanation);
 		}
 
-		const progresses = (await this.ProgressModel.find({}, fields)
-			.populate('user', this.usersService.defaultFields)
-			.lean()) as RProgress[];
+		// TODO: work when we remove .lean()
+		const progresses = (await this.ProgressModel.find({}, fields).populate(
+			'user',
+			this.usersService.defaultFields,
+		)) as RProgress[];
 		if (progresses.length > 0) {
 			for (let i = 0; i < progresses.length; i++) {
 				progresses[i].current_progress = await this.computeProgress(
@@ -88,6 +90,9 @@ export class ProgressesService {
 				);
 			}
 		}
+		console.log(fields);
+		// get deadline
+		console.log(progresses[0]);
 
 		return progresses;
 	}
@@ -114,22 +119,32 @@ export class ProgressesService {
 			{
 				user: userId,
 			},
-			fields + ' user',
-		)
-			.populate('user', this.usersService.defaultFields)
-			.lean()) as RProgress[];
+			fields + ' user measures',
+		).populate('user', this.usersService.defaultFields)) as RProgress[];
 		if (!progresses || progresses.length == 0)
 			throw new NotFoundException('No progresses found');
 		else {
-			for (let i = 0; i < progresses.length; i++) {
-				progresses[i].current_progress = await this.computeProgress(
-					requester,
-					progresses[i]._id.toString(),
-					date,
-				);
-			}
+			// for (let i = 0; i < progresses.length; i++) {
+			// 	progresses[i].current_progress = await this.computeProgress(
+			// 		requester,
+			// 		progresses[i]._id.toString(),
+			// 		date,
+			// 	);
+			// 	console.log(progresses[i].current_progress)
+			// }
 		}
-
+		console.log('yo', progresses[0]);
+		console.log(
+			'lo',
+			(
+				await this.ProgressModel.find(
+					{
+						user: userId,
+					},
+					'measures recurrence_unit',
+				).populate('measures')
+			)[0],
+		);
 		return progresses;
 	}
 
@@ -154,9 +169,7 @@ export class ProgressesService {
 		const existingProgress = (await this.ProgressModel.findById(
 			progressId,
 			fields + ' user',
-		)
-			.populate('user', this.usersService.defaultFields)
-			.lean()) as RProgress;
+		).populate('user', this.usersService.defaultFields)) as RProgress;
 		if (!existingProgress)
 			throw new NotFoundException('Progress not found');
 
@@ -187,7 +200,7 @@ export class ProgressesService {
 		await checkProgressAccess(requester, progressId, this.ProgressModel);
 
 		// Create a new progress object with given parameters
-		const updateProgress: Omit<Progress, '_id'> = {
+		const updateProgress: Progress = {
 			name: updateProgressDto.name,
 			user: undefined,
 			enabled: updateProgressDto.enabled,
@@ -205,9 +218,7 @@ export class ProgressesService {
 			progressId,
 			updateProgress,
 			{ new: true, fields: fields },
-		)
-			.populate('user', this.usersService.defaultFields)
-			.lean()) as RProgress;
+		).populate('user', this.usersService.defaultFields)) as RProgress;
 		if (!existingProgress)
 			throw new NotFoundException('Progress not found');
 
@@ -237,8 +248,7 @@ export class ProgressesService {
 			progressId,
 		)
 			.select(fields)
-			.populate('user', this.usersService.defaultFields)
-			.lean()) as RProgress;
+			.populate('user', this.usersService.defaultFields)) as RProgress;
 		if (!deletedProgress) throw new NotFoundException('Progress not found');
 		return deletedProgress;
 	}
@@ -288,9 +298,7 @@ export class ProgressesService {
 				},
 			},
 			{ new: true, fields: fields },
-		)
-			.populate('user', this.usersService.defaultFields)
-			.lean()) as RProgress;
+		).populate('user', this.usersService.defaultFields)) as RProgress;
 		if (!existingProgress)
 			throw new NotFoundException('Progress not found');
 
@@ -355,9 +363,7 @@ export class ProgressesService {
 				},
 			},
 			{ new: true, fields: this.defaultFields },
-		)
-			.populate('user', this.usersService.defaultFields)
-			.lean()) as RProgress;
+		).populate('user', this.usersService.defaultFields)) as RProgress;
 		if (!existingProgress)
 			throw new NotFoundException('Progress not found');
 

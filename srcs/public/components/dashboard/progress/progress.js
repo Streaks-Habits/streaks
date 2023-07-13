@@ -38,6 +38,8 @@ export default {
 		this.refreshInterval = setInterval(() => {
 			this.fetch();
 		}, 1000 * 60 * 5); // 5 minutes
+
+		console.log(this.progress.deadline)
 	},
 	beforeDestroy() {
 		window.removeEventListener('resize', this.replaceAddMeasure);
@@ -238,8 +240,13 @@ export default {
 			</div>
 
 			<div class="progress_details">
-				<p>Goal: <b>{{ numberToString(progress.goal, 2) }}</b></p>
-				<p>Current: <b>{{ numberToString(progress.current_progress, 2) }}</b></p>
+				<div class="progress_details_col">
+					<p>Goal: <b>{{ numberToString(progress.goal, 2) }}</b></p>
+					<p>Current: <b>{{ numberToString(progress.current_progress, 2) }}</b></p>
+				</div>
+				<div class="progress_details_col">
+					<p>⏰ {{ progress.deadline }}</p>
+				</div>
 			</div>
 
 		</div>

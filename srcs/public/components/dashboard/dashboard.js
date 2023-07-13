@@ -103,11 +103,9 @@ export default {
 
 			if (res.ok) {
 				res = await res.json();
-				console.log(res)
 				this.progresses.enabled = [];
 				this.progresses.disabled = [];
 				for (const progress of res) {
-					console.log(progress)
 					if (progress.enabled) this.progresses.enabled.push(progress);
 					else this.progresses.disabled.push(progress);
 				}

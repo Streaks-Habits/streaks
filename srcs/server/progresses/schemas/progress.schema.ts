@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import { Types, Schema as MongooseSchema, Date } from 'mongoose';
+import { DateTime, DateTimeUnit } from 'luxon';
 import { RUser, User } from '../../users/schemas/user.schema';
 import { RecurrenceUnit } from '../enum/recurrence_unit.enum';
 
@@ -15,7 +16,7 @@ class Measure {
 	value: number;
 }
 
-@Schema()
+@Schema({ toJSON: { virtuals: true }, toObject: { virtuals: true } })
 export class Progress {
 	@ApiProperty({ type: String })
 	@Prop({ required: true, type: String })
@@ -44,9 +45,58 @@ export class Progress {
 	@ApiProperty({ type: Measure, isArray: true })
 	@Prop({ required: false, type: Measure, isArray: true })
 	measures?: Measure[];
+
+	// deadline is a virtual property
 }
 
 export const ProgressSchema = SchemaFactory.createForClass(Progress);
+
+// Virtual properties
+ProgressSchema.virtual('deadline', {
+	ref: 'Progress',
+	localField: '_id',
+	foreignField: '_id',
+	justOne: true,
+}).get(function () {
+	const now = DateTime.now();
+	// slice(0, -2) to remove 'ly' from unit => 'yearly' -> 'year', 'monthly' -> 'month'
+	const unit =
+		this.recurrence_unit == RecurrenceUnit.Daily
+			? 'day'
+			: this.recurrence_unit.slice(0, -2);
+	const end = now.endOf(unit as DateTimeUnit);
+	return end.toJSDate() as unknown as Date;
+});
+
+ProgressSchema.virtual('current_progress', {
+	ref: 'Progress',
+	localField: '_id',
+	foreignField: '_id',
+	justOne: true,
+}).get(function () {
+	const now = DateTime.now();
+	// slice(0, -2) to remove 'ly' from unit => 'yearly' -> 'year', 'monthly' -> 'month'
+	const unit =
+		this.recurrence_unit == RecurrenceUnit.Daily
+			? 'day'
+			: this.recurrence_unit.slice(0, -2);
+	const start = now.startOf(unit as DateTimeUnit);
+	const end = now.endOf(unit as DateTimeUnit);
+
+	const mongo_start = start.toJSDate() as unknown as Date;
+	const mongo_end = end.toJSDate() as unknown as Date;
+
+	// Get measures if they exist
+	console.log(this.measures);
+	if (!this.measures) return 0;
+
+	const measures = this.measures.filter(
+		(measure) => measure.date >= mongo_start && measure.date <= mongo_end,
+	);
+	const sum = measures.reduce((acc, measure) => acc + measure.value, 0);
+	return sum;
+});
+
 export type ProgressDoc = Progress & { _id: Types.ObjectId };
 
 /*
@@ -80,4 +130,7 @@ export class RProgress {
 
 	@ApiProperty({ type: Number })
 	current_progress: number;
+
+	@ApiProperty({ type: Date })
+	deadline: Date;
 }
