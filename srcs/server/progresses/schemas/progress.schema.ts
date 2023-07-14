@@ -4,11 +4,12 @@ import { Types, Schema as MongooseSchema, Date } from 'mongoose';
 import { DateTime, DateTimeUnit } from 'luxon';
 import { RUser, User } from '../../users/schemas/user.schema';
 import { RecurrenceUnit } from '../enum/recurrence_unit.enum';
+import { Exclude } from 'class-transformer';
 
 @Schema()
-class Measure {
+export class Measure {
 	@ApiProperty({ type: Date })
-	@Prop({ required: true, type: Date })
+	@Prop({ required: true, type: Date, index: true, unique: true })
 	date: Date;
 
 	@ApiProperty()
@@ -16,7 +17,12 @@ class Measure {
 	value: number;
 }
 
-@Schema({ toJSON: { virtuals: true }, toObject: { virtuals: true } })
+export const MeasureSchema = SchemaFactory.createForClass(Measure);
+
+@Schema({
+	toJSON: { virtuals: true, getters: true },
+	toObject: { virtuals: true, getters: true },
+})
 export class Progress {
 	@ApiProperty({ type: String })
 	@Prop({ required: true, type: String })
@@ -42,11 +48,21 @@ export class Progress {
 	@Prop({ required: true, type: Number })
 	goal: number;
 
-	@ApiProperty({ type: Measure, isArray: true })
-	@Prop({ required: false, type: Measure, isArray: true })
-	measures?: Measure[];
+	@Prop({ required: false, type: Map, of: Number })
+	// Map<timestamp, value>
+	measures?: Map<number, number>;
 
 	// deadline is a virtual property
+
+	// current_progress is a virtual property
+	// @ApiProperty({ type: Number })
+	// @Prop({
+	// 	get: function () {
+	// 		console.log('meas', this.measures);
+	// 		return 42;
+	// 	},
+	// })
+	current_progress?: number;
 }
 
 export const ProgressSchema = SchemaFactory.createForClass(Progress);
@@ -80,20 +96,25 @@ ProgressSchema.virtual('current_progress', {
 		this.recurrence_unit == RecurrenceUnit.Daily
 			? 'day'
 			: this.recurrence_unit.slice(0, -2);
-	const start = now.startOf(unit as DateTimeUnit);
-	const end = now.endOf(unit as DateTimeUnit);
-
-	const mongo_start = start.toJSDate() as unknown as Date;
-	const mongo_end = end.toJSDate() as unknown as Date;
+	const start = now.startOf(unit as DateTimeUnit).valueOf();
+	const end = now.endOf(unit as DateTimeUnit).valueOf();
 
 	// Get measures if they exist
-	console.log(this.measures);
 	if (!this.measures) return 0;
 
-	const measures = this.measures.filter(
-		(measure) => measure.date >= mongo_start && measure.date <= mongo_end,
-	);
-	const sum = measures.reduce((acc, measure) => acc + measure.value, 0);
+	console.log('measures', this.measures);
+
+	// for (const [key, value] of this.measures.entries()) {
+	// 	console.log('key  ', key);
+	// 	console.log('start', start);
+	// 	console.log('end  ', end);
+	// 	console.log('value', value, typeof value);
+	// }
+
+	// Filter measures between start and end
+	const sum = Array.from(this.measures.entries())
+		.filter(([key]) => key >= start && key <= end)
+		.reduce((acc, [, value]) => acc + value, 0);
 	return sum;
 });
 
@@ -127,6 +148,9 @@ export class RProgress {
 
 	@ApiProperty({ type: Number })
 	goal: number;
+
+	@Exclude()
+	measures?: Map<number, number>;
 
 	@ApiProperty({ type: Number })
 	current_progress: number;

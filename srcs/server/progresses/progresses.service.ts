@@ -133,18 +133,19 @@ export class ProgressesService {
 			// 	console.log(progresses[i].current_progress)
 			// }
 		}
-		console.log('yo', progresses[0]);
-		console.log(
-			'lo',
-			(
-				await this.ProgressModel.find(
-					{
-						user: userId,
-					},
-					'measures recurrence_unit',
-				).populate('measures')
-			)[0],
-		);
+		// console.log('yo', progresses[0]);
+		// console.log(
+		// 	'lo',
+		// 	(await this.ProgressModel.find().populate('measures').exec())[0],
+		// );
+		// console.log(
+		// 	'compute',
+		// 	await this.computeProgress(
+		// 		requester,
+		// 		progresses[0]._id.toString(),
+		// 		date,
+		// 	),
+		// );
 		return progresses;
 	}
 
@@ -290,12 +291,9 @@ export class ProgressesService {
 		const existingProgress = (await this.ProgressModel.findByIdAndUpdate(
 			progressId,
 			{
-				$push: {
-					measures: {
-						date: forDate,
-						value: Number(value),
-					},
-				},
+				// Add [forDate.getTime()]: value to measures map
+				// (type of measures is: Map<number, number>)
+				$set: { [`measures.${forDate.getTime()}`]: value },
 			},
 			{ new: true, fields: fields },
 		).populate('user', this.usersService.defaultFields)) as RProgress;
@@ -381,67 +379,68 @@ export class ProgressesService {
 		progressId: string,
 		now: DateTime = DateTime.now(),
 	): Promise<number> {
-		// Check given parameters
-		if (!isValidObjectId(progressId))
-			throw new NotFoundException('Progress not found');
+		return -1;
+		// // Check given parameters
+		// if (!isValidObjectId(progressId))
+		// 	throw new NotFoundException('Progress not found');
 
-		// check that requester is the owner (except for admin)
-		await checkProgressAccess(requester, progressId, this.ProgressModel);
+		// // check that requester is the owner (except for admin)
+		// await checkProgressAccess(requester, progressId, this.ProgressModel);
 
-		// Get progress
-		const existingProgress = await this.ProgressModel.findById(
-			progressId,
-			'recurrence recurrence_unit goal',
-		);
-		if (!existingProgress)
-			throw new NotFoundException('Progress not found');
+		// // Get progress
+		// const existingProgress = await this.ProgressModel.findById(
+		// 	progressId,
+		// 	'recurrence recurrence_unit goal',
+		// );
+		// if (!existingProgress)
+		// 	throw new NotFoundException('Progress not found');
 
-		// Get time range
-		// slice(0, -2) to remove 'ly' from unit => 'yearly' -> 'year', 'monthly' -> 'month'
-		const unit =
-			existingProgress.recurrence_unit == RecurrenceUnit.Daily
-				? 'day'
-				: existingProgress.recurrence_unit.slice(0, -2);
-		const start = now.startOf(unit as DateTimeUnit);
-		const end = now.endOf(unit as DateTimeUnit);
+		// // Get time range
+		// // slice(0, -2) to remove 'ly' from unit => 'yearly' -> 'year', 'monthly' -> 'month'
+		// const unit =
+		// 	existingProgress.recurrence_unit == RecurrenceUnit.Daily
+		// 		? 'day'
+		// 		: existingProgress.recurrence_unit.slice(0, -2);
+		// const start = now.startOf(unit as DateTimeUnit);
+		// const end = now.endOf(unit as DateTimeUnit);
 
-		// Retrieve measures between start and end
-		const measures = await this.ProgressModel.aggregate([
-			{ $match: { _id: new Types.ObjectId(progressId) } },
-			{
-				$project: {
-					measures: {
-						$filter: {
-							input: '$measures',
-							as: 'measure',
-							cond: {
-								$and: [
-									{
-										$gte: [
-											'$$measure.date',
-											start.toJSDate(),
-										],
-									},
-									{
-										$lte: [
-											'$$measure.date',
-											end.toJSDate(),
-										],
-									},
-								],
-							},
-						},
-					},
-				},
-			},
-		]);
-		if (!measures || measures.length != 1)
-			throw new NotFoundException('Progress not found');
+		// // Retrieve measures between start and end
+		// const measures = await this.ProgressModel.aggregate([
+		// 	{ $match: { _id: new Types.ObjectId(progressId) } },
+		// 	{
+		// 		$project: {
+		// 			measures: {
+		// 				$filter: {
+		// 					input: '$measures',
+		// 					as: 'measure',
+		// 					cond: {
+		// 						$and: [
+		// 							{
+		// 								$gte: [
+		// 									'$$measure.date',
+		// 									start.toJSDate(),
+		// 								],
+		// 							},
+		// 							{
+		// 								$lte: [
+		// 									'$$measure.date',
+		// 									end.toJSDate(),
+		// 								],
+		// 							},
+		// 						],
+		// 					},
+		// 				},
+		// 			},
+		// 		},
+		// 	},
+		// ]);
+		// if (!measures || measures.length != 1)
+		// 	throw new NotFoundException('Progress not found');
 
-		let sum = 0;
-		if (measures[0].measures)
-			for (const measure of measures[0].measures) sum += measure.value;
+		// let sum = 0;
+		// if (measures[0].measures)
+		// 	for (const measure of measures[0].measures) sum += measure.value;
 
-		return sum;
+		// return sum;
 	}
 }

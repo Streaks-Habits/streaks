@@ -1,5 +1,12 @@
-import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
+import { NestFactory, Reflector } from '@nestjs/core';
+import {
+	CallHandler,
+	ClassSerializerInterceptor,
+	ExecutionContext,
+	Injectable,
+	NestInterceptor,
+	ValidationPipe,
+} from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import {
 	FastifyAdapter,
@@ -12,6 +19,42 @@ import { join } from 'path';
 import { ConfigService } from '@nestjs/config';
 import { areRegistrationsEnabled } from './utils';
 import { UsersService } from './users/users.service';
+import { Observable, map } from 'rxjs';
+
+function recursiveInterceptor(value: any): unknown {
+	if (Array.isArray(value)) {
+		return value.map(recursiveInterceptor);
+	}
+	if (typeof value !== 'object') return value;
+
+	// Check that object have been lean()ed
+	if (!value.hasOwnProperty('toObject')) value = value.toObject();
+
+	const properties_to_remove = ['measures'];
+
+	// Remove properties
+	for (const property of properties_to_remove) {
+		if (value.hasOwnProperty(property)) {
+			delete value[property];
+		}
+	}
+
+	// TODO: uncomment this (changes needed in the frontend and the clients)
+	// Rename _id to id
+	// if (value.hasOwnProperty('_id')) {
+	// 	value.id = value._id;
+	// 	delete value._id;
+	// }
+
+	return value;
+}
+
+@Injectable()
+export class Interceptor implements NestInterceptor {
+	intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+		return next.handle().pipe(map((value) => recursiveInterceptor(value)));
+	}
+}
 
 async function bootstrap() {
 	const app = await NestFactory.create<NestFastifyApplication>(
@@ -26,6 +69,7 @@ async function bootstrap() {
 
 	app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
 	app.useGlobalFilters(new MongoExceptionFilter());
+	app.useGlobalInterceptors(new Interceptor());
 
 	app.useStaticAssets({
 		root: join(__dirname, '..', 'public'),

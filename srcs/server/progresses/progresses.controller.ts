@@ -11,6 +11,12 @@ import {
 	Res,
 	UseGuards,
 	Query,
+	UseInterceptors,
+	CallHandler,
+	ExecutionContext,
+	Injectable,
+	NestInterceptor,
+	HttpCode,
 } from '@nestjs/common';
 import {
 	ApiBadRequestResponse,
@@ -32,6 +38,7 @@ import { Role } from '../users/enum/roles.enum';
 import { Roles } from '../auth/decorator/roles.decorator';
 import { RProgress } from './schemas/progress.schema';
 import { RefreshJwtGuard } from '../auth/guard/refresh-jwt.guard';
+import { Observable, map } from 'rxjs';
 
 @Controller('/api/v1/progresses')
 export class ProgressesController {
@@ -151,20 +158,15 @@ export class ProgressesController {
 	})
 	// #endregion doc
 	async findAllForUser(
-		@Res() response,
 		@Request() request,
 		@Param('user_id') userId: string,
 		@Query('date') date: string, // YYYY-MM-DD
 	) {
-		return response
-			.status(HttpStatus.OK)
-			.send(
-				await this.progressesService.findAllForUser(
-					request.user,
-					userId,
-					date,
-				),
-			);
+		return await this.progressesService.findAllForUser(
+			request.user,
+			userId,
+			date,
+		);
 	}
 
 	/*
