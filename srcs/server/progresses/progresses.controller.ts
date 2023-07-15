@@ -8,14 +8,8 @@ import {
 	Put,
 	HttpStatus,
 	Request,
-	Res,
 	UseGuards,
 	Query,
-	UseInterceptors,
-	CallHandler,
-	ExecutionContext,
-	Injectable,
-	NestInterceptor,
 	HttpCode,
 } from '@nestjs/common';
 import {
@@ -38,7 +32,6 @@ import { Role } from '../users/enum/roles.enum';
 import { Roles } from '../auth/decorator/roles.decorator';
 import { RProgress } from './schemas/progress.schema';
 import { RefreshJwtGuard } from '../auth/guard/refresh-jwt.guard';
-import { Observable, map } from 'rxjs';
 
 @Controller('/api/v1/progresses')
 export class ProgressesController {
@@ -48,6 +41,7 @@ export class ProgressesController {
 	 * CREATE
 	 */
 	@Post()
+	@HttpCode(HttpStatus.CREATED)
 	@UseGuards(MultiAuthGuard, RolesGuard, RefreshJwtGuard)
 	// User allowed, will check after that user can only create a progress for himself
 	@Roles(Role.Admin, Role.User)
@@ -68,24 +62,20 @@ export class ProgressesController {
 	})
 	// #endregion doc
 	async create(
-		@Res() response,
 		@Request() request,
 		@Body() createProgressDto: CreateProgressDto,
 	) {
-		return response
-			.status(HttpStatus.CREATED)
-			.send(
-				await this.progressesService.create(
-					request.user,
-					createProgressDto,
-				),
-			);
+		return await this.progressesService.create(
+			request.user,
+			createProgressDto,
+		);
 	}
 
 	/*
 	 * READ ALL
 	 */
 	@Get()
+	@HttpCode(HttpStatus.OK)
 	@UseGuards(MultiAuthGuard, RolesGuard, RefreshJwtGuard)
 	@Roles(Role.Admin)
 	// #region doc
@@ -112,19 +102,17 @@ export class ProgressesController {
 	})
 	// #endregion doc
 	async findAll(
-		@Res() response,
 		@Request() request,
 		@Query('date') date: string, // YYYY-MM-DD
 	) {
-		return response
-			.status(HttpStatus.OK)
-			.send(await this.progressesService.findAll(request.user, date));
+		return await this.progressesService.findAll(request.user, date);
 	}
 
 	/*
 	 * READ ALL FOR USER
 	 */
 	@Get('/user/:user_id')
+	@HttpCode(HttpStatus.OK)
 	@UseGuards(MultiAuthGuard, RolesGuard, RefreshJwtGuard)
 	// User allowed, will check after that user can only get his own progresses
 	@Roles(Role.Admin, Role.User)
@@ -173,6 +161,7 @@ export class ProgressesController {
 	 * READ ONE
 	 */
 	@Get(':progress_id')
+	@HttpCode(HttpStatus.OK)
 	@UseGuards(MultiAuthGuard, RolesGuard, RefreshJwtGuard)
 	// User allowed, will check after that user can only get his own progress
 	@Roles(Role.Admin, Role.User)
@@ -202,26 +191,22 @@ export class ProgressesController {
 	})
 	// #endregion doc
 	async findOne(
-		@Res() response,
 		@Request() request,
 		@Param('progress_id') progressId: string,
 		@Query('date') date: string, // YYYY-MM-DD
 	) {
-		return response
-			.status(HttpStatus.OK)
-			.send(
-				await this.progressesService.findOne(
-					request.user,
-					progressId,
-					date,
-				),
-			);
+		return await this.progressesService.findOne(
+			request.user,
+			progressId,
+			date,
+		);
 	}
 
 	/*
 	 * UPDATE
 	 */
 	@Put(':progress_id')
+	@HttpCode(HttpStatus.OK)
 	@UseGuards(MultiAuthGuard, RolesGuard, RefreshJwtGuard)
 	// User allowed, will check after that user can only update his own progress
 	@Roles(Role.Admin, Role.User)
@@ -245,26 +230,22 @@ export class ProgressesController {
 	})
 	// #endregion doc
 	async update(
-		@Res() response,
 		@Request() request,
 		@Param('progress_id') progressId: string,
 		@Body() updateProgressDto: UpdateProgressDto,
 	) {
-		return response
-			.status(HttpStatus.OK)
-			.send(
-				await this.progressesService.update(
-					request.user,
-					progressId,
-					updateProgressDto,
-				),
-			);
+		return await this.progressesService.update(
+			request.user,
+			progressId,
+			updateProgressDto,
+		);
 	}
 
 	/*
 	 * DELETE
 	 */
 	@Delete(':progress_id')
+	@HttpCode(HttpStatus.OK)
 	@UseGuards(MultiAuthGuard, RolesGuard, RefreshJwtGuard)
 	// User allowed, will check after that user can only delete his own progress
 	@Roles(Role.Admin, Role.User)
@@ -287,22 +268,15 @@ export class ProgressesController {
 			'Bad request, one or more data is badly formatted / missing.',
 	})
 	// #endregion doc
-	async delete(
-		@Res() response,
-		@Request() request,
-		@Param('progress_id') progressId: string,
-	) {
-		return response
-			.status(HttpStatus.OK)
-			.send(
-				await this.progressesService.delete(request.user, progressId),
-			);
+	async delete(@Request() request, @Param('progress_id') progressId: string) {
+		return await this.progressesService.delete(request.user, progressId);
 	}
 
 	/*
 	 * ADD MEASURE
 	 */
 	@Put('/measures/:progress_id/:measure')
+	@HttpCode(HttpStatus.OK)
 	@UseGuards(MultiAuthGuard, RolesGuard, RefreshJwtGuard)
 	// User allowed, will check after that user can only add a measure to his own progress
 	@Roles(Role.Admin, Role.User)
@@ -339,28 +313,24 @@ export class ProgressesController {
 	})
 	// #endregion doc
 	async addMeasure(
-		@Res() response,
 		@Request() request,
 		@Param('progress_id') progressId: string,
 		@Param('measure') value: string,
 		@Query('for') forDate: string, // ISO Date, e.g. 2023-01-09T14:09:03.769Z
 	) {
-		return response
-			.status(HttpStatus.OK)
-			.send(
-				await this.progressesService.addMeasure(
-					request.user,
-					progressId,
-					value,
-					forDate,
-				),
-			);
+		return await this.progressesService.addMeasure(
+			request.user,
+			progressId,
+			value,
+			forDate,
+		);
 	}
 
 	/*
 	 * DELETE MEASURES
 	 */
 	@Delete('/measures/:progress_id')
+	@HttpCode(HttpStatus.OK)
 	@UseGuards(MultiAuthGuard, RolesGuard, RefreshJwtGuard)
 	// User allowed, will check after that user can only add a measure to his own progress
 	@Roles(Role.Admin, Role.User)
@@ -400,21 +370,16 @@ export class ProgressesController {
 	})
 	// #endregion doc
 	async deleteMeasureRange(
-		@Res() response,
 		@Request() request,
 		@Param('progress_id') progressId: string,
 		@Query('from') fromDateQuery: string, // ISO Date, e.g. 2023-01-09T14:09:03.769Z
 		@Query('to') toDateQuery: string, // ISO Date, e.g. 2023-01-09T14:09:03.769Z
 	) {
-		return response
-			.status(HttpStatus.OK)
-			.send(
-				await this.progressesService.deleteMeasureRange(
-					request.user,
-					progressId,
-					fromDateQuery,
-					toDateQuery,
-				),
-			);
+		return await this.progressesService.deleteMeasureRange(
+			request.user,
+			progressId,
+			fromDateQuery,
+			toDateQuery,
+		);
 	}
 }

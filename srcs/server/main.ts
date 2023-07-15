@@ -1,7 +1,6 @@
-import { NestFactory, Reflector } from '@nestjs/core';
+import { NestFactory } from '@nestjs/core';
 import {
 	CallHandler,
-	ClassSerializerInterceptor,
 	ExecutionContext,
 	Injectable,
 	NestInterceptor,
@@ -28,7 +27,7 @@ function recursiveInterceptor(value: any): unknown {
 	if (typeof value !== 'object') return value;
 
 	// Check that object have been lean()ed
-	if (!value.hasOwnProperty('toObject')) value = value.toObject();
+	if (value.toObject) value = value.toObject();
 
 	const properties_to_remove = ['measures'];
 
