@@ -501,6 +501,8 @@ div.progress {
 	}
 
 	div.progress_details {
+		display: flex;
+		gap: 25px;
 		margin-top: 15px;
 
 		p {
