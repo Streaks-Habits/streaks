@@ -26,6 +26,7 @@ export class CronsService {
 		const calendars = await this.calendarsService.findAll(
 			AdminUser,
 			this.calendarsService.defaultFields + ` days.${today_str}`,
+			true,
 		);
 		for (const calendar of calendars) {
 			// If today is a break day, set it but don't overwrite success

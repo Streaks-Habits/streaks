@@ -60,8 +60,15 @@ export class CalendarsService {
 	async findAll(
 		requester: UserDoc,
 		fields = this.defaultFields,
+		onlyEnabled = false,
 	): Promise<RCalendar[]> {
-		const calendarsData = (await this.CalendarModel.find({}, fields)
+		const enabledFilter = onlyEnabled ? { enabled: true } : {};
+		const calendarsData = (await this.CalendarModel.find(
+			{
+				...enabledFilter,
+			},
+			fields,
+		)
 			.populate('user', this.usersService.defaultFields)
 			.lean()) as RCalendar[];
 
