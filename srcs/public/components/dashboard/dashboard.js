@@ -108,7 +108,8 @@ export default {
 				this.progresses.enabled = [];
 				this.progresses.disabled = [];
 				for (const progress of res) {
-					if (progress.enabled) this.progresses.enabled.push(progress);
+					if (progress.enabled)
+						this.progresses.enabled.push(progress);
 					else this.progresses.disabled.push(progress);
 				}
 			} else {

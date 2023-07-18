@@ -1,0 +1,38 @@
+@import './partials/variables';
+@import './partials/ui/toggle';
+
+.calendar-editor {
+
+	.agenda-days {
+		display: flex;
+		gap: 5px;
+
+		.agenda-day {
+			cursor: pointer;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			width: 1.8em;
+			height: 1.8em;
+			background: $success_background;
+			border-radius: 50%;
+
+			&.disabled {
+				background: $breakday_background;
+			}
+
+			input[type="checkbox"] {
+				display: none;
+			}
+
+			label {
+				cursor: pointer;
+				font-weight: bold;
+				color: $success_color;
+			}
+			&.disabled label {
+				color: $breakday_color;
+			}
+		}
+	}
+}

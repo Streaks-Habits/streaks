@@ -1,4 +1,9 @@
+import Toggle from '../ui/toggle.js';
+
 export default {
+	components: {
+		Toggle,
+	},
 	props: {
 		propsAction: {
 			type: String, // 'add' or 'edit'
@@ -13,6 +18,7 @@ export default {
 		return {
 			calendar: this.propsCalendar,
 			action: this.propsAction,
+			daynames: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
 		};
 	},
 	created() {
@@ -22,13 +28,21 @@ export default {
 				agenda: [true, true, true, true, true, false, false],
 				notifications: {
 					reminders: true,
-					congratulations: true,
+					congrats: true,
 				},
 				enabled: true,
 			};
 		}
 
 		console.log(this.calendar);
+	},
+	watch: {
+		calendar: {
+			handler() {
+				console.log(this.calendar);
+			},
+			deep: true,
+		},
 	},
 	template: `
 		<div class="calendar-editor">
@@ -42,37 +56,32 @@ export default {
 				<div class="form-group">
 					<p>Agenda</p>
 					<div class="agenda-days">
-						<div class="form-group">
-							<label for="monday">Monday</label>
-							<input type="checkbox" id="monday" v-model="calendar.agenda[0]" />
-							<label for="tuesday">Tuesday</label>
-							<input type="checkbox" id="tuesday" v-model="calendar.agenda[1]" />
-							<label for="wednesday">Wednesday</label>
-							<input type="checkbox" id="wednesday" v-model="calendar.agenda[2]" />
-							<label for="thursday">Thursday</label>
-							<input type="checkbox" id="thursday" v-model="calendar.agenda[3]" />
-							<label for="friday">Friday</label>
-							<input type="checkbox" id="friday" v-model="calendar.agenda[4]" />
-							<label for="saturday">Saturday</label>
-							<input type="checkbox" id="saturday" v-model="calendar.agenda[5]" />
-							<label for="sunday">Sunday</label>
-							<input type="checkbox" id="sunday" v-model="calendar.agenda[6]" />
+						<div
+							v-for="(day, index) in calendar.agenda"
+							:key="index"
+							class="agenda-day"
+							v-bind:class="{ disabled: !day }"
+							@click="calendar.agenda[index] = !calendar.agenda[index]"
+						>
+							<input type="checkbox" v-model="calendar.agenda[index]" />
+							<label for="day">{{ daynames[index] }}</label>
+						</div>
 					</div>
 				</div>
 				<div class="form-group">
 					<p>Notification</p>
 					<div class="form-group">
 						<label for="reminders">Reminders</label>
-						<input type="checkbox" id="reminders" v-model="calendar.notifications.reminders" />
+						<Toggle :toggle="calendar.notifications.reminders" @update:toggle="calendar.notifications.reminders = $event" />
 					</div>
 					<div class="form-group">
 						<label for="congratulations">Congratulations</label>
-						<input type="checkbox" id="congratulations" v-model="calendar.notifications.congratulations" />
+						<Toggle :toggle="calendar.notifications.congrats" @update:toggle="calendar.notifications.congrats = $event" />
 					</div>
 				</div>
 				<div class="form-group">
 					<label for="enabled">Enabled</label>
-					<input type="checkbox" id="enabled" v-model="calendar.enabled" />
+					<Toggle :toggle="calendar.enabled" @update:toggle="calendar.enabled = $event" />
 				</div>
 		</div>
 	`,

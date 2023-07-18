@@ -1,0 +1,76 @@
+@import '../variables';
+
+.toggle {
+	position: relative;
+		top: 50%;
+		width: 59.2px;
+		height: 28.8px;
+		margin: -20px auto 0 auto;
+		overflow: hidden;
+
+	&, .layer {
+		border-radius: 100px;
+	}
+
+	.knobs, .layer {
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+	}
+
+	.knobs {
+		z-index: 2;
+
+		&::before {
+			content: "";
+			position: absolute;
+			top: 3.2px;
+			left: 3.2px;
+			width: 16px;
+			height: 8px;
+			color: #fff;
+			font-size: 10px;
+			font-weight: bold;
+			text-align: center;
+			line-height: 1;
+			padding: 7.2px 4px;
+			background-color: $error_color_light;
+			border-radius: 50%;
+			transition: 0.3s cubic-bezier(0.18, 0.89, 0.35, 1.15) all;
+		}
+	}
+
+	.checkbox {
+		position: relative;
+		width: 100%;
+		height: 100%;
+		padding: 0;
+		margin: 0;
+		opacity: 0;
+		cursor: pointer;
+		z-index: 3;
+	}
+
+	.layer {
+		width: 100%;
+		background-color: $secondary_color_light;
+		transition: 0.3s ease all;
+		z-index: 1;
+	}
+
+	.checkbox:checked + .knobs:before {
+		content: "";
+		left: 32px;
+		background-color: $ok_color_light;
+	}
+
+	.checkbox:checked ~ .layer {
+		background-color: $secondary_color_light;
+	}
+
+	.knobs, .knobs:before, .layer {
+		transition: 0.3s ease all;
+	}
+}
