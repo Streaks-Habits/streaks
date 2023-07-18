@@ -1,5 +1,6 @@
 import Calendar from '/public/components/dashboard/calendar/calendar.js';
 import DisabledCalendar from '/public/components/dashboard/calendar/disabled_calendar.js';
+import CalendarEditor from '/public/components/dashboard/calendar/editor.js';
 import Progress from '/public/components/dashboard/progress/progress.js';
 import DisabledProgress from '/public/components/dashboard/progress/disabled_progress.js';
 
@@ -7,6 +8,7 @@ export default {
 	components: {
 		Calendar,
 		DisabledCalendar,
+		CalendarEditor,
 		Progress,
 		DisabledProgress,
 	},
@@ -123,6 +125,9 @@ export default {
 		<div class="calendars" v-if="calendars.enabled.length">
 			<Calendar v-for="calendar in calendars.enabled" :key="calendar._id" :calendarData="calendar" />
 		</div>
+		<CalendarEditor :propsAction="'add'" :propsCalendar="{}" />
+		<CalendarEditor v-for="calendar in calendars.enabled" :propsAction="'edit'" :propsCalendar="calendar" />
+
 
 		<h1 v-if="progresses.enabled.length" v-html="progresses_title"></h1>
 		<div class="progresses" v-if="progresses.enabled.length">
