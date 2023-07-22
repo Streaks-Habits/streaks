@@ -72,16 +72,16 @@ export default {
 					<p>Notification</p>
 					<div class="form-group">
 						<label for="reminders">Reminders</label>
-						<Toggle :toggle="calendar.notifications.reminders" @update:toggle="calendar.notifications.reminders = $event" />
+						<Toggle id="reminders" :toggle="calendar.notifications.reminders" @update:toggle="calendar.notifications.reminders = $event" />
 					</div>
 					<div class="form-group">
-						<label for="congratulations">Congratulations</label>
-						<Toggle :toggle="calendar.notifications.congrats" @update:toggle="calendar.notifications.congrats = $event" />
+						<label for="congrats">Congratulations</label>
+						<Toggle id="congrats" :toggle="calendar.notifications.congrats" @update:toggle="calendar.notifications.congrats = $event" />
 					</div>
 				</div>
 				<div class="form-group">
 					<label for="enabled">Enabled</label>
-					<Toggle :toggle="calendar.enabled" @update:toggle="calendar.enabled = $event" />
+					<Toggle id="enabled" :toggle="calendar.enabled" @update:toggle="calendar.enabled = $event" />
 				</div>
 		</div>
 	`,

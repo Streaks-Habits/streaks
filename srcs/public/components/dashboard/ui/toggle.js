@@ -1,13 +1,19 @@
 export default {
 	props: {
+		id: {
+			type: String,
+			required: true,
+		},
 		toggle: {
 			type: Boolean,
 			required: true,
 		},
 	},
 	data() {
+		console.log(this.id);
 		return {
 			enabled: this.toggle,
+			id: this.id,
 		};
 	},
 	methods: {
@@ -21,6 +27,7 @@ export default {
 			<input
 				type="checkbox"
 				class="checkbox"
+				:id="id"
 				v-bind:checked="enabled"
 				@click="toggleToggle"
 			/>
