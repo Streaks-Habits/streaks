@@ -183,6 +183,9 @@ export default {
 			this.setState.pos.x = 0;
 			this.setState.pos.y = 0;
 		},
+		edit() {
+			this.$emit('editor:edit', this.calendar);
+		},
 	},
 	template: `
 		<div class="calendar">
@@ -219,9 +222,10 @@ export default {
 			<div class="header">
 				<p class="name">{{ calendar.name }}</p>
 				<div class="controls">
-					<svg @click="prevMonth()" class="caret left"><use xlink:href="/public/icons/caret.svg#icon"></use></svg>
-					<svg @click="currentMonth()" class="today"><use xlink:href="/public/icons/today.svg#icon"></use></svg>
-					<svg @click="nextMonth()" class="caret right"><use xlink:href="/public/icons/caret.svg#icon"></use></svg>
+					<button @click="prevMonth()"><svg class="caret left"><use xlink:href="/public/icons/caret.svg#icon"></use></svg></button>
+					<button @click="currentMonth()"><svg class="today"><use xlink:href="/public/icons/today.svg#icon"></use></svg></button>
+					<button @click="nextMonth()"><svg class="caret right"><use xlink:href="/public/icons/caret.svg#icon"></use></svg></button>
+					<button @click="edit()"><svg class="edit"><use xlink:href="/public/icons/edit.svg#icon"></use></svg></button>
 				</div>
 			</div>
 

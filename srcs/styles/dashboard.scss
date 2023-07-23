@@ -30,26 +30,45 @@ div.controls {
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	padding-right: 5px;
 
-	svg {
-		fill: $secondary_color_light;
-		animation: fill .3s ease-in-out;
+	button {
+		background: none;
+		border: none;
+		padding: 0;
+		margin: 0;
 
-		:hover {
-			fill: $secondary_color_lighter;
-		}
-		&.caret {
-			width: 1.6em;
-			height: 1.6em;
-
-			&.right {
-				transform: rotate(180deg);
+		&:hover {
+			svg {
+				fill: $secondary_color_lighter;
+				stroke: $secondary_color_lighter;
 			}
 		}
-		&.today {
-			width: 1.2em;
-			height: 1.2em;
-			margin: 0 3px;
+
+		svg {
+			fill: $secondary_color_light;
+			stroke: $secondary_color_light;
+			animation: fill .3s ease-in-out;
+			cursor: pointer;
+
+			&.caret {
+				width: 1.6em;
+				height: 1.6em;
+
+				&.right {
+					transform: rotate(180deg);
+				}
+			}
+			&.today {
+				width: 1.2em;
+				height: 1.2em;
+				margin: 0 3px;
+			}
+			&.edit {
+				width: 1.6em;
+				height: 1.6em;
+				margin-left: 5px;
+			}
 		}
 	}
 }
@@ -412,7 +431,6 @@ div.progresses {
 
 div.progress {
 	max-width: 25em;
-	min-width: 18em;
 	border: solid 2px #425d64;
 	border-radius: 15px;
 	padding: 20px;

@@ -2,11 +2,11 @@
 
 .toggle {
 	position: relative;
-		top: 50%;
-		width: 59.2px;
-		height: 28.8px;
-		margin: -20px auto 0 auto;
-		overflow: hidden;
+	top: 50%;
+	width: 59.2px;
+	height: 28.8px;
+	// margin: -20px auto 0 auto;
+	overflow: hidden;
 
 	&, .layer {
 		border-radius: 100px;

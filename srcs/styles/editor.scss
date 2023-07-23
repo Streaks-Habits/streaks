@@ -2,10 +2,95 @@
 @import './partials/ui/toggle';
 
 .calendar-editor {
+	display: flex;
+	justify-content: center;
+	position: fixed;
+	top: 0; left: 0; right: 0; bottom: 0;
+	width: 100%;
+	min-height: 100%;
+	background: $secondary_color;
+	z-index: 1;
+	overflow-y: scroll;
+
+	.calendar-editor-inner {
+		max-width: 25rem;
+		margin: auto 25px;
+		width: 100%;
+	}
+
+	button.close {
+		background: none;
+		border: none;
+		padding: 0;
+		margin: 0;
+		width: initial;
+		float: right;
+		margin: -25px -8px 15px 15px;
+
+		&:hover {
+			svg {
+				fill: $secondary_color_lighter;
+				stroke: $secondary_color_lighter;
+			}
+		}
+
+		svg {
+			stroke: $white;
+			animation: fill .3s ease-in-out;
+			cursor: pointer;
+			width: 2em;
+			height: 2em;
+		}
+	}
+
+	h1 {
+		word-break: break-word;
+	}
+
+	h1 .span {
+		color: $primary_color;
+	}
+
+	.calendar-id {
+		font-size: .9rem;
+		font-weight: bold;
+		color: $secondary_color_lighter;
+		text-align: center;
+	}
+
+	.form-group {
+		& > label, &> p.label {
+			font-weight: bold;
+			margin-bottom: 5px;
+			display: block;
+		}
+
+		& > p.group-title {
+			font-weight: bold;
+			margin-top: 2rem;
+			font-size: 1.2rem;
+		}
+
+		&.toggle-group {
+			display: flex;
+			justify-content: start;
+			align-items: center;
+			gap: 15px;
+
+			label {
+				margin-bottom: 0;
+			}
+
+			.toggle {
+				transform: scale(.8);
+			}
+		}
+	}
 
 	.agenda-days {
 		display: flex;
 		gap: 5px;
+		margin-top: 10px;
 
 		.agenda-day {
 			cursor: pointer;

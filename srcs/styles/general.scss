@@ -20,6 +20,10 @@ body {
 	margin: auto;
 }
 
+body.no-scroll {
+	overflow: hidden;
+}
+
 a {
 	text-decoration: none;
 	color: $primary_color;

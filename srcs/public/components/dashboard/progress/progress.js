@@ -229,9 +229,9 @@ export default {
 			<div class="date_controls_wrapper">
 				<span class="time_range">{{ timeRangeName }}</span>
 				<div class="controls">
-					<svg @click="previous()" class="caret left"><use xlink:href="/public/icons/caret.svg#icon"></use></svg>
-					<svg @click="current()" class="today"><use xlink:href="/public/icons/today.svg#icon"></use></svg>
-					<svg @click="next()" class="caret right"><use xlink:href="/public/icons/caret.svg#icon"></use></svg>
+					<button @click="previous()"><svg class="caret left"><use xlink:href="/public/icons/caret.svg#icon"></use></svg></button>
+					<button @click="current()"><svg class="today"><use xlink:href="/public/icons/today.svg#icon"></use></svg></button>
+					<button @click="next()"><svg class="caret right"><use xlink:href="/public/icons/caret.svg#icon"></use></svg></button>
 				</div>
 			</div>
 

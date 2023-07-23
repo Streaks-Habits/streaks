@@ -22,6 +22,7 @@ export default {
 		};
 	},
 	created() {
+		document.body.classList.add('no-scroll');
 		if (this.action === 'add') {
 			this.calendar = {
 				name: '',
@@ -36,6 +37,9 @@ export default {
 
 		console.log(this.calendar);
 	},
+	beforeDestroy() {
+		document.body.classList.remove('no-scroll');
+	},
 	watch: {
 		calendar: {
 			handler() {
@@ -46,43 +50,55 @@ export default {
 	},
 	template: `
 		<div class="calendar-editor">
-			<h1 v-if="action === 'add'">Add a calendar</h1>
-			<h1 v-if="action === 'edit'">Edit {{ calendar.name }}</h1>
-			<form>
-				<div class="form-group">
-					<label for="name">Name</label>
-					<input type="text" id="name" v-model="calendar.name" />
+			<div class="calendar-editor-inner">
+				<div>
+				<button @click="$emit('editor:close')" class="close">
+					<svg><use xlink:href="/public/icons/close.svg#icon"></use></svg>
+				</button>
+				<h1 v-if="action === 'add'">Add a calendar</h1>
+				<h1 v-if="action === 'edit'">Edit <span>{{ calendar.name }}</span></h1>
+				<p class="calendar-id">{{ calendar._id }}</p>
 				</div>
-				<div class="form-group">
-					<p>Agenda</p>
-					<div class="agenda-days">
-						<div
-							v-for="(day, index) in calendar.agenda"
-							:key="index"
-							class="agenda-day"
-							v-bind:class="{ disabled: !day }"
-							@click="calendar.agenda[index] = !calendar.agenda[index]"
-						>
-							<input type="checkbox" v-model="calendar.agenda[index]" />
-							<label for="day">{{ daynames[index] }}</label>
+				<form>
+					<div class="form-group">
+						<label for="name">Name</label>
+						<input type="text" id="name" v-model="calendar.name" />
+					</div>
+					<div class="form-group">
+						<p class="label">📅 Agenda</p>
+						<div class="agenda-days">
+							<div
+								v-for="(day, index) in calendar.agenda"
+								:key="index"
+								class="agenda-day"
+								v-bind:class="{ disabled: !day }"
+								@click="calendar.agenda[index] = !calendar.agenda[index]"
+							>
+								<input type="checkbox" v-model="calendar.agenda[index]" />
+								<label for="day">{{ daynames[index] }}</label>
+							</div>
 						</div>
 					</div>
-				</div>
-				<div class="form-group">
-					<p>Notification</p>
 					<div class="form-group">
-						<label for="reminders">Reminders</label>
-						<Toggle id="reminders" :toggle="calendar.notifications.reminders" @update:toggle="calendar.notifications.reminders = $event" />
+						<p class="group-title">🔔 Notification</p>
+						<div class="form-group toggle-group">
+							<Toggle id="reminders" :toggle="calendar.notifications.reminders" @update:toggle="calendar.notifications.reminders = $event" />
+							<label for="reminders">Reminders</label>
+						</div>
+						<div class="form-group toggle-group">
+							<Toggle id="congrats" :toggle="calendar.notifications.congrats" @update:toggle="calendar.notifications.congrats = $event" />
+							<label for="congrats">Congratulations</label>
+						</div>
 					</div>
 					<div class="form-group">
-						<label for="congrats">Congratulations</label>
-						<Toggle id="congrats" :toggle="calendar.notifications.congrats" @update:toggle="calendar.notifications.congrats = $event" />
+						<p class="group-title">⚙️ Settings</p>
+						<div class="form-group toggle-group">
+							<Toggle id="enabled" :toggle="calendar.enabled" @update:toggle="calendar.enabled = $event" />
+							<label for="enabled">Enabled</label>
+						</div>
 					</div>
-				</div>
-				<div class="form-group">
-					<label for="enabled">Enabled</label>
-					<Toggle id="enabled" :toggle="calendar.enabled" @update:toggle="calendar.enabled = $event" />
-				</div>
+				</form>
+			</div>
 		</div>
 	`,
 };

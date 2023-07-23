@@ -25,6 +25,10 @@ export default {
 			calendars: {
 				enabled: [],
 				disabled: [],
+				editor: {
+					action: null, // 'add', 'edit' or null
+					calendar: {},
+				},
 			},
 			progresses: {
 				enabled: [],
@@ -118,16 +122,23 @@ export default {
 				else console.error("Error while retrieving user's progresses");
 			}
 		},
+		editCalendar(calendar) {
+			this.calendars.editor.action = 'edit';
+			this.calendars.editor.calendar = calendar;
+		},
+		closeEditor() {
+			this.calendars.editor.action = null;
+			this.calendars.editor.calendar = {};
+		},
 	},
 	template: `
 		<p class="sentence">{{ sentence }}</p>
 
 		<h1 v-if="calendars.enabled.length" v-html="calendars_title"></h1>
 		<div class="calendars" v-if="calendars.enabled.length">
-			<Calendar v-for="calendar in calendars.enabled" :key="calendar._id" :calendarData="calendar" />
+			<Calendar v-for="calendar in calendars.enabled" :key="calendar._id" :calendarData="calendar" @editor:edit="editCalendar" />
 		</div>
-		<CalendarEditor :propsAction="'add'" :propsCalendar="{}" />
-		<CalendarEditor v-for="calendar in calendars.enabled" :propsAction="'edit'" :propsCalendar="calendar" />
+		<CalendarEditor v-if="calendars.editor.action" :propsAction="calendars.editor.action" :propsCalendar="calendars.editor.calendar" @editor:close="closeEditor" />
 
 
 		<h1 v-if="progresses.enabled.length" v-html="progresses_title"></h1>
