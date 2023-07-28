@@ -19,6 +19,11 @@ export default {
 			calendar: this.propsCalendar,
 			action: this.propsAction,
 			daynames: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
+			infoMessage: null,
+			successMessage: null,
+			errorMessage: null,
+			lastSaved: null,
+			saveTimeout: null,
 		};
 	},
 	created() {
@@ -43,21 +48,62 @@ export default {
 	watch: {
 		calendar: {
 			handler() {
-				console.log(this.calendar);
+				this.successMessage = null;
+				this.errorMessage = null;
+				this.infoMessage = 'Saving...';
+
+				if (this.saveTimeout) {
+					clearTimeout(this.saveTimeout);
+					this.saveTimeout = null;
+				}
+				this.saveTimeout = setTimeout(async () => {
+					this.saveTimeout = null;
+					await this.save();
+				}, 2000);
 			},
 			deep: true,
+		},
+	},
+	methods: {
+		async save() {
+			const res = await fetch('/api/v1/calendars/' + this.calendar._id, {
+				method: 'PUT',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({
+					name: this.calendar.name,
+					agenda: this.calendar.agenda,
+					notifications: this.calendar.notifications,
+					enabled: this.calendar.enabled,
+				}),
+			});
+
+			const data = await res.json();
+
+			this.infoMessage = null;
+			this.successMessage = null;
+			this.errorMessage = null;
+
+			if (res.ok) {
+				this.successMessage = 'Saved';
+			} else if (data.hasOwnProperty('message')) {
+				this.errorMessage = data.message;
+			} else {
+				this.errorMessage = 'Error while saving calendar';
+			}
 		},
 	},
 	template: `
 		<div class="calendar-editor">
 			<div class="calendar-editor-inner">
 				<div>
-				<button @click="$emit('editor:close')" class="close">
-					<svg><use xlink:href="/public/icons/close.svg#icon"></use></svg>
-				</button>
-				<h1 v-if="action === 'add'">Add a calendar</h1>
-				<h1 v-if="action === 'edit'">Edit <span>{{ calendar.name }}</span></h1>
-				<p class="calendar-id">{{ calendar._id }}</p>
+					<button @click="$emit('editor:close')" class="close">
+						<svg><use xlink:href="/public/icons/close.svg#icon"></use></svg>
+					</button>
+					<h1 v-if="action === 'add'">Add a calendar</h1>
+					<h1 v-if="action === 'edit'">Edit <span>{{ calendar.name }}</span></h1>
+					<p class="calendar-id">{{ calendar._id }}</p>
 				</div>
 				<form>
 					<div class="form-group">
@@ -96,6 +142,11 @@ export default {
 							<Toggle id="enabled" :toggle="calendar.enabled" @update:toggle="calendar.enabled = $event" />
 							<label for="enabled">Enabled</label>
 						</div>
+					</div>
+					<div class="info">
+						<p class="info-message" v-if="infoMessage">{{ infoMessage }}</p>
+						<p class="success-message" v-if="successMessage">{{ successMessage }}</p>
+						<p class="error-message" v-if="errorMessage">{{ errorMessage }}</p>
 					</div>
 				</form>
 			</div>

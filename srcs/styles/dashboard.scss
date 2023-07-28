@@ -89,7 +89,7 @@ div.calendars {
 div.calendar {
 	display: inline-block;
 	// calendar size + padding + border
-	max-width: calc(16.75em + 44px);
+	max-width: 16.75em;
 
 	div.header {
 		display: flex;
@@ -399,7 +399,9 @@ div.calendar {
 
 div.disabled_calendar, div.disabled_progress {
 	display: flex;
-	flex-direction: column;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
 	width: 16.75em;
 	box-sizing: border-box;
 	border: solid 2px $secondary_color_light;
@@ -409,6 +411,9 @@ div.disabled_calendar, div.disabled_progress {
 	p.name {
 		margin: 0;
 		color: $secondary_color_lighter;
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
 	}
 }
 

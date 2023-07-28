@@ -10,7 +10,6 @@ export default {
 		},
 	},
 	data() {
-		console.log(this.id);
 		return {
 			enabled: this.toggle,
 			id: this.id,

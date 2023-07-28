@@ -129,6 +129,7 @@ export default {
 		closeEditor() {
 			this.calendars.editor.action = null;
 			this.calendars.editor.calendar = {};
+			this.updateCalendars();
 		},
 	},
 	template: `
@@ -148,7 +149,7 @@ export default {
 
 		<h1 v-if="calendars.disabled.length" class="disabled">Disabled Calendars</h1>
 		<div class="calendars disabled" v-if="calendars.disabled.length">
-			<DisabledCalendar v-for="calendar in calendars.disabled" :key="calendar._id" :calendarData="calendar" />
+			<DisabledCalendar v-for="calendar in calendars.disabled" :key="calendar._id" :calendarData="calendar" @editor:edit="editCalendar" />
 		</div>
 
 		<h1 v-if="progresses.disabled.length" class="disabled">Disabled Progresses</h1>

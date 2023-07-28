@@ -1,7 +1,7 @@
 version: "3.9"
 services:
   db:
-    image : mongo:5.0.8
+    image : mongo:4.4.14
     container_name: mongodb
     restart: always
     ports:
@@ -18,7 +18,7 @@ services:
     environment:
       - TZ=Europe/Paris
       - MONGO_URI=mongodb://db:27017/streaks?retryWrites=true&w=majority
-      - JWT_SECRET=${JWT_SECRET}
+      - AUTH_JWT_SECRET=${AUTH_JWT_SECRET}
       - AUTH_COOKIE_EXPIRES=1814400 # three weeks
       - AUTH_COOKIE_SECRET=${AUTH_COOKIE_SECRET}
 

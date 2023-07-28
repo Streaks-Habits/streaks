@@ -14,7 +14,7 @@
 
 	.calendar-editor-inner {
 		max-width: 25rem;
-		margin: auto 25px;
+		margin: 5rem 25px 0 25px;
 		width: 100%;
 	}
 
@@ -118,6 +118,29 @@
 			&.disabled label {
 				color: $breakday_color;
 			}
+		}
+	}
+
+	div.info {
+		margin-top: 1rem;
+
+		p {
+			font-weight: bold;
+			padding: 10px;
+			border-radius: 5px;
+			display: inline-block;
+		}
+
+		p.success-message {
+			background: $ok_color;
+		}
+
+		p.error-message {
+			background: $error_color;
+		}
+
+		p.info-message {
+			background: $secondary_color_light;
 		}
 	}
 }
