@@ -1,4 +1,9 @@
+import LoadingButton from '../ui/loadingButton.js';
+
 export default {
+	components: {
+		LoadingButton,
+	},
 	props: {
 		startingType: {
 			// login, register
@@ -128,10 +133,7 @@ export default {
 				<h1>Login</h1>
 				<input v-model="username" type="text" placeholder="Username" />
 				<input v-model="password" type="password" placeholder="Password" />
-				<div class="submit_loading">
-					<button type="submit" :disabled="loading">Login</button>
-					<svg v-show="loading" class="spinner"><use xlink:href="/public/icons/spinner.svg#icon"></use></svg>
-				</div>
+				<LoadingButton :loading="loading" :text="'Login'" :type="'submit'" :additionalClasses="'submit_loading'" />
 				<ul class="errors" v-if="errors.length">
 					<li v-for="error in errors">{{ error }}</li>
 				</ul>
@@ -144,10 +146,7 @@ export default {
 				<input v-model="username" type="text" placeholder="Username" />
 				<input v-model="password" type="password" placeholder="Password" />
 				<input v-model="passwordRepeat" type="password" placeholder="Repeat password" />
-				<div class="submit_loading">
-					<button type="submit" :disabled="loading">Register</button>
-					<svg v-show="loading" class="spinner"><use xlink:href="/public/icons/spinner.svg#icon"></use></svg>
-				</div>
+				<LodingButton :loading="loading" :text="'Register'" :type="'submit'" :additionalClasses="'submit_loading'" />
 				<ul class="errors" v-if="errors.length">
 					<li v-for="error in errors">{{ error }}</li>
 				</ul>

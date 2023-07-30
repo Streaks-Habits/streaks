@@ -1,0 +1,16 @@
+.loading_button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	button {
+		width: auto;
+	}
+
+	svg.spinner {
+		margin-left: 15px;
+		width: 1.5em;
+		height: 1.5em;
+		fill: $white
+	}
+}

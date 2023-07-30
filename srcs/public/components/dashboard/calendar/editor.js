@@ -1,8 +1,10 @@
-import Toggle from '../ui/toggle.js';
+import Toggle from '../../ui/toggle.js';
+import LoadingButton from '../../ui/loadingButton.js';
 
 export default {
 	components: {
 		Toggle,
+		LoadingButton,
 	},
 	props: {
 		propsAction: {
@@ -13,17 +15,25 @@ export default {
 			type: Object,
 			required: true,
 		},
+		propsUser: {
+			type: Object,
+			required: true,
+		},
 	},
 	data() {
 		return {
 			calendar: this.propsCalendar,
+			calendarId: this.propsCalendar._id, // Separate to avoid triggering watcher
 			action: this.propsAction,
+			user: this.propsUser,
 			daynames: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
 			infoMessage: null,
 			successMessage: null,
 			errorMessage: null,
 			lastSaved: null,
 			saveTimeout: null,
+			isLoading: false,
+			deleteIsLoading: false,
 		};
 	},
 	created() {
@@ -39,18 +49,20 @@ export default {
 				enabled: true,
 			};
 		}
-
-		console.log(this.calendar);
 	},
 	beforeDestroy() {
 		document.body.classList.remove('no-scroll');
 	},
 	watch: {
 		calendar: {
+			deep: true,
 			handler() {
+				if (this.action !== 'edit') return;
+
 				this.successMessage = null;
 				this.errorMessage = null;
 				this.infoMessage = 'Saving...';
+				this.isLoading = true;
 
 				if (this.saveTimeout) {
 					clearTimeout(this.saveTimeout);
@@ -61,32 +73,85 @@ export default {
 					await this.save();
 				}, 2000);
 			},
-			deep: true,
 		},
 	},
 	methods: {
+		resetInfo() {
+			this.infoMessage = null;
+			this.successMessage = null;
+			this.errorMessage = null;
+			this.isLoading = false;
+			this.deleteIsLoading = false;
+		},
 		async save() {
+			this.isLoading = true;
+			let res;
+
+			if (this.action === 'add') {
+				res = await fetch('/api/v1/calendars', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({
+						name: this.calendar.name,
+						agenda: this.calendar.agenda,
+						notifications: this.calendar.notifications,
+						enabled: this.calendar.enabled,
+						user: this.user._id,
+					}),
+				});
+			} else {
+				res = await fetch('/api/v1/calendars/' + this.calendarId, {
+					method: 'PUT',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({
+						name: this.calendar.name,
+						agenda: this.calendar.agenda,
+						notifications: this.calendar.notifications,
+						enabled: this.calendar.enabled,
+					}),
+				});
+			}
+
+			const data = await res.json();
+
+			this.resetInfo();
+
+			if (res.ok) {
+				this.successMessage = 'Saved';
+				if (this.action === 'add') {
+					this.action = 'edit';
+					this.calendarId = data._id;
+				}
+			} else if (data.hasOwnProperty('message')) {
+				this.errorMessage = data.message;
+			} else {
+				this.errorMessage = 'Error while saving calendar';
+			}
+		},
+		openDeleteConfirm() {
+			this.action = 'delete';
+			this.resetInfo();
+		},
+		async deleteCalendar() {
+			this.deleteIsLoading = true;
+
 			const res = await fetch('/api/v1/calendars/' + this.calendar._id, {
-				method: 'PUT',
+				method: 'DELETE',
 				headers: {
 					'Content-Type': 'application/json',
 				},
-				body: JSON.stringify({
-					name: this.calendar.name,
-					agenda: this.calendar.agenda,
-					notifications: this.calendar.notifications,
-					enabled: this.calendar.enabled,
-				}),
 			});
 
 			const data = await res.json();
 
-			this.infoMessage = null;
-			this.successMessage = null;
-			this.errorMessage = null;
+			this.resetInfo();
 
 			if (res.ok) {
-				this.successMessage = 'Saved';
+				this.$emit('editor:close');
 			} else if (data.hasOwnProperty('message')) {
 				this.errorMessage = data.message;
 			} else {
@@ -105,13 +170,13 @@ export default {
 					<h1 v-if="action === 'edit'">Edit <span>{{ calendar.name }}</span></h1>
 					<p class="calendar-id">{{ calendar._id }}</p>
 				</div>
-				<form>
+				<form @submit.prevent="save">
 					<div class="form-group">
 						<label for="name">Name</label>
 						<input type="text" id="name" v-model="calendar.name" />
 					</div>
 					<div class="form-group">
-						<p class="label">📅 Agenda</p>
+						<p class="group-title">📅 Agenda</p>
 						<div class="agenda-days">
 							<div
 								v-for="(day, index) in calendar.agenda"
@@ -143,12 +208,37 @@ export default {
 							<label for="enabled">Enabled</label>
 						</div>
 					</div>
-					<div class="info">
+
+					<LoadingButton v-if=" action === 'add' " :loading="isLoading" :text="'Save'" :type="'submit'" />
+
+					<button v-if=" action === 'edit' " class="delete" @click="openDeleteConfirm">
+						<svg><use xlink:href="/public/icons/trash.svg#icon"></use></svg>
+						Delete
+					</button>
+
+					<div class="information" :class="{ 'info': infoMessage, 'success': successMessage, 'error': errorMessage }">
+						<svg v-show="isLoading" class="spinner"><use xlink:href="/public/icons/spinner.svg#icon"></use></svg>
 						<p class="info-message" v-if="infoMessage">{{ infoMessage }}</p>
 						<p class="success-message" v-if="successMessage">{{ successMessage }}</p>
 						<p class="error-message" v-if="errorMessage">{{ errorMessage }}</p>
 					</div>
 				</form>
+			</div>
+		</div>
+		<div class="delete-confirm-popup" v-if="action === 'delete'">
+			<div class="delete-confirm-popup-inner">
+				<h1>Delete <span>{{ calendar.name }}</span>?</h1>
+				<p>This action cannot be undone.</p>
+				<div class="buttons">
+					<button @click="action = 'edit'" class="cancel">Cancel</button>
+					<LoadingButton :loading="deleteIsLoading" :text="'Delete'" :type="'button'" @click="deleteCalendar" />
+				</div>
+
+				<div class="information" :class="{ 'info': infoMessage, 'success': successMessage, 'error': errorMessage }">
+					<p class="info-message" v-if="infoMessage">{{ infoMessage }}</p>
+					<p class="success-message" v-if="successMessage">{{ successMessage }}</p>
+					<p class="error-message" v-if="errorMessage">{{ errorMessage }}</p>
+				</div>
 			</div>
 		</div>
 	`,

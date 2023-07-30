@@ -1,7 +1,6 @@
 @import './partials/variables';
-@import './partials/ui/toggle';
 
-.calendar-editor {
+.calendar-editor, .delete-confirm-popup {
 	display: flex;
 	justify-content: center;
 	position: fixed;
@@ -12,7 +11,7 @@
 	z-index: 1;
 	overflow-y: scroll;
 
-	.calendar-editor-inner {
+	.calendar-editor-inner, .delete-confirm-popup-inner {
 		max-width: 25rem;
 		margin: 5rem 25px 0 25px;
 		width: 100%;
@@ -121,26 +120,86 @@
 		}
 	}
 
-	div.info {
-		margin-top: 1rem;
+	div.information {
+		padding: 5px 7px;
+		border-radius: 5px;
+		display: inline-block;
+		margin-top: 2rem;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 
 		p {
 			font-weight: bold;
-			padding: 10px;
-			border-radius: 5px;
-			display: inline-block;
+			margin: 0;
 		}
 
-		p.success-message {
+		&.success {
 			background: $ok_color;
 		}
 
-		p.error-message {
+		&.error {
 			background: $error_color;
 		}
 
-		p.info-message {
+		&.info {
 			background: $secondary_color_light;
+		}
+
+		svg.spinner {
+			margin-right: 15px;
+			width: 1em;
+			height: 1em;
+			fill: $white
+		}
+	}
+
+	.loading_button, button.delete {
+		margin: 2rem 0 0 0;
+	}
+
+	button.delete {
+		background: $error_color;
+		color: $error_color_light;
+		width: auto;
+
+		svg {
+			width: 1em;
+			height: 1em;
+			vertical-align: text-top;
+		}
+	}
+}
+
+.delete-confirm-popup {
+
+	h1, p {
+		color: $error_color_light;
+	}
+
+	.buttons {
+		display: flex;
+		gap: 2rem;
+		margin-top: 2rem;
+
+		.cancel {
+			background: $secondary_color_light;
+			color: $white;
+		}
+
+		.loading_button {
+			width: 100%;
+			margin: 0;
+
+			button {
+				width: 100%;
+				background-color: $error_color;
+				color: $error_color_light;
+			}
+
+			svg {
+				fill: $error_color_light;
+			}
 		}
 	}
 }

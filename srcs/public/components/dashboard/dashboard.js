@@ -122,6 +122,10 @@ export default {
 				else console.error("Error while retrieving user's progresses");
 			}
 		},
+		addCalendar() {
+			this.calendars.editor.action = 'add';
+			this.calendars.editor.calendar = {};
+		},
 		editCalendar(calendar) {
 			this.calendars.editor.action = 'edit';
 			this.calendars.editor.calendar = calendar;
@@ -129,18 +133,21 @@ export default {
 		closeEditor() {
 			this.calendars.editor.action = null;
 			this.calendars.editor.calendar = {};
+			document.body.classList.remove('no-scroll');
 			this.updateCalendars();
 		},
 	},
 	template: `
 		<p class="sentence">{{ sentence }}</p>
 
-		<h1 v-if="calendars.enabled.length" v-html="calendars_title"></h1>
+		<div class="title">
+			<button class="add-calendar" @click="addCalendar">+</button>
+			<h1 v-if="calendars.enabled.length" v-html="calendars_title"></h1>
+		</div>
 		<div class="calendars" v-if="calendars.enabled.length">
 			<Calendar v-for="calendar in calendars.enabled" :key="calendar._id" :calendarData="calendar" @editor:edit="editCalendar" />
 		</div>
-		<CalendarEditor v-if="calendars.editor.action" :propsAction="calendars.editor.action" :propsCalendar="calendars.editor.calendar" @editor:close="closeEditor" />
-
+		<CalendarEditor v-if="calendars.editor.action" :propsAction="calendars.editor.action" :propsCalendar="calendars.editor.calendar" :propsUser="user" @editor:close="closeEditor" />
 
 		<h1 v-if="progresses.enabled.length" v-html="progresses_title"></h1>
 		<div class="progresses" v-if="progresses.enabled.length">

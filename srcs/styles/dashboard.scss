@@ -11,6 +11,24 @@ p.sentence {
 	font-weight: bold;
 }
 
+div.title {
+	margin: 25px 0 0 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 15px;
+
+	h1 {
+		margin: 0;
+	}
+
+	button {
+		width: auto;
+		height: 100%;
+		padding: 2px 6px;
+	}
+}
+
 h1 {
 	text-align: center;
 	margin: 25px 0 0 0;

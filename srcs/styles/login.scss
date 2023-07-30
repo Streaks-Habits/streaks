@@ -28,14 +28,8 @@
 	}
 
 	.submit_loading {
-		display: flex;
-		align-items: center;
-
-		svg.spinner {
-			margin-left: 15px;
-			width: 1.5em;
-			height: 1.5em;
-			fill: $white
+		button {
+			width: 100%;
 		}
 	}
 
