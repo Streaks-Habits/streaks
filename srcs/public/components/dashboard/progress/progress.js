@@ -198,6 +198,9 @@ export default {
 			if (number % 1 === 0) return number.toString();
 			return number.toFixed(decimals);
 		},
+		edit() {
+			this.$emit('editor:edit', this.progress);
+		},
 	},
 	template: `
 		<div class="progress">
@@ -232,6 +235,7 @@ export default {
 					<button @click="previous()"><svg class="caret left"><use xlink:href="/public/icons/caret.svg#icon"></use></svg></button>
 					<button @click="current()"><svg class="today"><use xlink:href="/public/icons/today.svg#icon"></use></svg></button>
 					<button @click="next()"><svg class="caret right"><use xlink:href="/public/icons/caret.svg#icon"></use></svg></button>
+					<button @click="edit()"><svg class="edit"><use xlink:href="/public/icons/edit.svg#icon"></use></svg></button>
 				</div>
 			</div>
 

@@ -1,14 +1,14 @@
 import Calendar from '/public/components/dashboard/calendar/calendar.js';
 import DisabledCalendar from '/public/components/dashboard/calendar/disabled_calendar.js';
-import CalendarEditor from '/public/components/dashboard/calendar/editor.js';
 import Progress from '/public/components/dashboard/progress/progress.js';
 import DisabledProgress from '/public/components/dashboard/progress/disabled_progress.js';
+import Editor from '/public/components/dashboard/editor.js';
 
 export default {
 	components: {
 		Calendar,
 		DisabledCalendar,
-		CalendarEditor,
+		Editor,
 		Progress,
 		DisabledProgress,
 	},
@@ -25,10 +25,11 @@ export default {
 			calendars: {
 				enabled: [],
 				disabled: [],
-				editor: {
-					action: null, // 'add', 'edit' or null
-					calendar: {},
-				},
+			},
+			editor: {
+				action: null, // 'add', 'edit' or null
+				type: null, // 'calendar' or 'progress'
+				properties: {},
 			},
 			progresses: {
 				enabled: [],
@@ -123,35 +124,51 @@ export default {
 			}
 		},
 		addCalendar() {
-			this.calendars.editor.action = 'add';
-			this.calendars.editor.calendar = {};
+			this.editor.action = 'add';
+			this.editor.type = 'calendar';
+			this.editor.properties = {};
 		},
 		editCalendar(calendar) {
-			this.calendars.editor.action = 'edit';
-			this.calendars.editor.calendar = calendar;
+			this.editor.action = 'edit';
+			this.editor.type = 'calendar';
+			this.editor.properties = calendar;
+		},
+		addProgress() {
+			this.editor.action = 'add';
+			this.editor.type = 'progress';
+			this.editor.properties = {};
+		},
+		editProgress(progress) {
+			this.editor.action = 'edit';
+			this.editor.type = 'progress';
+			this.editor.properties = progress;
 		},
 		closeEditor() {
-			this.calendars.editor.action = null;
-			this.calendars.editor.calendar = {};
+			this.editor.action = null;
+			this.editor.type = null;
+			this.editor.properties = {};
 			document.body.classList.remove('no-scroll');
 			this.updateCalendars();
+			this.updateProgresses();
 		},
 	},
 	template: `
 		<p class="sentence">{{ sentence }}</p>
 
 		<div class="title">
-			<button class="add-calendar" @click="addCalendar">+</button>
+			<button @click="addCalendar">+</button>
 			<h1 v-if="calendars.enabled.length" v-html="calendars_title"></h1>
 		</div>
 		<div class="calendars" v-if="calendars.enabled.length">
 			<Calendar v-for="calendar in calendars.enabled" :key="calendar._id" :calendarData="calendar" @editor:edit="editCalendar" />
 		</div>
-		<CalendarEditor v-if="calendars.editor.action" :propsAction="calendars.editor.action" :propsCalendar="calendars.editor.calendar" :propsUser="user" @editor:close="closeEditor" />
 
-		<h1 v-if="progresses.enabled.length" v-html="progresses_title"></h1>
+		<div class="title">
+			<button @click="addProgress">+</button>
+			<h1 v-if="progresses.enabled.length" v-html="progresses_title"></h1>
+		</div>
 		<div class="progresses" v-if="progresses.enabled.length">
-			<Progress v-for="progress in progresses.enabled" :key="progress._id" :propProgress="progress" />
+			<Progress v-for="progress in progresses.enabled" :key="progress._id" :propProgress="progress" @editor:edit="editProgress" />
 		</div>
 
 		<h1 v-if="calendars.disabled.length" class="disabled">Disabled Calendars</h1>
@@ -161,7 +178,9 @@ export default {
 
 		<h1 v-if="progresses.disabled.length" class="disabled">Disabled Progresses</h1>
 		<div class="progresses disabled" v-if="progresses.disabled.length">
-			<DisabledProgress v-for="progresse in progresses.disabled" :key="progresse._id" :progressData="progresse" />
+			<DisabledProgress v-for="progresse in progresses.disabled" :key="progresse._id" :progressData="progresse" @editor:edit="editProgress" />
 		</div>
+
+		<Editor v-if="editor.action" :propsAction="editor.action" :propsProperties="editor.properties" :propsType="editor.type" :propsUser="user" @editor:close="closeEditor" />
 	`,
 };

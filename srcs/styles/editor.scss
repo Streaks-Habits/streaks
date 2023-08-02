@@ -1,6 +1,6 @@
 @import './partials/variables';
 
-.calendar-editor, .delete-confirm-popup {
+.editor, .delete-confirm-popup {
 	display: flex;
 	justify-content: center;
 	position: fixed;
@@ -11,7 +11,7 @@
 	z-index: 1;
 	overflow-y: scroll;
 
-	.calendar-editor-inner, .delete-confirm-popup-inner {
+	.editor-inner, .delete-confirm-popup-inner {
 		max-width: 25rem;
 		margin: 5rem 25px 0 25px;
 		width: 100%;
@@ -50,7 +50,7 @@
 		color: $primary_color;
 	}
 
-	.calendar-id {
+	.id {
 		font-size: .9rem;
 		font-weight: bold;
 		color: $secondary_color_lighter;
