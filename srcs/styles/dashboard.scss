@@ -579,3 +579,21 @@ div.progress {
 		}
 	}
 }
+
+div.no-calendars, div.no-progresses {
+	text-align: center;
+	color: $secondary_color_lighter;
+	margin: 25px 0 50px 0;
+
+	p {
+		margin: 5px 0;
+	}
+
+	span {
+		color: $secondary_color;
+		font-weight: bold;
+		background: $secondary_color_lighter;
+		padding: 0px 5px;
+		border-radius: 5px;
+	}
+}

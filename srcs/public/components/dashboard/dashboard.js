@@ -86,15 +86,17 @@ export default {
 				},
 			});
 
+			this.calendars.enabled = [];
+			this.calendars.disabled = [];
+
 			if (res.ok) {
 				res = await res.json();
-				this.calendars.enabled = [];
-				this.calendars.disabled = [];
 				for (const calendar of res) {
 					if (calendar.enabled) this.calendars.enabled.push(calendar);
 					else this.calendars.disabled.push(calendar);
 				}
 			} else {
+				if (res.status === 404) return;
 				// TODO: show error to user
 				if (res.hasOwnProperty('message')) console.error(res.message);
 				else console.error("Error while retrieving user's calendars");
@@ -108,16 +110,18 @@ export default {
 				},
 			});
 
+			this.progresses.enabled = [];
+			this.progresses.disabled = [];
+
 			if (res.ok) {
 				res = await res.json();
-				this.progresses.enabled = [];
-				this.progresses.disabled = [];
 				for (const progress of res) {
 					if (progress.enabled)
 						this.progresses.enabled.push(progress);
 					else this.progresses.disabled.push(progress);
 				}
 			} else {
+				if (res.status === 404) return;
 				// TODO: show error to user
 				if (res.hasOwnProperty('message')) console.error(res.message);
 				else console.error("Error while retrieving user's progresses");
@@ -157,18 +161,26 @@ export default {
 
 		<div class="title">
 			<button @click="addCalendar">+</button>
-			<h1 v-if="calendars.enabled.length" v-html="calendars_title"></h1>
+			<h1 v-html="calendars_title"></h1>
 		</div>
 		<div class="calendars" v-if="calendars.enabled.length">
 			<Calendar v-for="calendar in calendars.enabled" :key="calendar._id" :calendarData="calendar" @editor:edit="editCalendar" />
 		</div>
+		<div class="no-calendars" v-else>
+			<p>You don't have any calendars yet.</p>
+			<p>Click the <span>+</span> button above to add one.</p>
+		</div>
 
 		<div class="title">
 			<button @click="addProgress">+</button>
-			<h1 v-if="progresses.enabled.length" v-html="progresses_title"></h1>
+			<h1 v-html="progresses_title"></h1>
 		</div>
 		<div class="progresses" v-if="progresses.enabled.length">
 			<Progress v-for="progress in progresses.enabled" :key="progress._id" :propProgress="progress" @editor:edit="editProgress" />
+		</div>
+		<div class="no-progresses" v-else>
+			<p>You don't have any progresses yet.</p>
+			<p>Click the <span>+</span> button above to add one.</p>
 		</div>
 
 		<h1 v-if="calendars.disabled.length" class="disabled">Disabled Calendars</h1>
