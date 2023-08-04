@@ -51,6 +51,7 @@ export default {
 				'Consistency is key. Keep up the good work.',
 			],
 			sentence: '',
+			notification: '',
 		};
 	},
 	created() {
@@ -60,6 +61,15 @@ export default {
 		this.progresses_title = this.generateTitle(this.progresses_title);
 		this.updateCalendars();
 		this.updateProgresses();
+		this.setNotification();
+	},
+	watch: {
+		calendars: {
+			handler() {
+				this.setNotification();
+			},
+			deep: true,
+		},
 	},
 	methods: {
 		randInt(min, max) {
@@ -155,8 +165,31 @@ export default {
 			this.updateCalendars();
 			this.updateProgresses();
 		},
+		setNotification() {
+			// If every calendar have a success for today, return a success notification
+
+			let success = true;
+			let enabled = false;
+			for (const calendar of this.calendars.enabled) {
+				if (!calendar.enabled) continue;
+				enabled = true;
+				console.log(calendar)
+				if (!calendar.days) {
+					success = false;
+					break;
+				}
+				if (!calendar.days[calendar.days.length - 1].success)
+					success = false;
+			}
+
+			if (success) this.notification = '🎉 All the streaks are done!! 🎉';
+			else if (!enabled)
+				this.notification = ''; // The user has no calendars
+			else this.notification = '⏰ You still have work to do!';
+		},
 	},
 	template: `
+		<p class="notification" v-if="notification">{{ notification }}</p>
 		<p class="sentence">{{ sentence }}</p>
 
 		<div class="title">
