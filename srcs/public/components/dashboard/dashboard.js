@@ -173,24 +173,25 @@ export default {
 			for (const calendar of this.calendars.enabled) {
 				if (!calendar.enabled) continue;
 				enabled = true;
-				console.log(calendar)
-				if (!calendar.days) {
+				console.log(calendar);
+				if (!calendar.streak_expended_today) {
 					success = false;
 					break;
 				}
-				if (!calendar.days[calendar.days.length - 1].success)
-					success = false;
 			}
 
-			if (success) this.notification = '🎉 All the streaks are done!! 🎉';
+			console.log(success, enabled);
+
+			if (success && enabled)
+				this.notification = '🎉 All the streaks are done!! 🎉';
 			else if (!enabled)
 				this.notification = ''; // The user has no calendars
 			else this.notification = '⏰ You still have work to do!';
 		},
 	},
 	template: `
-		<p class="notification" v-if="notification">{{ notification }}</p>
 		<p class="sentence">{{ sentence }}</p>
+		<p class="notification" v-if="notification">{{ notification }}</p>
 
 		<div class="title">
 			<button @click="addCalendar">+</button>

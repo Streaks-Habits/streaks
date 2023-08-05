@@ -125,7 +125,6 @@ export default {
 			}
 		},
 		async setDayState(state) {
-			console.log(this.setState.pos);
 			this.setState.loading = true;
 
 			let dayToSet = undefined;

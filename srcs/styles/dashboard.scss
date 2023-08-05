@@ -7,7 +7,15 @@
 
 p.sentence {
 	text-align: center;
-	margin: 35px 0 55px 0;
+	margin: 35px 0 0 0;
+	font-weight: bold;
+	color: $secondary_color_lighter;
+}
+
+p.notification {
+	text-align: center;
+	margin-bottom: 55px;
+	font-size: 1.2rem;
 	font-weight: bold;
 }
 
