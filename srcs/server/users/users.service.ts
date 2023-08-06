@@ -9,22 +9,17 @@ import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { isValidObjectId } from '../utils';
+import { isDemoUserEnabled, isValidObjectId } from '../utils';
 import { RUser, User, UserDoc } from './schemas/user.schema';
 import { AdminUser } from '../auth/admin.object';
 import { Role } from './enum/roles.enum';
 import { ConfigService } from '@nestjs/config';
-import { CalendarsService } from '../calendars/calendars.service';
-import { ProgressesService } from '../progresses/progresses.service';
-import { DateTime } from 'luxon';
 
 @Injectable()
 export class UsersService {
 	constructor(
 		@InjectModel('User') private UserModel: Model<User>,
 		private readonly configService: ConfigService,
-		private readonly calendarsService: CalendarsService,
-		private readonly progressesService: ProgressesService,
 	) {}
 
 	defaultFields = '_id username role notifications';
@@ -65,6 +60,18 @@ export class UsersService {
 		return existingUser;
 	}
 
+	async findByUsername(
+		username: string,
+		fields = this.defaultFields,
+	): Promise<RUser> {
+		const existingUser = await this.UserModel.findOne(
+			{ username: username },
+			fields,
+		).exec();
+		if (!existingUser) throw new NotFoundException('User not found');
+		return existingUser;
+	}
+
 	async update(
 		userId: string,
 		updateUserDto: UpdateUserDto,
@@ -74,11 +81,7 @@ export class UsersService {
 			throw new NotFoundException('User not found');
 
 		// Disable demo user update
-		if (
-			this.configService
-				.get('DEMO_USER_ENABLED', 'false')
-				.toLowerCase() === 'true'
-		)
+		if (isDemoUserEnabled(this.configService))
 			throw new BadRequestException('Demo user update is disabled');
 
 		const updateUser: User = {
@@ -161,37 +164,5 @@ export class UsersService {
 			role: Role.User,
 		};
 		return this.create(createUserDto);
-	}
-
-	async resetDemoUser(): Promise<RUser> {
-		const demoUser = await this.UserModel.findOne({
-			username: 'demo',
-		});
-		if (!demoUser) return this.createDemoUser();
-
-		// Remove all calendars
-		const calendars = await this.calendarsService.findAllForUser(
-			demoUser,
-			demoUser._id.toString(),
-		);
-		for (const calendar of calendars) {
-			await this.calendarsService.delete(
-				demoUser,
-				calendar._id.toString(),
-			);
-		}
-
-		// Remove all progresses
-		const progresses = await this.progressesService.findAllForUser(
-			demoUser,
-			demoUser._id.toString(),
-			DateTime.now().toFormat('yyyy-MM-dd'),
-		);
-		for (const progress of progresses) {
-			await this.progressesService.delete(
-				demoUser,
-				progress._id.toString(),
-			);
-		}
 	}
 }

@@ -16,7 +16,7 @@ import { AuthService } from './auth/auth.service';
 import { JwtAuthGuard } from './auth/guard/jwt.guard';
 import { LocalAuthGuard } from './auth/guard/local.guard';
 import { RedirectLoginFilter } from './unauthorized-exception.filter';
-import { areRegistrationsEnabled } from './utils';
+import { areRegistrationsEnabled, isDemoUserEnabled } from './utils';
 import { UsersService } from './users/users.service';
 
 @Controller()
@@ -46,6 +46,7 @@ export class AppController {
 				this.configService,
 				this.usersService,
 			),
+			demoUserEnabled: isDemoUserEnabled(this.configService),
 		};
 	}
 
@@ -63,6 +64,7 @@ export class AppController {
 		return {
 			type: 'register',
 			registrationsEnabled: registrationsEnabled,
+			demoUserEnabled: isDemoUserEnabled(this.configService),
 		};
 	}
 

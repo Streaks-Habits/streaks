@@ -16,7 +16,7 @@ import { AppModule } from './app.module';
 import { MongoExceptionFilter } from './mongoose-exception.filter';
 import { join } from 'path';
 import { ConfigService } from '@nestjs/config';
-import { areRegistrationsEnabled } from './utils';
+import { areRegistrationsEnabled, isDemoUserEnabled } from './utils';
 import { UsersService } from './users/users.service';
 import { Observable, map } from 'rxjs';
 
@@ -116,8 +116,10 @@ async function bootstrap() {
 	);
 
 	// Is demo user enabled?
-	if (config.get<boolean>('DEMO_USER_ENABLED')) {
-		console.log('Demo user is enabled');
+	const demoUserEnabled = isDemoUserEnabled(config);
+	if (demoUserEnabled) {
+		usersService.createDemoUser();
 	}
+	console.log(`Demo user is ${demoUserEnabled ? 'enabled' : 'disabled'}`);
 }
 bootstrap();

@@ -40,3 +40,14 @@ export async function areRegistrationsEnabled(
 	if (envVal === 'false' && (await usersService.count()) > 0) return false;
 	return true;
 }
+
+export function isDemoUserEnabled(configService: ConfigService) {
+	// Get env, true if not set
+	const envVal = configService.get('DEMO_USER_ENABLED') || 'false';
+	if (envVal !== 'true' && envVal !== 'false') {
+		console.error('DEMO_USER_ENABLED env variable is not a boolean');
+		process.exit(1);
+	}
+
+	return envVal === 'true';
+}

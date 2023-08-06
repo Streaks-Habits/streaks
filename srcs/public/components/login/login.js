@@ -14,11 +14,16 @@ export default {
 			type: String,
 			required: true,
 		},
+		startingDemoUserEnabled: {
+			type: String,
+			required: true,
+		},
 	},
 	data() {
 		return {
 			type: this.startingType,
 			registrationsEnabled: this.startingRegistrationsEnabled === 'true',
+			demoUserEnabled: this.startingDemoUserEnabled === 'true',
 			loading: false,
 			errors: [],
 			username: '',
@@ -36,6 +41,7 @@ export default {
 	methods: {
 		changeType(type) {
 			if (this.loading) return;
+			this.errors = [];
 
 			this.type = type;
 			if (type === 'login') {
@@ -125,6 +131,12 @@ export default {
 			}
 			this.loading = false;
 		},
+		async loginAsDemoUser() {
+			this.changeType('login');
+			this.username = 'demo';
+			this.password = 'demo';
+			await this.login();
+		},
 	},
 	template: `
 	<div class="form_box">
@@ -139,6 +151,7 @@ export default {
 				</ul>
 			</form>
 			<p v-if="registrationsEnabled" class="change_type">I don't have an account, <a href="/register" @click.prevent="changeType('register')">register</a> !</p>
+			<button v-if="demoUserEnabled" class="demo" @click="loginAsDemoUser">Or try the demo</button>
 		</div>
 		<div class="register" v-show=" type == 'register' " v-if="registrationsEnabled">
 			<form @submit.prevent="register">
@@ -146,12 +159,13 @@ export default {
 				<input v-model="username" type="text" placeholder="Username" />
 				<input v-model="password" type="password" placeholder="Password" />
 				<input v-model="passwordRepeat" type="password" placeholder="Repeat password" />
-				<LodingButton :loading="loading" :text="'Register'" :type="'submit'" :additionalClasses="'submit_loading'" />
+				<LoadingButton :loading="loading" :text="'Register'" :type="'submit'" :additionalClasses="'submit_loading'" />
 				<ul class="errors" v-if="errors.length">
 					<li v-for="error in errors">{{ error }}</li>
 				</ul>
 			</form>
 			<p class="change_type">Already have an account ? <a href="/login" @click.prevent="changeType('login')">Login</a> !</p>
+			<button v-if="demoUserEnabled" class="demo" @click="loginAsDemoUser">Or try the demo</button>
 		</div>
 	</div>
 	`,
