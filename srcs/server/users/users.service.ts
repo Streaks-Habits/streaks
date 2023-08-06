@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+	BadRequestException,
+	Injectable,
+	NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
@@ -8,10 +12,20 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { isValidObjectId } from '../utils';
 import { RUser, User, UserDoc } from './schemas/user.schema';
 import { AdminUser } from '../auth/admin.object';
+import { Role } from './enum/roles.enum';
+import { ConfigService } from '@nestjs/config';
+import { CalendarsService } from '../calendars/calendars.service';
+import { ProgressesService } from '../progresses/progresses.service';
+import { DateTime } from 'luxon';
 
 @Injectable()
 export class UsersService {
-	constructor(@InjectModel('User') private UserModel: Model<User>) {}
+	constructor(
+		@InjectModel('User') private UserModel: Model<User>,
+		private readonly configService: ConfigService,
+		private readonly calendarsService: CalendarsService,
+		private readonly progressesService: ProgressesService,
+	) {}
 
 	defaultFields = '_id username role notifications';
 	userModel = this.UserModel;
@@ -58,6 +72,14 @@ export class UsersService {
 	): Promise<RUser> {
 		if (!isValidObjectId(userId))
 			throw new NotFoundException('User not found');
+
+		// Disable demo user update
+		if (
+			this.configService
+				.get('DEMO_USER_ENABLED', 'false')
+				.toLowerCase() === 'true'
+		)
+			throw new BadRequestException('Demo user update is disabled');
 
 		const updateUser: User = {
 			username: updateUserDto.username,
@@ -125,5 +147,51 @@ export class UsersService {
 
 	async count(): Promise<number> {
 		return await this.UserModel.countDocuments();
+	}
+
+	async createDemoUser(): Promise<RUser> {
+		const demoUser = await this.UserModel.findOne({
+			username: 'demo',
+		});
+		if (demoUser) return demoUser;
+
+		const createUserDto: CreateUserDto = {
+			username: 'demo',
+			password: 'demo',
+			role: Role.User,
+		};
+		return this.create(createUserDto);
+	}
+
+	async resetDemoUser(): Promise<RUser> {
+		const demoUser = await this.UserModel.findOne({
+			username: 'demo',
+		});
+		if (!demoUser) return this.createDemoUser();
+
+		// Remove all calendars
+		const calendars = await this.calendarsService.findAllForUser(
+			demoUser,
+			demoUser._id.toString(),
+		);
+		for (const calendar of calendars) {
+			await this.calendarsService.delete(
+				demoUser,
+				calendar._id.toString(),
+			);
+		}
+
+		// Remove all progresses
+		const progresses = await this.progressesService.findAllForUser(
+			demoUser,
+			demoUser._id.toString(),
+			DateTime.now().toFormat('yyyy-MM-dd'),
+		);
+		for (const progress of progresses) {
+			await this.progressesService.delete(
+				demoUser,
+				progress._id.toString(),
+			);
+		}
 	}
 }

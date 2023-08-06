@@ -114,5 +114,10 @@ async function bootstrap() {
 	console.log(
 		`Registrations are ${registrationsEnabled ? 'enabled' : 'disabled'}`,
 	);
+
+	// Is demo user enabled?
+	if (config.get<boolean>('DEMO_USER_ENABLED')) {
+		console.log('Demo user is enabled');
+	}
 }
 bootstrap();
