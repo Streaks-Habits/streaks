@@ -93,7 +93,6 @@ div.controls {
 			&.edit {
 				width: 1.6em;
 				height: 1.6em;
-				margin-left: 5px;
 			}
 		}
 	}
@@ -192,15 +191,24 @@ div.calendar {
 
 		div.calendar_info {
 			display: flex;
-			align-items: baseline;
 			justify-content: space-between;
 			width: 100%;
 			margin: -5px 0 10px 0;
 
-			p.calendar_month {
-				color: $white;
-				margin: 0;
-				font-size: 1em;
+			div.edit_and_month {
+				display: flex;
+				align-items: center;
+				gap: 5px;
+
+				button {
+					margin-left: -7px;
+				}
+
+				p.calendar_month {
+					color: $white;
+					margin: 0;
+					font-size: 1em;
+				}
 			}
 
 			div.streaks {
@@ -519,12 +527,22 @@ div.progress {
 	div.date_controls_wrapper {
 		display: flex;
 		align-items: center;
-		justify-content: center;
+		justify-content: space-between;
 		margin: 10px 0 15px 0;
 
-		span.time_range {
-			flex: 1;
-			margin-right: 15px;
+		div.edit_and_range {
+			display: flex;
+			align-items: center;
+			gap: 5px;
+
+			button {
+				margin-left: -7px;
+			}
+
+			span.time_range {
+				flex: 1;
+				margin-right: 15px;
+			}
 		}
 	}
 

@@ -230,12 +230,16 @@ export default {
 			</div>
 
 			<div class="date_controls_wrapper">
-				<span class="time_range">{{ timeRangeName }}</span>
+				<div class="edit_and_range">
+					<div class="controls">
+						<button @click="edit()"><svg class="edit"><use xlink:href="/public/icons/edit.svg#icon"></use></svg></button>
+					</div>
+					<span class="time_range">{{ timeRangeName }}</span>
+				</div>
 				<div class="controls">
 					<button @click="previous()"><svg class="caret left"><use xlink:href="/public/icons/caret.svg#icon"></use></svg></button>
 					<button @click="current()"><svg class="today"><use xlink:href="/public/icons/today.svg#icon"></use></svg></button>
 					<button @click="next()"><svg class="caret right"><use xlink:href="/public/icons/caret.svg#icon"></use></svg></button>
-					<button @click="edit()"><svg class="edit"><use xlink:href="/public/icons/edit.svg#icon"></use></svg></button>
 				</div>
 			</div>
 

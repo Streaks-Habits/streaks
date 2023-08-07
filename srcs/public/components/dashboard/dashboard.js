@@ -173,14 +173,11 @@ export default {
 			for (const calendar of this.calendars.enabled) {
 				if (!calendar.enabled) continue;
 				enabled = true;
-				console.log(calendar);
 				if (!calendar.streak_expended_today) {
 					success = false;
 					break;
 				}
 			}
-
-			console.log(success, enabled);
 
 			if (success && enabled)
 				this.notification = '🎉 All the streaks are done!! 🎉';

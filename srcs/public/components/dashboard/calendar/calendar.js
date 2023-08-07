@@ -1,3 +1,5 @@
+import { nextTick } from '/public/libs/vue.esm-browser.prod.js';
+
 import CalendarDayItem from '/public/components/dashboard/calendar/day_item.js';
 
 export default {
@@ -176,11 +178,36 @@ export default {
 			)
 				return;
 
+			document.body.classList.remove('no-scroll');
 			this.setState.show = false;
 			this.setState.date = undefined;
 			this.setState.loading = false;
 			this.setState.pos.x = 0;
 			this.setState.pos.y = 0;
+		},
+		async showSetState(x, y, day) {
+			document.body.classList.add('no-scroll');
+
+			this.setState.show = true;
+			this.setState.date = day.date;
+
+			await nextTick();
+
+			// Ensure that the box is not outside the screen
+			const box = this.$refs.setStateBox;
+			const boxWidth = box.offsetWidth;
+			const boxHeight = box.offsetHeight;
+			const screenWidth = window.innerWidth;
+			const screenHeight = window.innerHeight;
+			const margin = 10;
+
+			if (x + boxWidth + margin > screenWidth)
+				x = screenWidth - boxWidth - margin;
+			if (y + boxHeight + margin > screenHeight)
+				y = screenHeight - boxHeight - margin;
+
+			this.setState.pos.x = x;
+			this.setState.pos.y = y;
 		},
 		edit() {
 			this.$emit('editor:edit', this.calendar);
@@ -191,6 +218,7 @@ export default {
 			<div class="set_state_overlay" v-if="setState.show" @click="hideSetState($event)">
 				<div
 					class="set_state_box"
+					ref="setStateBox"
 					:style="{ left: this.setState.pos.x + 'px', top: this.setState.pos.y + 'px' }"
 				>
 					<svg v-show="this.setState.loading" class="spinner"><use xlink:href="/public/icons/spinner.svg#icon"></use></svg>
@@ -224,13 +252,17 @@ export default {
 					<button @click="prevMonth()"><svg class="caret left"><use xlink:href="/public/icons/caret.svg#icon"></use></svg></button>
 					<button @click="currentMonth()"><svg class="today"><use xlink:href="/public/icons/today.svg#icon"></use></svg></button>
 					<button @click="nextMonth()"><svg class="caret right"><use xlink:href="/public/icons/caret.svg#icon"></use></svg></button>
-					<button @click="edit()"><svg class="edit"><use xlink:href="/public/icons/edit.svg#icon"></use></svg></button>
 				</div>
 			</div>
 
 			<div class="calendar_body">
 				<div class="calendar_info">
-					<p class="calendar_month">{{ monthString }}</p>
+					<div class="edit_and_month">
+						<div class="controls">
+							<button @click="edit()"><svg class="edit"><use xlink:href="/public/icons/edit.svg#icon"></use></svg></button>
+						</div>
+						<p class="calendar_month">{{ monthString }}</p>
+					</div>
 					<div class="streaks">
 						<p>{{ this.calendar.current_streak }}</p>
 						{{ this.calendar.streak_expended }}
@@ -250,10 +282,7 @@ export default {
 						:key="day.date"
 						:day-prop="day"
 						@show-set-state="(event) => {
-							this.setState.show = true;
-							this.setState.date = day.date;
-							this.setState.pos.x = event.clientX;
-							this.setState.pos.y = event.clientY;
+							this.showSetState(event.clientX, event.clientY, day);
 						}"
 					/>
 				</div>
