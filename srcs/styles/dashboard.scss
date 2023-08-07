@@ -605,3 +605,23 @@ div.no-calendars, div.no-progresses {
 		border-radius: 5px;
 	}
 }
+
+a.logout {
+	display: block;
+	position: absolute;
+	top: 25px;
+	right: 25px;
+
+	&:hover {
+		svg {
+			stroke: $secondary_color_lighter;
+		}
+	}
+
+	svg {
+		width: 1.5em;
+		height: 1.5em;
+		stroke: $white;
+		animation: stroke .3s ease-in-out;
+	}
+}
