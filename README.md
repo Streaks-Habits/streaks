@@ -9,22 +9,17 @@ Streaks
 
 Streaks is a habit-tracking app that relies on streaks (like Duolingo or Snapchat), to help you build habits.
 
-The principle is simple, when you accomplish your goal of the day you accumulate streaks, and the more streaks you have, the less you want to lose them (by not accomplishing your goal).
+The principle is simple: when you accomplish your goal of the day you accumulate streaks, and the more streaks you have, the less you want to lose them (by not accomplishing your goal).
 
 ![Streaks's dashboard](.readme/dashboard.png)
 
-There is also [Streaks Runner](https://git.chevro.fr/streaks/runner), to automate your tasks.
+There is also [Streaks CLI](https://git.chevro.fr/streaks/cli), to manage your calendars and progresses and automatically validate streaks by checking online services (Duolingo, Strava, GitLab...).
 
 Installation
 ============
 
 With Docker (recommended)
 -------------------------
-Download the `docker-compose.yml`
-```bash
-mkdir streaks && cd "$_"
-wget https://git.chevro.fr/streaks/runner/-/raw/main/docker-compose.yml
-```
 
 Edit the `docker-compose.yml` to suit your needs.
 
@@ -68,23 +63,29 @@ npm run start
 Configuration
 =============
 
-Use the creation script to create your `.env` file.
-
-If you use docker, run:
-```bash
-docker-compose exec streaks node user_scripts/set_env.js
-```
-Otherwise, run:
-```bash
-node user_scripts/set_env.js
-```
-
-This script should create an `.env` file that looks like this:
+Create a `.env` with the following content
 ```env
 PORT=80
-TZ=Europe/Paris
-JWT_KEY=random
+
+REGISTRATIONS_ENABLED=true # allow users to create an account
+DEMO_USER_ENABLED=true # add a demo user, which is reseted every day
+
+ADMIN_API_KEY=<the admin api key> # for admin access
+
+AUTH_JWT_EXPIRES=20d # three weeks
+AUTH_JWT_SECRET=<a random key>
+AUTH_COOKIE_EXPIRES=1814400 # three weeks
+AUTH_COOKIE_SECRET=<a random key>
+
 MONGO_URI=mongodb+srv://your-mongodb-connection-string
+# On docker, use:
+MONGO_URI=mongodb://db:27017/streaks?retryWrites=true&w=majority
+
+# Matrix notifications
+MATRIX_ENABLED=true
+MATRIX_USER=<the complete username of the user that sends notifications>
+MATRIX_URL=<your instanec>
+MATRIX_TOKEN=<the token of the user>
 ```
 Edit-it to suit your needs.
 
