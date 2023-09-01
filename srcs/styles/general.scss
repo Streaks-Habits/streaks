@@ -24,7 +24,9 @@ body {
 	flex-direction: column;
 	justify-content: center;
 	max-width: 75rem;
-	margin: auto;
+	scrollbar-gutter: stable both-edges;
+	width: 100vw;
+	overflow-x: hidden;
 }
 
 body.no-scroll {
