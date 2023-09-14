@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="/styles/general.css">
+	<link rel="stylesheet" href="/styles/dashboard.css">
+	<%- include("partial/favicon.ejs") %>
+	<title>Streaks</title>
+</head>
+<body>
+	<img id="logo" src="/public/icons/logoname.svg" alt="streaks.json logo">
+
+	<div id="app">
+		<Calendar
+			:is-demo="true"
+			:calendar-data="{
+				_id: '0',
+				name: '🗓️ My calendar'
+			}" />
+	</div>
+
+	<script src="/public/libs/luxon.min.js"></script>
+	<script type="module">
+		import { createApp } from '/public/libs/vue.esm-browser.js'
+		import Calendar from '/public/components/dashboard/calendar/calendar.js';
+
+		createApp({
+			components: {
+				Calendar
+			},
+		}).mount('#app')
+	</script>
+</body>
+</html>

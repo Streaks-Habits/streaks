@@ -7,6 +7,11 @@ export default {
 		CalendarDayItem,
 	},
 	props: {
+		isDemo: {
+			type: Boolean,
+			required: false,
+			default: false,
+		},
 		calendarData: {
 			type: Object,
 			required: true,
@@ -37,9 +42,11 @@ export default {
 	},
 	created() {
 		this.updateMonth();
-		this.refreshInterval = setInterval(() => {
-			this.updateMonth();
-		}, 1000 * 60 * 5); // 5 minutes
+		if (!this.isDemo) {
+			this.refreshInterval = setInterval(() => {
+				this.updateMonth();
+			}, 1000 * 60 * 5); // 5 minutes
+		}
 	},
 	computed: {
 		daysLetters() {
@@ -86,7 +93,6 @@ export default {
 			while (firstDay <= lastDay) {
 				days.push({
 					date: firstDay,
-					isToday: firstDay == today,
 					isOver: firstDay <= today,
 					gridColumn: days.length === 0 ? firstDay.weekday : null, // 1 = Monday, 7 = Sunday, null = not first day of month
 					status: 'loading',
@@ -96,6 +102,19 @@ export default {
 			this.days = days;
 		},
 		async retrieveStatus() {
+			if (this.isDemo) {
+				// Return random status for each day
+				this.days = this.days.map((day) => {
+					const status = ['success', 'freeze', 'fail'][
+						Math.floor(Math.random() * 3)
+					];
+					day.status = status;
+					return day;
+				});
+				this.computeDemoStreak();
+				return;
+			}
+
 			const res = await fetch(
 				`/api/v1/calendars/month/${
 					this.calendar._id
@@ -142,6 +161,13 @@ export default {
 				return;
 			}
 
+			if (this.isDemo) {
+				this.hideSetState(null);
+				dayToSet.status = state;
+				this.computeDemoStreak();
+				return;
+			}
+
 			dayToSet.status = 'loading';
 			const res = await fetch(
 				`/api/v1/calendars/state/${
@@ -169,6 +195,27 @@ export default {
 				console.error("Error while setting day's state");
 			}
 			this.hideSetState(null);
+		},
+		async computeDemoStreak() {
+			// Compute streak
+			this.calendar.current_streak = this.days.reduce((acc, day) => {
+				if (day.isOver === false) return acc;
+				if (day.status === 'success') acc++;
+				else if (day.status === 'fail') acc = 0;
+				return acc;
+			}, 0);
+
+			this.calendar.streak_expended_today = false;
+			const today = luxon.DateTime.now().toFormat('yyyy-MM-dd');
+			for (const day of this.days) {
+				// If the day is today
+				if (day.date.toFormat('yyyy-MM-dd') === today) {
+					if (day.status === 'success') {
+						this.calendar.streak_expended_today = true;
+					}
+					break;
+				}
+			}
 		},
 		hideSetState(e) {
 			// Check that the click is outside the set state box

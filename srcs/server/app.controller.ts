@@ -29,12 +29,11 @@ export class AppController {
 	) {}
 
 	@Get()
-	// @Redirect('/dashboard')
-	getIndex(@Res() response) {
-		// return;
-		return response
-			.status(HttpStatus.TEMPORARY_REDIRECT)
-			.redirect('/dashboard');
+	@Render('index')
+	getIndex() {
+		return {
+			demoUserEnabled: isDemoUserEnabled(this.configService),
+		};
 	}
 
 	@Get('/login')
