@@ -19,6 +19,7 @@ import { ConfigService } from '@nestjs/config';
 import { areRegistrationsEnabled, isDemoUserEnabled } from './utils';
 import { UsersService } from './users/users.service';
 import { Observable, map } from 'rxjs';
+import { CronsService } from './crons/crons.service';
 
 function recursiveInterceptor(value: any): unknown {
 	if (Array.isArray(value)) {
@@ -121,5 +122,9 @@ async function bootstrap() {
 		usersService.createDemoUser();
 	}
 	console.log(`Demo user is ${demoUserEnabled ? 'enabled' : 'disabled'}`);
+
+	// Set break days
+	const cronsService = app.get<CronsService>(CronsService);
+	await cronsService.setBreakDays();
 }
 bootstrap();

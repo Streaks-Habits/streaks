@@ -41,8 +41,10 @@ export class CronsService {
 			// weekday - 1 because weekdays are 1-indexed
 			if (
 				calendar.agenda[today.weekday - 1] === false &&
-				calendar['days'][today_str] !== State.Success &&
-				calendar['days'][today_str] !== State.Breakday
+				(!calendar.hasOwnProperty('days') ||
+					!calendar['days'].hasOwnProperty(today_str) ||
+					(calendar['days'][today_str] !== State.Success &&
+						calendar['days'][today_str] !== State.Breakday))
 			) {
 				await this.calendarsService.setState(
 					AdminUser,
