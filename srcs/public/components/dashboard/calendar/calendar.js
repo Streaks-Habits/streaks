@@ -38,6 +38,7 @@ export default {
 					y: 0,
 				},
 			},
+			demoCache: {}, // To store demo data (days states)
 		};
 	},
 	created() {
@@ -103,14 +104,26 @@ export default {
 		},
 		async retrieveStatus() {
 			if (this.isDemo) {
-				// Return random status for each day
-				this.days = this.days.map((day) => {
-					const status = ['success', 'freeze', 'fail'][
-						Math.floor(Math.random() * 3)
-					];
-					day.status = status;
-					return day;
-				});
+				const month = this.monthDate.toFormat('yyyy-MM');
+				// If current month is not in cache, create it
+				if (!this.demoCache.hasOwnProperty(month)) {
+					this.demoCache[month] = {};
+					for (const day of this.days) {
+						const status = ['success', 'freeze', 'fail'][
+							Math.floor(Math.random() * 3)
+						];
+						this.demoCache[month][day.date.toFormat('yyyy-MM-dd')] =
+							status;
+					}
+				}
+
+				// Set days status from cache
+				for (const day of this.days) {
+					day.status =
+						this.demoCache[this.monthDate.toFormat('yyyy-MM')][
+							day.date.toFormat('yyyy-MM-dd')
+						];
+				}
 				this.computeDemoStreak();
 				return;
 			}
@@ -164,6 +177,10 @@ export default {
 			if (this.isDemo) {
 				this.hideSetState(null);
 				dayToSet.status = state;
+				// Update demo cache
+				this.demoCache[this.monthDate.toFormat('yyyy-MM')][
+					dayToSet.date.toFormat('yyyy-MM-dd')
+				] = state;
 				this.computeDemoStreak();
 				return;
 			}
@@ -197,24 +214,47 @@ export default {
 			this.hideSetState(null);
 		},
 		async computeDemoStreak() {
-			// Compute streak
-			this.calendar.current_streak = this.days.reduce((acc, day) => {
-				if (day.isOver === false) return acc;
-				if (day.status === 'success') acc++;
-				else if (day.status === 'fail') acc = 0;
-				return acc;
-			}, 0);
-
+			// Compute streak from cache
+			this.calendar.current_streak = 0;
 			this.calendar.streak_expended_today = false;
-			const today = luxon.DateTime.now().toFormat('yyyy-MM-dd');
-			for (const day of this.days) {
-				// If the day is today
-				if (day.date.toFormat('yyyy-MM-dd') === today) {
-					if (day.status === 'success') {
-						this.calendar.streak_expended_today = true;
+
+			const today = luxon.DateTime.now().endOf('day');
+			let month = luxon.DateTime.now().toFormat('yyyy-MM');
+
+			// Read every month starting from current month
+			let fail = false;
+			while (this.demoCache.hasOwnProperty(month)) {
+				const endOfMonth = luxon.DateTime.fromISO(month).endOf('month');
+				const startOfMonth =
+					luxon.DateTime.fromISO(month).startOf('month');
+
+				// Read every day starting from the last day of the month
+				let day = endOfMonth;
+
+				// If today if before the last day of the month, start from today
+				if (day > today) day = today;
+
+				while (day >= startOfMonth) {
+					const dayString = day.toISODate();
+					if (this.demoCache[month][dayString] === 'success') {
+						this.calendar.current_streak++;
+						if (day === today) {
+							this.calendar.streak_expended_today = true;
+						}
+					} else if (this.demoCache[month][dayString] === 'fail') {
+						fail = true;
+						break;
 					}
-					break;
+
+					day = day.minus({ days: 1 });
 				}
+
+				if (fail) break;
+
+				// Go to previous month
+				month = luxon.DateTime.fromISO(month)
+					.minus({ months: 1 })
+					.toFormat('yyyy-MM');
 			}
 		},
 		hideSetState(e) {
