@@ -1,25 +1,27 @@
 $font-family: 'Fira Code', sans-serif;
 
-$white: #fff;
+$studydesk_shadow: 0px 4px 16px rgba(17,17,26,0.1), 0px 8px 24px rgba(17,17,26,0.1), 0px 16px 56px rgba(17,17,26,0.1);
+
+$white: #425d64;
 $primary_color: #ff9c13;
-$secondary_color: #131f22;
+$secondary_color: #fff;
 $secondary_color_light: #425d64;
 $secondary_color_lighter: #a2c8d3;
 
 $overlay_background: #0000003b;
 
 $error_color: #690101;
-$error_color_light: #eb5a5a;
+$error_color_light: #e93c3c;
 
 $ok_color: #037e2c;
-$ok_color_light: #5edc5e;
+$ok_color_light: #13a143;
 
 $success_color: $secondary_color;
 $success_background: $primary_color;
 $success_text: $primary_color;
 
-$fail_color: $secondary_color_lighter;
-$fail_background: #3f191c;
+$fail_color: $secondary_color;
+$fail_background: #e93c3c;
 $fail_text: #e02323;
 
 $freeze_color: $secondary_color;

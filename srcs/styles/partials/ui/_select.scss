@@ -6,17 +6,18 @@
 	margin: 0 0 15px 0;
 
 	.selected {
-		background-color: $secondary_color_light;
+		background-color: $secondary_color;
 		border-radius: 5px;
 		color: $white;
 		padding: 5px 7px;
 		cursor: pointer;
 		user-select: none;
 
+		border: $secondary_color_lighter 2px solid;
+		margin: -2px;
+
 		&.open{
-			border: $white 2px solid;
 			border-radius: 5px 5px 0px 0px;
-			margin: -2px;
 
 			&:after {
 				top: 10px;
@@ -32,7 +33,7 @@
 			width: 0;
 			height: 0;
 			border: 5px solid transparent;
-			border-color: $white transparent transparent transparent;
+			border-color: $secondary_color_lighter transparent transparent transparent;
 			transition: .1s ease-in-out transform;
 		}
 	}
@@ -41,10 +42,10 @@
 		color: $white;
 		border-radius: 0px 0px 5px 5px;
 		overflow: hidden;
-		border: 2px solid $white;
+		border: 2px solid $secondary_color_lighter;
 		margin: 0px -2px -2px -2px;
 		position: absolute;
-		background-color: $secondary_color_light;
+		background-color: $secondary_color;
 		left: 0;
 		right: 0;
 		z-index: 5;

@@ -1,0 +1,39 @@
+@import './partials/variables';
+
+body {
+	max-width: 75rem;
+}
+
+#logo {
+	margin-bottom: 7rem;
+}
+
+section {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+
+	.right {
+		flex: 2;
+	}
+	.left {
+		flex: 1;
+	}
+}
+
+.section-1 {
+	> .right {
+		padding: 5rem 5rem 5rem 0;
+
+		h1 {
+			text-align: center;
+			font-size: 2.5rem;
+			margin: 0 0 1rem 0;
+		}
+	}
+
+	.left {
+		display: flex;
+		justify-content: end;
+	}
+}

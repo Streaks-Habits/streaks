@@ -135,15 +135,20 @@
 		}
 
 		&.success {
-			background: $ok_color;
+			color: $ok_color;
 		}
 
 		&.error {
-			background: $error_color;
+			color: $error_color;
 		}
 
 		&.info {
-			background: $secondary_color_light;
+			color: $white;
+		}
+
+		&.success, &.error, &.info {
+			background: $secondary_color_lighter;
+
 		}
 
 		svg.spinner {
@@ -160,13 +165,13 @@
 
 	button.delete {
 		background: $error_color;
-		color: $error_color_light;
+		fill: $error_color_light;
 		width: auto;
 
 		svg {
 			width: 1em;
 			height: 1em;
-			vertical-align: text-top;
+			margin-bottom: 2px;
 		}
 	}
 }

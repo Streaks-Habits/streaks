@@ -6,6 +6,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" href="/styles/general.css">
 	<link rel="stylesheet" href="/styles/dashboard.css">
+	<link rel="stylesheet" href="/styles/index.css">
 	<%- include("partial/favicon.ejs") %>
 	<title>Streaks</title>
 </head>
@@ -13,12 +14,21 @@
 	<img id="logo" src="/public/icons/logoname.svg" alt="streaks.json logo">
 
 	<div id="app">
-		<Calendar
-			:is-demo="true"
-			:calendar-data="{
-				_id: '0',
-				name: '🗓️ My calendar'
-			}" />
+		<section class="section-1">
+			<div class="right">
+				<h1>Streaks - Habits tracking app</h1>
+				<p>helps you build habits by maintaining streaks</p>
+			</div>
+
+			<div class="left">
+				<Calendar
+					:is-demo="true"
+					:calendar-data="{
+						_id: '0',
+						name: '🗓️ My calendar'
+					}" />
+			</div>
+		</section>
 	</div>
 
 	<script src="/public/libs/luxon.min.js"></script>

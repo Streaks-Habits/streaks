@@ -9,7 +9,7 @@ p.sentence {
 	text-align: center;
 	margin: 35px 0 0 0;
 	font-weight: bold;
-	color: $secondary_color_lighter;
+	color: $secondary_color_light;
 }
 
 p.notification {
@@ -91,8 +91,8 @@ div.controls {
 				margin: 0 3px;
 			}
 			&.edit {
-				width: 1.6em;
-				height: 1.6em;
+				width: 1.2em;
+				height: 1.2em;
 			}
 		}
 	}
@@ -101,8 +101,8 @@ div.controls {
 div.calendars {
 	display: flex;
 	flex-wrap: wrap;
-	gap: 25px;
-	padding: 25px 0;
+	gap: 35px;
+	padding: 35px 0;
 	justify-content: center;
 
 	&.disabled {
@@ -120,7 +120,7 @@ div.calendar {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		margin-bottom: 10px;
+		margin: 0 5px 15px 5px;
 
 		p.name {
 			color: $white;
@@ -184,10 +184,12 @@ div.calendar {
 		align-items: center;
 		width: 16.75em;
 		height: 18.75em;
-		border: solid 2px $secondary_color_light;
+		border: solid 2px $secondary_color;
 		border-radius: 15px;
 		padding: 20px;
 		box-sizing: border-box;
+
+		box-shadow: $studydesk_shadow;
 
 		div.calendar_info {
 			display: flex;
@@ -200,6 +202,10 @@ div.calendar {
 				align-items: center;
 				gap: 5px;
 
+				.controls {
+					margin-right: 5px;
+				}
+
 				button {
 					margin-left: -7px;
 				}
@@ -208,6 +214,7 @@ div.calendar {
 					color: $white;
 					margin: 0;
 					font-size: 1em;
+					font-weight: bold;
 				}
 			}
 
@@ -330,10 +337,10 @@ div.calendar {
 
 		div.set_state_box {
 			display: block;
-			background: #2f4044;
+			background: $secondary_color;
 			position: absolute;
 			padding: 15px;
-			border: solid 2px $secondary_color_light;
+			border: solid 2px $secondary_color;
 			border-radius: 15px;
 
 			button {
@@ -453,8 +460,8 @@ div.disabled_calendar, div.disabled_progress {
 div.progresses {
 	display: flex;
 	flex-wrap: wrap;
-	gap: 25px;
-	padding: 25px 0;
+	gap: 35px;
+	padding: 35px 0;
 	justify-content: center;
 
 	div.progress {
@@ -469,9 +476,10 @@ div.progresses {
 
 div.progress {
 	max-width: 25em;
-	border: solid 2px #425d64;
+	border: solid 2px $secondary_color;
 	border-radius: 15px;
 	padding: 20px;
+	box-shadow: $studydesk_shadow;
 
 	margin-top: 14px;
 
@@ -487,8 +495,11 @@ div.progress {
 			align-items: center;
 			justify-content: center;
 			background: $secondary_color;
-			padding: 0 10px;
 			max-width: 100%;
+
+			box-shadow: 0px 4px 16px rgba(17,17,26,0.1), 0px 8px 24px rgba(17,17,26,0.1), 0px 16px 56px rgba(17,17,26,0.1);
+			border-radius: 15px;
+			padding: 5px 15px;
 
 			p.name {
 				margin: 0 10px;
@@ -534,6 +545,10 @@ div.progress {
 			align-items: center;
 			gap: 5px;
 
+			.controls {
+				margin-right: 5px;
+			}
+
 			button {
 				margin-left: -7px;
 			}
@@ -541,6 +556,7 @@ div.progress {
 			span.time_range {
 				flex: 1;
 				margin-right: 15px;
+				font-weight: bold;
 			}
 		}
 	}
@@ -548,7 +564,7 @@ div.progress {
 	.progress_bar {
 		position: relative;
 		height: 20px;
-		background: $secondary_color_light;
+		background: $secondary_color_lighter;
 		border-radius: 50px;
 		overflow: hidden;
 
@@ -590,9 +606,9 @@ div.progress {
 			position: absolute;
 			transform: translate(-50%, -50%);
 			display: block;
-			background: #2f4044;
+			background: $secondary_color;
 			padding: 15px;
-			border: solid 2px $secondary_color_light;
+			border: solid 2px $secondary_color;
 			border-radius: 15px;
 			width: 9em;
 

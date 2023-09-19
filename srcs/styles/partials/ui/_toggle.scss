@@ -55,7 +55,7 @@
 
 	.layer {
 		width: 100%;
-		background-color: $secondary_color_light;
+		background-color: $secondary_color_lighter;
 		transition: 0.3s ease all;
 		z-index: 1;
 	}
@@ -67,7 +67,7 @@
 	}
 
 	.checkbox:checked ~ .layer {
-		background-color: $secondary_color_light;
+		background-color: $secondary_color_lighter;
 	}
 
 	.knobs, .knobs:before, .layer {

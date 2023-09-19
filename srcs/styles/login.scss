@@ -8,9 +8,10 @@
 	max-width: 15em;
 	margin: 0 auto;
 
-	border: solid 2px $secondary_color_light;
+	border: solid 2px $secondary_color;
 	border-radius: 15px;
 	padding: 20px;
+	box-shadow: $studydesk_shadow;
 
 	overflow: hidden;
 
@@ -21,8 +22,8 @@
 
 	ul.errors {
 		background: $error_color_light;
-		color: $error_color;
-		padding: 5px 5px 5px 25px;
+		color: $secondary_color;
+		padding: 10px 10px 10px 30px;
 		border-radius: 5px;
 		margin: 15px 0;
 	}
@@ -38,7 +39,7 @@
 	}
 
 	button.demo {
-		background: $secondary_color_light;
+		background: $secondary_color_lighter;
 		color: $white;
 		margin-top: 15px;
 	}
