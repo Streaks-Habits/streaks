@@ -250,12 +250,12 @@ export default {
 
 			<div class="progress_details">
 				<div class="progress_details_col">
-					<p>🎯 <b>{{ numberToString(progress.goal, 2) }}</b></p>
-					<p>📈 <b>{{ numberToString(progress.current_progress, 2) }}</b></p>
+					<p title="goal">🎯 <b>{{ numberToString(progress.goal, 2) }}</b></p>
+					<p title="current progress">📈 <b>{{ numberToString(progress.current_progress, 2) }}</b></p>
 				</div>
 				<div class="progress_details_col">
-					<p>🔁 {{ progress.recurrence_unit }}</p>
-					<p>⏰ {{ relativeDeadline }}</p>
+					<p title="recurrence unit">🔁 {{ progress.recurrence_unit }}</p>
+					<p title="deadline">⏰ {{ relativeDeadline }}</p>
 				</div>
 			</div>
 

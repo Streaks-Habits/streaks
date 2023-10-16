@@ -1,6 +1,40 @@
 $font-family: 'Fira Code', sans-serif;
 
-$studydesk_shadow: 0px 4px 16px rgba(17,17,26,0.1), 0px 8px 24px rgba(17,17,26,0.1), 0px 16px 56px rgba(17,17,26,0.1);
+
+// $studydesk_shadow: 0px 4px 16px rgba(17,17,26,0.1), 0px 8px 24px rgba(17,17,26,0.1), 0px 16px 56px rgba(17,17,26,0.1);
+
+.light {
+	--studydesk_shadow: rgba(13, 38, 76, 0.19) 0px 9px 20px;
+
+	--white: #425d64;
+	--primary_color: #ff9c13;
+	--secondary_color: #fff;
+	--secondary_color_light: #425d64;
+	--secondary_color_lighter: #a2c8d3;
+
+	--overlay_background: #0000003b;
+
+	--error_color: #690101;
+	--error_color_light: #e93c3c;
+
+	--ok_color: #037e2c;
+	--ok_color_light: #13a143;
+
+	--success_color: var(--secondary_color);
+	--success_background: var(--primary_color);
+	--success_text: var(--primary_color);
+
+	--fail_color: var(--secondary_color);
+	--fail_background: #e93c3c;
+	--fail_text: #e02323;
+
+	--freeze_color: var(--secondary_color);
+	--freeze_background: #6bcbf9;
+	--freeze_text: var(--freeze_background);
+
+	--breakday_color: var(--secondary_color_lighter);
+	--breakday_background: #0d516b;
+}
 $studydesk_shadow: rgba(13, 38, 76, 0.19) 0px 9px 20px;
 
 $white: #425d64;
@@ -31,3 +65,101 @@ $freeze_text: $freeze_background;
 
 $breakday_color: $secondary_color_lighter;
 $breakday_background: #0d516b;
+
+
+/* DARK */
+.dark {
+	--studydesk_shadow: #a2c8d324 0px 9px 20px;
+
+	--white: #fff;
+	--primary_color: #ff9c13;
+	--secondary_color: #172327;
+	--secondary_color_light: #425d64;
+	--secondary_color_lighter: #a2c8d3;
+
+	--overlay_background: #0000003b;
+
+	--error_color: #690101;
+	--error_color_light: #e93c3c;
+
+	--ok_color: #037e2c;
+	--ok_color_light: #13a143;
+
+	--success_color: var(--secondary_color);
+	--success_background: var(--primary_color);
+	--success_text: var(--primary_color);
+
+	--fail_color: var(--secondary_color_lighter);
+	--fail_background: #471d22;
+	--fail_text: #e02323;
+
+	--freeze_color: var(--secondary_color);
+	--freeze_background: #6bcbf9;
+	--freeze_text: var(--freeze_background);
+
+	--breakday_color: var(--secondary_color_lighter);
+	--breakday_background: #0d516b;
+}
+$studydesk_shadow: 0px 4px 16px rgba(17,17,26,0.1), 0px 8px 24px rgba(17,17,26,0.1), 0px 16px 56px rgba(17,17,26,0.1);
+$studydesk_shadow: #a2c8d324 0px 9px 20px;
+
+$white: #fff;
+$primary_color: #ff9c13;
+$secondary_color: #172327;
+$secondary_color_light: #425d64;
+$secondary_color_lighter: #a2c8d3;
+
+$overlay_background: #0000003b;
+
+$error_color: #690101;
+$error_color_light: #e93c3c;
+
+$ok_color: #037e2c;
+$ok_color_light: #13a143;
+
+$success_color: $secondary_color;
+$success_background: $primary_color;
+$success_text: $primary_color;
+
+$fail_color: $secondary_color_lighter;
+$fail_background: #471d22;
+$fail_text: #e02323;
+
+$freeze_color: $secondary_color;
+$freeze_background: #6bcbf9;
+$freeze_text: $freeze_background;
+
+$breakday_color: $secondary_color_lighter;
+$breakday_background: #0d516b;
+
+
+// Set variables
+$studydesk_shadow: var(--studydesk_shadow);
+
+$white: var(--white);
+$primary_color: var(--primary_color);
+$secondary_color: var(--secondary_color);
+$secondary_color_light: var(--secondary_color_light);
+$secondary_color_lighter: var(--secondary_color_lighter);
+
+$overlay_background: var(--overlay_background);
+
+$error_color: var(--error_color);
+$error_color_light: var(--error_color_light);
+
+$ok_color: var(--ok_color);
+$ok_color_light: var(--ok_color_light);
+
+$success_color: var(--success_color);
+$success_background: var(--success_background);
+
+$fail_color: var(--fail_color);
+$fail_background: var(--fail_background);
+$fail_text: var(--fail_text);
+
+$freeze_color: var(--freeze_color);
+$freeze_background: var(--freeze_background);
+$freeze_text: var(--freeze_text);
+
+$breakday_color: var(--breakday_color);
+$breakday_background: var(--breakday_background);
