@@ -1,0 +1,50 @@
+@import './theme_select';
+
+header {
+	width: 100%;
+	box-shadow: $studydesk_shadow;
+
+	.header_wrapper {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		width: 100%;
+		max-width: 75rem;
+		margin: auto;
+
+		> div {
+			flex: 1;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+
+			&:last-child {
+				justify-content: flex-end;
+			}
+		}
+	}
+}
+
+#logo {
+	margin: 0;
+	width: 13em;
+	display: block;
+}
+
+a.logout {
+	display: block;
+	margin-left: 20px;
+
+	&:hover {
+		svg {
+			stroke: $secondary_color_lighter;
+		}
+	}
+
+	svg {
+		width: 1.5em;
+		height: 1.5em;
+		stroke: $white;
+		animation: stroke .3s ease-in-out;
+	}
+}

@@ -1,0 +1,20 @@
+.theme_select {
+	margin-right: 20px;
+
+	.select {
+		width: calc(100% + 20px);
+		margin: 0;
+
+		.selected {
+			border-color: $white;
+
+			&:after {
+				border-color: $white transparent transparent transparent;
+			}
+		}
+
+		.items {
+			border-color: $white;
+		}
+	}
+}

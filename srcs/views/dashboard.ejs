@@ -10,25 +10,27 @@
 	<title>Dashboard - Streaks</title>
 </head>
 <body>
-	<script src="/public/theme.js"></script>
-	<img id="logo" src="/public/icons/logoname.svg" alt="streaks.json logo">
-
 	<div id="app">
-		<Dashboard :user="{
+		<Navigation></Navigation>
+		<div id="content">
+			<Dashboard :user="{
 				_id: '<%= user._id %>',
 				username: '<%= user.username %>',
 				role: '<%= user.role %>',
 			}"
-		/>
+			></Dashboard>
+		</div>
 	</div>
 
 	<script src="/public/libs/luxon.min.js"></script>
 	<script type="module">
 		import { createApp } from '/public/libs/vue.esm-browser.prod.js'
 		import Dashboard from '/public/components/dashboard/dashboard.js'
+		import Navigation from '/public/components/navigation.js'
 
 		createApp({
 			components: {
+				Navigation,
 				Dashboard
 			},
 		}).mount('#app')

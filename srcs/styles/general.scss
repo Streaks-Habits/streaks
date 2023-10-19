@@ -1,8 +1,12 @@
 @import './partials/variables';
 @import './partials/fonts';
+
+@import './partials/navigation';
+
 @import './partials/ui/toggle';
 @import './partials/ui/loading_button';
 @import './partials/ui/select';
+
 
 html, body {
 	margin: 0;
@@ -21,16 +25,16 @@ html {
 }
 
 body {
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	max-width: 75rem;
+	// display: flex;
+	// flex-direction: column;
+	// justify-content: center;
+	// max-width: 75rem;
 	scrollbar-gutter: stable both-edges;
-	width: 100vw;
-	min-width: 100vw;
+	// width: 100vw;
+	// min-width: 100vw;
 	overflow-x: hidden;
-	margin: auto;
-	position: absolute;
+	margin: 0;
+	// position: absolute;
 }
 
 body.no-scroll {
@@ -87,12 +91,14 @@ svg.spinner {
 }
 
 /* APP */
-#logo {
-	margin: 25px auto 45px auto;
-	width: 13em;
-	display: block;
+#app {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 }
 
-#app {
-	margin: 0 25px 50px 25px;
+#content {
+	margin: 45px auto 0 auto;
+	max-width: 75rem;
+	width: 100vw;
 }

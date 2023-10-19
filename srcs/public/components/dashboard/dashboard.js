@@ -225,9 +225,5 @@ export default {
 		</div>
 
 		<Editor v-if="editor.action" :propsAction="editor.action" :propsProperties="editor.properties" :propsType="editor.type" :propsUser="user" @editor:close="closeEditor" />
-
-		<a href="/logout" class="logout">
-			<svg><use xlink:href="/public/icons/logout.svg#icon"></use></svg>
-		</a>
 	`,
 };

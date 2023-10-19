@@ -35,41 +35,41 @@ $font-family: 'Fira Code', sans-serif;
 	--breakday_color: var(--secondary_color_lighter);
 	--breakday_background: #0d516b;
 }
-$studydesk_shadow: rgba(13, 38, 76, 0.19) 0px 9px 20px;
+// $studydesk_shadow: rgba(13, 38, 76, 0.19) 0px 9px 20px;
 
-$white: #425d64;
-$primary_color: #ff9c13;
-$secondary_color: #fff;
-$secondary_color_light: #425d64;
-$secondary_color_lighter: #a2c8d3;
+// $white: #425d64;
+// $primary_color: #ff9c13;
+// $secondary_color: #fff;
+// $secondary_color_light: #425d64;
+// $secondary_color_lighter: #a2c8d3;
 
-$overlay_background: #0000003b;
+// $overlay_background: #0000003b;
 
-$error_color: #690101;
-$error_color_light: #e93c3c;
+// $error_color: #690101;
+// $error_color_light: #e93c3c;
 
-$ok_color: #037e2c;
-$ok_color_light: #13a143;
+// $ok_color: #037e2c;
+// $ok_color_light: #13a143;
 
-$success_color: $secondary_color;
-$success_background: $primary_color;
-$success_text: $primary_color;
+// $success_color: $secondary_color;
+// $success_background: $primary_color;
+// $success_text: $primary_color;
 
-$fail_color: $secondary_color;
-$fail_background: #e93c3c;
-$fail_text: #e02323;
+// $fail_color: $secondary_color;
+// $fail_background: #e93c3c;
+// $fail_text: #e02323;
 
-$freeze_color: $secondary_color;
-$freeze_background: #6bcbf9;
-$freeze_text: $freeze_background;
+// $freeze_color: $secondary_color;
+// $freeze_background: #6bcbf9;
+// $freeze_text: $freeze_background;
 
-$breakday_color: $secondary_color_lighter;
-$breakday_background: #0d516b;
+// $breakday_color: $secondary_color_lighter;
+// $breakday_background: #0d516b;
 
 
 /* DARK */
 .dark {
-	--studydesk_shadow: #a2c8d324 0px 9px 20px;
+	--studydesk_shadow: #0b0f1070 0px 9px 20px;
 
 	--white: #fff;
 	--primary_color: #ff9c13;
@@ -100,37 +100,37 @@ $breakday_background: #0d516b;
 	--breakday_color: var(--secondary_color_lighter);
 	--breakday_background: #0d516b;
 }
-$studydesk_shadow: 0px 4px 16px rgba(17,17,26,0.1), 0px 8px 24px rgba(17,17,26,0.1), 0px 16px 56px rgba(17,17,26,0.1);
-$studydesk_shadow: #a2c8d324 0px 9px 20px;
+// $studydesk_shadow: 0px 4px 16px rgba(17,17,26,0.1), 0px 8px 24px rgba(17,17,26,0.1), 0px 16px 56px rgba(17,17,26,0.1);
+// $studydesk_shadow: #a2c8d324 0px 9px 20px;
 
-$white: #fff;
-$primary_color: #ff9c13;
-$secondary_color: #172327;
-$secondary_color_light: #425d64;
-$secondary_color_lighter: #a2c8d3;
+// $white: #fff;
+// $primary_color: #ff9c13;
+// $secondary_color: #172327;
+// $secondary_color_light: #425d64;
+// $secondary_color_lighter: #a2c8d3;
 
-$overlay_background: #0000003b;
+// $overlay_background: #0000003b;
 
-$error_color: #690101;
-$error_color_light: #e93c3c;
+// $error_color: #690101;
+// $error_color_light: #e93c3c;
 
-$ok_color: #037e2c;
-$ok_color_light: #13a143;
+// $ok_color: #037e2c;
+// $ok_color_light: #13a143;
 
-$success_color: $secondary_color;
-$success_background: $primary_color;
-$success_text: $primary_color;
+// $success_color: $secondary_color;
+// $success_background: $primary_color;
+// $success_text: $primary_color;
 
-$fail_color: $secondary_color_lighter;
-$fail_background: #471d22;
-$fail_text: #e02323;
+// $fail_color: $secondary_color_lighter;
+// $fail_background: #471d22;
+// $fail_text: #e02323;
 
-$freeze_color: $secondary_color;
-$freeze_background: #6bcbf9;
-$freeze_text: $freeze_background;
+// $freeze_color: $secondary_color;
+// $freeze_background: #6bcbf9;
+// $freeze_text: $freeze_background;
 
-$breakday_color: $secondary_color_lighter;
-$breakday_background: #0d516b;
+// $breakday_color: $secondary_color_lighter;
+// $breakday_background: #0d516b;
 
 
 // Set variables
@@ -152,6 +152,7 @@ $ok_color_light: var(--ok_color_light);
 
 $success_color: var(--success_color);
 $success_background: var(--success_background);
+$success_text: var(--success_text);
 
 $fail_color: var(--fail_color);
 $fail_background: var(--fail_background);

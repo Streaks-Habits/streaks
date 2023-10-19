@@ -7,7 +7,6 @@
 
 p.sentence {
 	text-align: center;
-	margin: 35px 0 0 0;
 	font-weight: bold;
 	color: $secondary_color_light;
 }
@@ -636,25 +635,5 @@ div.no-calendars, div.no-progresses {
 		background: $secondary_color_lighter;
 		padding: 0px 5px;
 		border-radius: 5px;
-	}
-}
-
-a.logout {
-	display: block;
-	position: absolute;
-	top: 25px;
-	right: 25px;
-
-	&:hover {
-		svg {
-			stroke: $secondary_color_lighter;
-		}
-	}
-
-	svg {
-		width: 1.5em;
-		height: 1.5em;
-		stroke: $white;
-		animation: stroke .3s ease-in-out;
 	}
 }
