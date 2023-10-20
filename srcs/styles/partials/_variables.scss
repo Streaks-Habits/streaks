@@ -1,16 +1,31 @@
 $font-family: 'Fira Code', sans-serif;
 
-
-// $studydesk_shadow: 0px 4px 16px rgba(17,17,26,0.1), 0px 8px 24px rgba(17,17,26,0.1), 0px 16px 56px rgba(17,17,26,0.1);
-
-.light {
+html.light {
 	--studydesk_shadow: rgba(13, 38, 76, 0.19) 0px 9px 20px;
 
-	--white: #425d64;
-	--primary_color: #ff9c13;
-	--secondary_color: #fff;
-	--secondary_color_light: #425d64;
-	--secondary_color_lighter: #a2c8d3;
+	--text_color: #425d64;
+	--text_color_dark_background: #fff;
+	--main_color: #ff9c13;
+	--background_color: #fff;
+	--text_color_dark: #a2c8d3;
+	--text_color_darker: #425d64;
+
+	--interraction_element: var(--text_color); // Color of an icon, a button, a link, etc.
+	--interraction_element_hover: var(--text_color_dark);
+
+	--button_background: var(--main_color);
+	--button_color: var(--background_color);
+	--button_background_hover: var(--text_color_darker);
+	--button_color_hover: var(--background_color);
+	--light_button_background: var(--text_color_dark);
+	--light_button_color: var(--text_color);
+	--light_button_background_hover: var(--text_color_darker);
+	--light_button_color_hover: var(--background_color);
+
+	--select_background_hover: var(--text_color_dark);
+	--select_border_hover: var(--text_color_darker);
+
+	--progress_bar_background: var(--text_color_dark);
 
 	--overlay_background: #0000003b;
 
@@ -20,62 +35,49 @@ $font-family: 'Fira Code', sans-serif;
 	--ok_color: #037e2c;
 	--ok_color_light: #13a143;
 
-	--success_color: var(--secondary_color);
-	--success_background: var(--primary_color);
-	--success_text: var(--primary_color);
+	--success_color: var(--background_color);
+	--success_background: var(--main_color);
+	--success_text_color: var(--main_color);
 
-	--fail_color: var(--secondary_color);
+	--fail_color: var(--background_color);
 	--fail_background: #e93c3c;
-	--fail_text: #e02323;
+	--fail_text_color: #e02323;
 
-	--freeze_color: var(--secondary_color);
+	--freeze_color: var(--background_color);
 	--freeze_background: #6bcbf9;
-	--freeze_text: var(--freeze_background);
+	--freeze_text_color: var(--freeze_background);
 
-	--breakday_color: var(--secondary_color_lighter);
+	--breakday_color: var(--text_color_dark);
 	--breakday_background: #0d516b;
 }
-// $studydesk_shadow: rgba(13, 38, 76, 0.19) 0px 9px 20px;
-
-// $white: #425d64;
-// $primary_color: #ff9c13;
-// $secondary_color: #fff;
-// $secondary_color_light: #425d64;
-// $secondary_color_lighter: #a2c8d3;
-
-// $overlay_background: #0000003b;
-
-// $error_color: #690101;
-// $error_color_light: #e93c3c;
-
-// $ok_color: #037e2c;
-// $ok_color_light: #13a143;
-
-// $success_color: $secondary_color;
-// $success_background: $primary_color;
-// $success_text: $primary_color;
-
-// $fail_color: $secondary_color;
-// $fail_background: #e93c3c;
-// $fail_text: #e02323;
-
-// $freeze_color: $secondary_color;
-// $freeze_background: #6bcbf9;
-// $freeze_text: $freeze_background;
-
-// $breakday_color: $secondary_color_lighter;
-// $breakday_background: #0d516b;
-
 
 /* DARK */
-.dark {
+html.dark {
 	--studydesk_shadow: #0b0f1070 0px 9px 20px;
 
-	--white: #fff;
-	--primary_color: #ff9c13;
-	--secondary_color: #172327;
-	--secondary_color_light: #425d64;
-	--secondary_color_lighter: #a2c8d3;
+	--text_color: #fff;
+	--text_color_dark_background: #fff;
+	--main_color: #ff9c13;
+	--background_color: #172327;
+	--text_color_dark: #a2c8d3;
+	--text_color_darker: #425d64;
+
+	--interraction_element: var(--text_color_darker); // Color of an icon, a button, a link, etc.
+	--interraction_element_hover: var(--text_color_dark);
+
+	--button_background: var(--main_color);
+	--button_color: var(--background_color);
+	--button_background_hover: var(--text_color_dark);
+	--button_color_hover: var(--text_color_darker);
+	--light_button_background: var(--text_color_darker);
+	--light_button_color: var(--text_color);
+	--light_button_background_hover: var(--text_color_dark);
+	--light_button_color_hover: var(--text_color_darker);
+
+	--select_background_hover: var(--text_color_darker);
+	--select_border_hover: var(--text_color_dark);
+
+	--progress_bar_background: var(--text_color_darker);
 
 	--overlay_background: #0000003b;
 
@@ -85,62 +87,50 @@ $font-family: 'Fira Code', sans-serif;
 	--ok_color: #037e2c;
 	--ok_color_light: #13a143;
 
-	--success_color: var(--secondary_color);
-	--success_background: var(--primary_color);
-	--success_text: var(--primary_color);
+	--success_color: var(--background_color);
+	--success_background: var(--main_color);
+	--success_text_color: var(--main_color);
 
-	--fail_color: var(--secondary_color_lighter);
+	--fail_color: var(--text_color_dark);
 	--fail_background: #471d22;
-	--fail_text: #e02323;
+	--fail_text_color: #e02323;
 
-	--freeze_color: var(--secondary_color);
+	--freeze_color: var(--background_color);
 	--freeze_background: #6bcbf9;
-	--freeze_text: var(--freeze_background);
+	--freeze_text_color: var(--freeze_background);
 
-	--breakday_color: var(--secondary_color_lighter);
+	--breakday_color: var(--text_color_dark);
 	--breakday_background: #0d516b;
 }
-// $studydesk_shadow: 0px 4px 16px rgba(17,17,26,0.1), 0px 8px 24px rgba(17,17,26,0.1), 0px 16px 56px rgba(17,17,26,0.1);
-// $studydesk_shadow: #a2c8d324 0px 9px 20px;
-
-// $white: #fff;
-// $primary_color: #ff9c13;
-// $secondary_color: #172327;
-// $secondary_color_light: #425d64;
-// $secondary_color_lighter: #a2c8d3;
-
-// $overlay_background: #0000003b;
-
-// $error_color: #690101;
-// $error_color_light: #e93c3c;
-
-// $ok_color: #037e2c;
-// $ok_color_light: #13a143;
-
-// $success_color: $secondary_color;
-// $success_background: $primary_color;
-// $success_text: $primary_color;
-
-// $fail_color: $secondary_color_lighter;
-// $fail_background: #471d22;
-// $fail_text: #e02323;
-
-// $freeze_color: $secondary_color;
-// $freeze_background: #6bcbf9;
-// $freeze_text: $freeze_background;
-
-// $breakday_color: $secondary_color_lighter;
-// $breakday_background: #0d516b;
-
 
 // Set variables
 $studydesk_shadow: var(--studydesk_shadow);
 
-$white: var(--white);
-$primary_color: var(--primary_color);
-$secondary_color: var(--secondary_color);
-$secondary_color_light: var(--secondary_color_light);
-$secondary_color_lighter: var(--secondary_color_lighter);
+$text_color: var(--text_color);
+$text_color_dark_background: var(--text_color_dark_background);
+$main_color: var(--main_color);
+$background_color: var(--background_color);
+$text_color_dark: var(--text_color_dark);
+$text_color_darker: var(--text_color_darker);
+
+$text_color_dark: var(--text_color_dark);
+
+$interraction_element: var(--interraction_element);
+$interraction_element_hover: var(--interraction_element_hover);
+
+$button_background: var(--button_background);
+$button_color: var(--button_color);
+$button_background_hover: var(--button_background_hover);
+$button_color_hover: var(--button_color_hover);
+$light_button_background: var(--light_button_background);
+$light_button_color: var(--light_button_color);
+$light_button_background_hover: var(--light_button_background_hover);
+$light_button_color_hover: var(--light_button_color_hover);
+
+$select_background_hover: var(--select_background_hover);
+$select_border_hover: var(--select_border_hover);
+
+$progress_bar_background: var(--progress_bar_background);
 
 $overlay_background: var(--overlay_background);
 
@@ -152,15 +142,15 @@ $ok_color_light: var(--ok_color_light);
 
 $success_color: var(--success_color);
 $success_background: var(--success_background);
-$success_text: var(--success_text);
+$success_text_color: var(--success_text_color);
 
 $fail_color: var(--fail_color);
 $fail_background: var(--fail_background);
-$fail_text: var(--fail_text);
+$fail_text_color: var(--fail_text_color);
 
 $freeze_color: var(--freeze_color);
 $freeze_background: var(--freeze_background);
-$freeze_text: var(--freeze_text);
+$freeze_text_color: var(--freeze_text_color);
 
 $breakday_color: var(--breakday_color);
 $breakday_background: var(--breakday_background);

@@ -1,14 +1,14 @@
 @import './partials/variables';
 
-#app {
-	margin: 0 15px;
+#content {
+	margin-top: 85px;
 }
 
 .form_box {
 	max-width: 15em;
 	margin: 0 auto;
 
-	border: solid 2px $secondary_color;
+	// border: solid 2px $secondary_color;
 	border-radius: 15px;
 	padding: 20px;
 	box-shadow: $studydesk_shadow;
@@ -17,12 +17,12 @@
 
 	h1 {
 		margin: 0 0 20px 0;
-		color: $primary_color;
+		color: $main_color;
 	}
 
 	ul.errors {
 		background: $error_color_light;
-		color: $secondary_color;
+		color: $text_color_dark;
 		padding: 10px 10px 10px 30px;
 		border-radius: 5px;
 		margin: 15px 0;
@@ -39,8 +39,13 @@
 	}
 
 	button.demo {
-		background: $secondary_color_lighter;
-		color: $white;
+		// background: $light_button_background;
+		// color: $light_button_color;
 		margin-top: 15px;
+
+		// &:hover {
+		// 	background: $light_button_background_hover;
+		// 	color: $light_button_color_hover;
+		// }
 	}
 }

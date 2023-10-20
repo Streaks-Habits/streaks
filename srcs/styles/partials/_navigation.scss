@@ -1,5 +1,3 @@
-@import './theme_select';
-
 header {
 	width: 100%;
 	box-shadow: $studydesk_shadow;
@@ -12,7 +10,7 @@ header {
 		max-width: 75rem;
 		margin: auto;
 
-		> div {
+		>div {
 			flex: 1;
 			display: flex;
 			align-items: center;
@@ -31,20 +29,44 @@ header {
 	display: block;
 }
 
+.theme_select {
+	margin-right: 20px;
+
+	.select {
+		width: calc(100% + 20px);
+		margin: 0;
+	}
+}
+
 a.logout {
 	display: block;
 	margin-left: 20px;
 
 	&:hover {
 		svg {
-			stroke: $secondary_color_lighter;
+			stroke: $interraction_element_hover;
 		}
 	}
 
 	svg {
 		width: 1.5em;
 		height: 1.5em;
-		stroke: $white;
+		stroke: $interraction_element;
 		animation: stroke .3s ease-in-out;
 	}
+}
+
+a.register.button {
+	margin-left: 20px;
+	width: auto;
+	// Add a border to be the same size as theme select
+	border: 1px solid $button_background;
+
+	&:hover {
+		border-color: $button_background_hover;
+	}
+}
+
+a.login {
+	margin-left: 20px;
 }

@@ -8,7 +8,7 @@
 p.sentence {
 	text-align: center;
 	font-weight: bold;
-	color: $secondary_color_light;
+	color: $text_color_dark;
 }
 
 p.notification {
@@ -43,11 +43,11 @@ h1 {
 
 	&.disabled {
 		font-size: 1.2em;
-		color: $secondary_color_lighter;
+		color: $text_color_dark;
 	}
 
 	span {
-		color: $primary_color;
+		color: $main_color;
 	}
 }
 
@@ -65,14 +65,14 @@ div.controls {
 
 		&:hover {
 			svg {
-				fill: $secondary_color_lighter;
-				stroke: $secondary_color_lighter;
+				fill: $text_color_dark;
+				stroke: $text_color_dark;
 			}
 		}
 
 		svg {
-			fill: $secondary_color_light;
-			stroke: $secondary_color_light;
+			fill: $text_color_darker;
+			stroke: $text_color_darker;
 			animation: fill .3s ease-in-out;
 			cursor: pointer;
 
@@ -122,7 +122,7 @@ div.calendar {
 		margin: 0 5px 15px 5px;
 
 		p.name {
-			color: $white;
+			color: $text_color;
 			margin: 0 5px 0 0;
 			font-weight: bold;
 			font-size: 1.2em;
@@ -139,7 +139,7 @@ div.calendar {
 		margin-bottom: 10px;
 
 		p.name {
-			color: $white;
+			color: $text_color;
 			margin: 0 5px 0 0;
 			font-weight: bold;
 			font-size: 1.2em;
@@ -154,11 +154,11 @@ div.calendar {
 			align-items: center;
 
 			svg {
-				fill: $secondary_color_light;
+				fill: $text_color_darker;
 				animation: fill .3s ease-in-out;
 
 				:hover {
-					fill: $secondary_color_lighter;
+					fill: $text_color_dark;
 				}
 				&.caret {
 					width: 1.6em;
@@ -183,7 +183,7 @@ div.calendar {
 		align-items: center;
 		width: 16.75em;
 		height: 18.75em;
-		border: solid 2px $secondary_color;
+		border: solid 2px $background_color;
 		border-radius: 15px;
 		padding: 20px;
 		box-sizing: border-box;
@@ -210,7 +210,7 @@ div.calendar {
 				}
 
 				p.calendar_month {
-					color: $white;
+					color: $text_color;
 					margin: 0;
 					font-size: 1em;
 					font-weight: bold;
@@ -222,7 +222,7 @@ div.calendar {
 				align-items: center;
 
 				p {
-					color: $secondary_color_lighter;
+					color: $text_color_dark;
 					font-weight: bold;
 					margin: 0;
 					font-size: 1.3em;
@@ -231,11 +231,11 @@ div.calendar {
 				svg {
 					width: 1.7em;
 					height: 1.7em;
-					fill: $secondary_color_light;
+					fill: $text_color_darker;
 					margin-top: -5px;
 
 					&.expended {
-						fill: $primary_color;
+						fill: $main_color;
 					}
 				}
 			}
@@ -261,13 +261,13 @@ div.calendar {
 			div.calendar_dayname {
 				font-weight: bold;
 				font-size: .9em;
-				color: $secondary_color_light;
+				color: $text_color_darker;
 			}
 
 			button.calendar_day {
 				border-radius: 50%;
-				background: $secondary_color;
-				color: $secondary_color_lighter;
+				background: $background_color;
+				color: $text_color_dark;
 
 				transition: background .2s ease-in-out;
 
@@ -282,7 +282,7 @@ div.calendar {
 
 				&.loading:not(.future) {
 					$loading_start_color: #354246;
-					$loading_end_color: $secondary_color_light;
+					$loading_end_color: $text_color_darker;
 
 					background: $loading_start_color;
 					@keyframes blink {
@@ -336,10 +336,10 @@ div.calendar {
 
 		div.set_state_box {
 			display: block;
-			background: $secondary_color;
+			background: $background_color;
 			position: absolute;
 			padding: 15px;
-			border: solid 2px $secondary_color;
+			border: solid 2px $background_color;
 			border-radius: 15px;
 
 			button {
@@ -366,21 +366,21 @@ div.calendar {
 				}
 
 				&.set_success {
-					color: $success_text;
+					color: $success_text_color;
 					&::before {
-						background: $success_text
+						background: $success_text_color
 					}
 				}
 				&.set_freeze {
-					color: $freeze_text;
+					color: $freeze_text_color;
 					&::before {
-						background: $freeze_text
+						background: $freeze_text_color;
 					}
 				}
 				&.set_fail {
-					color: $fail_text;
+					color: $fail_text_color;
 					&::before {
-						background: $fail_text
+						background: $fail_text_color;
 					}
 				}
 			}
@@ -430,7 +430,7 @@ div.calendar {
 			svg.spinner {
 				width: 1.3em;
 				height: 1.3em;
-				fill: $secondary_color_lighter;
+				fill: $text_color_dark;
 			}
 		}
 	}
@@ -443,13 +443,13 @@ div.disabled_calendar, div.disabled_progress {
 	justify-content: space-between;
 	width: 16.75em;
 	box-sizing: border-box;
-	border: solid 2px $secondary_color_light;
+	border: solid 2px $text_color_darker;
 	border-radius: 15px;
 	padding: 10px;
 
 	p.name {
 		margin: 0;
-		color: $secondary_color_lighter;
+		color: $text_color_dark;
 		overflow: hidden;
 		white-space: nowrap;
 		text-overflow: ellipsis;
@@ -475,7 +475,7 @@ div.progresses {
 
 div.progress {
 	max-width: 25em;
-	border: solid 2px $secondary_color;
+	border: solid 2px $background_color;
 	border-radius: 15px;
 	padding: 20px;
 	box-shadow: $studydesk_shadow;
@@ -493,7 +493,7 @@ div.progress {
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			background: $secondary_color;
+			background: $background_color;
 			max-width: 100%;
 
 			box-shadow: 0px 4px 16px rgba(17,17,26,0.1), 0px 8px 24px rgba(17,17,26,0.1), 0px 16px 56px rgba(17,17,26,0.1);
@@ -519,14 +519,14 @@ div.progress {
 
 				&:hover {
 					svg {
-						fill: $secondary_color_lighter;
+						fill: $text_color_dark;
 					}
 				}
 
 				svg {
 					width: 1.5em;
 					height: 1.5em;
-					fill: $primary_color;
+					fill: $main_color;
 					animation: fill .3s ease-in-out;
 				}
 			}
@@ -563,12 +563,12 @@ div.progress {
 	.progress_bar {
 		position: relative;
 		height: 20px;
-		background: $secondary_color_lighter;
+		background: $progress_bar_background;
 		border-radius: 50px;
 		overflow: hidden;
 
 		.progress_bar_fill {
-			background: $primary_color;
+			background: $main_color;
 			border-radius: 50px;
 			height: 100%;
 		}
@@ -605,16 +605,16 @@ div.progress {
 			position: absolute;
 			transform: translate(-50%, -50%);
 			display: block;
-			background: $secondary_color;
+			background: $background_color;
 			padding: 15px;
-			border: solid 2px $secondary_color;
+			border: solid 2px $background_color;
 			border-radius: 15px;
 			width: 9em;
 
 			svg.spinner {
 				width: 1.3em;
 				height: 1.3em;
-				fill: $secondary_color_lighter;
+				fill: $text_color_dark;
 			}
 		}
 	}
@@ -622,7 +622,7 @@ div.progress {
 
 div.no-calendars, div.no-progresses {
 	text-align: center;
-	color: $secondary_color_lighter;
+	color: $text_color_dark;
 	margin: 25px 0 50px 0;
 
 	p {
@@ -630,9 +630,9 @@ div.no-calendars, div.no-progresses {
 	}
 
 	span {
-		color: $secondary_color;
+		color: $background_color;
 		font-weight: bold;
-		background: $secondary_color_lighter;
+		background: $text_color_dark;
 		padding: 0px 5px;
 		border-radius: 5px;
 	}

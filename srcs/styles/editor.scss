@@ -7,7 +7,7 @@
 	top: 0; left: 0; right: 0; bottom: 0;
 	width: 100%;
 	min-height: 100%;
-	background: $secondary_color;
+	background: $background_color;
 	z-index: 1;
 	overflow-y: scroll;
 
@@ -28,13 +28,12 @@
 
 		&:hover {
 			svg {
-				fill: $secondary_color_lighter;
-				stroke: $secondary_color_lighter;
+				stroke: $text_color_dark;
 			}
 		}
 
 		svg {
-			stroke: $white;
+			stroke: $text_color;
 			animation: fill .3s ease-in-out;
 			cursor: pointer;
 			width: 2em;
@@ -47,13 +46,13 @@
 	}
 
 	h1 .span {
-		color: $primary_color;
+		color: $main_color;
 	}
 
 	.id {
 		font-size: .9rem;
 		font-weight: bold;
-		color: $secondary_color_lighter;
+		color: $text_color_dark;
 		text-align: center;
 	}
 
@@ -143,11 +142,11 @@
 		}
 
 		&.info {
-			color: $white;
+			color: $text_color;
 		}
 
 		&.success, &.error, &.info {
-			background: $secondary_color_lighter;
+			background: $text_color_dark;
 
 		}
 
@@ -155,7 +154,7 @@
 			margin-right: 15px;
 			width: 1em;
 			height: 1em;
-			fill: $white
+			fill: $text_color
 		}
 	}
 
@@ -167,6 +166,7 @@
 		background: $error_color;
 		fill: $error_color_light;
 		width: auto;
+		color: $text_color_dark_background;
 
 		svg {
 			width: 1em;
@@ -188,8 +188,8 @@
 		margin-top: 2rem;
 
 		.cancel {
-			background: $secondary_color_light;
-			color: $white;
+			background: $text_color_darker;
+			color: $text_color;
 		}
 
 		.loading_button {

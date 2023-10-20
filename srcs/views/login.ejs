@@ -10,8 +10,6 @@
 	<title>Account - Streaks</title>
 </head>
 <body>
-	<img id="logo" src="/public/icons/logoname.svg" alt="streaks.json logo">
-
 	<noscript>
 		<strong>We're sorry but Streaks doesn't work
 		properly without JavaScript enabled. Please enable it to
@@ -19,15 +17,20 @@
 	</noscript>
 
 	<div id="app">
-		<Login starting-type="<%= type %>" starting-registrations-enabled="<%= registrationsEnabled %>" starting-demo-user-enabled="<%= demoUserEnabled %>" />
+		<Navigation show-logout="false"></Navigation>
+		<div id="content">
+			<Login starting-type="<%= type %>" starting-registrations-enabled="<%= registrationsEnabled %>" starting-demo-user-enabled="<%= demoUserEnabled %>"></Login>
+		</div>
 	</div>
 
 	<script type="module">
 		import { createApp } from '/public/libs/vue.esm-browser.prod.js'
 		import Login from '/public/components/login/login.js'
+		import Navigation from '/public/components/navigation.js'
 
 		createApp({
 			components: {
+				Navigation,
 				Login
 			}
 		}).mount('#app')

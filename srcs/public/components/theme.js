@@ -32,7 +32,6 @@ export default {
 		},
 		changeTheme(theme) {
 			var newTheme = theme;
-			console.log('Setting theme to ' + theme);
 
 			if (theme == 'system') {
 				newTheme = this.getSystemTheme() ? 'dark' : 'light';
@@ -45,10 +44,21 @@ export default {
 			if (newTheme == 'dark') {
 				document.documentElement.classList.remove('light');
 				document.documentElement.classList.add('dark');
+				// Update theme color meta tag
+				document
+					.querySelector('meta[name="theme-color"]')
+					.setAttribute('content', '#172327');
 			} else {
 				document.documentElement.classList.remove('dark');
 				document.documentElement.classList.add('light');
+				// Update theme color meta tag
+				document
+					.querySelector('meta[name="theme-color"]')
+					.setAttribute('content', '#ffffff');
 			}
+
+			// Emit new theme
+			this.$emit('update:theme', newTheme);
 		},
 	},
 	template: `

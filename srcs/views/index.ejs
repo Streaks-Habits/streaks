@@ -11,34 +11,46 @@
 	<title>Streaks</title>
 </head>
 <body>
-	<img id="logo" src="/public/icons/logoname.svg" alt="streaks.json logo">
+	<noscript>
+		<strong>We're sorry but Streaks doesn't work
+		properly without JavaScript enabled. Please enable it to
+		continue.</strong>
+	</noscript>
 
 	<div id="app">
-		<section class="section-1">
-			<div class="right">
-				<h1>Streaks - Habits tracking app</h1>
-				<p>helps you build habits by maintaining streaks</p>
-			</div>
+		<Navigation
+			:show-logout="'<%= isLoggedIn %>' === 'true'"
+			:show-login="'<%= isLoggedIn %>' === 'false'"
+		></Navigation>
+		<div id="content">
+			<section class="section-1">
+				<div class="right">
+					<h1>Streaks - Habits tracking app</h1>
+					<p>helps you build habits by maintaining streaks</p>
+				</div>
 
-			<div class="left">
-				<Calendar
-					:is-demo="true"
-					:calendar-data="{
-						_id: '0',
-						name: '🗓️ My calendar'
-					}" />
-			</div>
-		</section>
+				<div class="left">
+					<Calendar
+						:is-demo="true"
+						:calendar-data="{
+							_id: '0',
+							name: '🗓️ My calendar'
+						}" />
+				</div>
+			</section>
+		</div>
 	</div>
 
 	<script src="/public/libs/luxon.min.js"></script>
 	<script type="module">
 		import { createApp } from '/public/libs/vue.esm-browser.js'
 		import Calendar from '/public/components/dashboard/calendar/calendar.js';
+		import Navigation from '/public/components/navigation.js'
 
 		createApp({
 			components: {
-				Calendar
+				Calendar,
+				Navigation
 			},
 		}).mount('#app')
 	</script>

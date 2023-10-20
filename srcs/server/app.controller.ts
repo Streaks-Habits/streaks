@@ -15,7 +15,7 @@ import { AppService } from './app.service';
 import { AuthService } from './auth/auth.service';
 import { JwtAuthGuard } from './auth/guard/jwt.guard';
 import { LocalAuthGuard } from './auth/guard/local.guard';
-import { RedirectLoginFilter } from './unauthorized-exception.filter';
+import { RedirectLoginFilter } from './filters/unauthorized-exception.filter';
 import { areRegistrationsEnabled, isDemoUserEnabled } from './utils';
 import { UsersService } from './users/users.service';
 
@@ -30,15 +30,23 @@ export class AppController {
 
 	@Get()
 	@Render('index')
-	getIndex() {
+	getIndex(@Request() request) {
 		return {
 			demoUserEnabled: isDemoUserEnabled(this.configService),
+			isLoggedIn: request.logged_in === true,
 		};
 	}
 
 	@Get('/login')
 	@Render('login')
-	async getLogin() {
+	async getLogin(@Request() request, @Res() response) {
+		// If logged in, redirect to dashboard
+		if (request.logged_in === true) {
+			return response.redirect(
+				HttpStatus.TEMPORARY_REDIRECT,
+				'/dashboard',
+			);
+		}
 		return {
 			type: 'login',
 			registrationsEnabled: await areRegistrationsEnabled(

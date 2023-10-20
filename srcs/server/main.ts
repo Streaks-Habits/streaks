@@ -12,14 +12,16 @@ import {
 	NestFastifyApplication,
 } from '@nestjs/platform-fastify';
 import fastifyCookie from '@fastify/cookie';
-import { AppModule } from './app.module';
-import { MongoExceptionFilter } from './mongoose-exception.filter';
-import { join } from 'path';
+import { Observable, map } from 'rxjs';
 import { ConfigService } from '@nestjs/config';
+import { join } from 'path';
+
+import { AppModule } from './app.module';
+import { MongoExceptionFilter } from './filters/mongoose-exception.filter';
 import { areRegistrationsEnabled, isDemoUserEnabled } from './utils';
 import { UsersService } from './users/users.service';
-import { Observable, map } from 'rxjs';
 import { CronsService } from './crons/crons.service';
+import { IsLoggedGuard } from './auth/guard/is-logged-in.guard';
 
 function recursiveInterceptor(value: any): unknown {
 	if (Array.isArray(value)) {
@@ -70,6 +72,7 @@ async function bootstrap() {
 	app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
 	app.useGlobalFilters(new MongoExceptionFilter());
 	app.useGlobalInterceptors(new Interceptor());
+	app.useGlobalGuards(new IsLoggedGuard());
 
 	app.useStaticAssets({
 		root: join(__dirname, '..', 'public'),

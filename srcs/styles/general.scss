@@ -13,10 +13,10 @@ html, body {
 }
 
 html {
-	background-color: $secondary_color;
+	background-color: $background_color;
 	font-family: $font-family;
 	outline: none;
-	color: $white;
+	color: $text_color;
 }
 
 * {
@@ -25,16 +25,9 @@ html {
 }
 
 body {
-	// display: flex;
-	// flex-direction: column;
-	// justify-content: center;
-	// max-width: 75rem;
 	scrollbar-gutter: stable both-edges;
-	// width: 100vw;
-	// min-width: 100vw;
 	overflow-x: hidden;
 	margin: 0;
-	// position: absolute;
 }
 
 body.no-scroll {
@@ -43,7 +36,7 @@ body.no-scroll {
 
 a {
 	text-decoration: none;
-	color: $primary_color;
+	color: $main_color;
 
 	&:hover {
 		text-decoration: underline;
@@ -51,27 +44,45 @@ a {
 }
 
 input {
-	background: $secondary_color;
-	border: solid 2px $secondary_color_lighter;
+	background: $background_color;
+	border: solid 2px $interraction_element;
 	border-radius: 5px;
 	padding: 5px 7px;
-	color: $white;
+	color: $text_color;
 	margin: 0 0 15px 0;
 	font-size: 1em;
 	width: 100%;
 	box-sizing: border-box;
 }
 
-button {
-	background-color: $primary_color;
+button, a.button {
 	border: none;
 	border-radius: 5px;
 	font-size: 1em;
-	color: $secondary_color;
 	font-weight: bold;
 	padding: 5px 7px;
 	width: 100%;
 	cursor: pointer;
+	transition: 0.3s ease all;
+
+	background-color: $button_background;
+	color: $button_color;
+
+	&:hover {
+		background-color: $button_background_hover;
+		color: $button_color_hover;
+		text-decoration: none;
+	}
+
+	&.light {
+		background-color: $light_button_background;
+		color: $light_button_color;
+
+		&:hover {
+			background-color: $light_button_background_hover;
+			color: $light_button_color_hover;
+		}
+	}
 }
 
 svg {

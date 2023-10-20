@@ -5,16 +5,33 @@
 	outline: none;
 	margin: 0 0 15px 0;
 
+	&:hover {
+		.selected {
+			border-color: $select_border_hover;
+		}
+		.items {
+			border-color: $select_border_hover;
+		}
+	}
+
 	.selected {
-		background-color: $secondary_color;
+		background-color: $background_color;
 		border-radius: 5px;
-		color: $white;
+		color: $text_color;
 		padding: 5px 7px;
 		cursor: pointer;
 		user-select: none;
 
-		border: $secondary_color_lighter 2px solid;
+		border: $interraction_element 2px solid;
 		margin: -2px;
+
+		&:hover{
+			background-color: $select_background_hover;
+
+			&:after {
+				border-color: $select_border_hover transparent transparent transparent;
+			}
+		}
 
 		&.open{
 			border-radius: 5px 5px 0px 0px;
@@ -33,19 +50,19 @@
 			width: 0;
 			height: 0;
 			border: 5px solid transparent;
-			border-color: $secondary_color_lighter transparent transparent transparent;
+			border-color: $interraction_element transparent transparent transparent;
 			transition: .1s ease-in-out transform;
 		}
 	}
 
 	.items {
-		color: $white;
+		color: $text_color;
 		border-radius: 0px 0px 5px 5px;
 		overflow: hidden;
-		border: 2px solid $secondary_color_lighter;
+		border: 2px solid $interraction_element;
 		margin: 0px -2px -2px -2px;
 		position: absolute;
-		background-color: $secondary_color;
+		background-color: $background_color;
 		left: 0;
 		right: 0;
 		z-index: 5;
@@ -55,13 +72,13 @@
 		}
 
 		.item {
-			color: $white;
+			color: $text_color;
 			padding: 5px 7px;
 			cursor: pointer;
 			user-select: none;
 
 			&:hover{
-				background-color: $secondary_color;
+				background-color: $select_background_hover;
 			}
 		}
 	}

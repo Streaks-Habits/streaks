@@ -151,7 +151,7 @@ export default {
 				</ul>
 			</form>
 			<p v-if="registrationsEnabled" class="change_type">I don't have an account, <a href="/register" @click.prevent="changeType('register')">register</a> !</p>
-			<button v-if="demoUserEnabled" class="demo" @click="loginAsDemoUser">Or try the demo</button>
+			<button v-if="demoUserEnabled" class="demo light" @click="loginAsDemoUser">Or try the demo</button>
 		</div>
 		<div class="register" v-show=" type == 'register' " v-if="registrationsEnabled">
 			<form @submit.prevent="register">
@@ -165,7 +165,7 @@ export default {
 				</ul>
 			</form>
 			<p class="change_type">Already have an account ? <a href="/login" @click.prevent="changeType('login')">Login</a> !</p>
-			<button v-if="demoUserEnabled" class="demo" @click="loginAsDemoUser">Or try the demo</button>
+			<button v-if="demoUserEnabled" class="demo light" @click="loginAsDemoUser">Or try the demo</button>
 		</div>
 	</div>
 	`,
