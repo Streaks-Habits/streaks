@@ -37,7 +37,6 @@ export default {
 				newTheme = this.getSystemTheme() ? 'dark' : 'light';
 				localStorage.setItem('theme', 'system');
 			} else {
-				console.log('Saving theme to local storage');
 				localStorage.setItem('theme', theme);
 			}
 

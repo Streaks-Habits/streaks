@@ -111,5 +111,6 @@ svg.spinner {
 #content {
 	margin: 45px auto 0 auto;
 	max-width: 75rem;
-	width: 100vw;
+	width: calc(100% - 25px * 2);
+	padding: 0 25px;
 }

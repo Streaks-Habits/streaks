@@ -29,9 +29,7 @@ export default {
 					y: 0,
 				},
 			},
-			relativeDeadline: luxon.DateTime.fromISO(
-				this.propProgress.deadline,
-			).toRelative(),
+			relativeDeadline: '',
 		};
 	},
 	created() {
@@ -53,6 +51,10 @@ export default {
 			this.current_progress_percent =
 				((this.progress.current_progress || 0) / this.progress.goal) *
 				100;
+
+			this.relativeDeadline = luxon.DateTime.fromISO(
+				this.progress.deadline,
+			).toRelative();
 
 			switch (this.progress.recurrence_unit) {
 				case 'daily':

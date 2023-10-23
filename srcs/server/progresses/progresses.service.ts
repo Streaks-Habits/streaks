@@ -5,7 +5,7 @@ import {
 	UnauthorizedException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { DateTime } from 'luxon';
+import { DateTime, DateTimeUnit } from 'luxon';
 import { Model, Types } from 'mongoose';
 import { Role } from '../users/enum/roles.enum';
 import { UserDoc } from '../users/schemas/user.schema';
@@ -15,6 +15,7 @@ import { CreateProgressDto } from './dto/create-progress.dto';
 import { UpdateProgressDto } from './dto/update-progress.dto';
 import { asProgressAccess, checkProgressAccess } from './progresses.utils';
 import { Progress, RProgress } from './schemas/progress.schema';
+import { RecurrenceUnit } from './enum/recurrence_unit.enum';
 
 @Injectable()
 export class ProgressesService {
@@ -24,7 +25,8 @@ export class ProgressesService {
 	) {}
 
 	defaultFields =
-		'_id name enabled recurrence recurrence_unit goal measures deadline current_progress';
+		// '_id name enabled recurrence recurrence_unit goal measures deadline current_progress';
+		'_id name enabled recurrence recurrence_unit goal deadline';
 
 	async create(
 		requester: UserDoc,
@@ -76,10 +78,21 @@ export class ProgressesService {
 				throw new BadRequestException(date.invalidExplanation);
 		}
 
-		const progresses = (await this.ProgressModel.find({}, fields).populate(
-			'user',
-			this.usersService.defaultFields,
-		)) as RProgress[];
+		const progresses = (await this.ProgressModel.find({}, fields)
+			.populate('user', this.usersService.defaultFields)
+			.lean()) as RProgress[];
+
+		// Compute current_progress
+		for (const progress of progresses) {
+			const computedProgress = await this.computeProgress(
+				requester,
+				progress._id.toString(),
+				date.toJSDate(),
+			);
+
+			progress.current_progress = computedProgress.current_progress;
+			progress.deadline = computedProgress.deadline;
+		}
 
 		return progresses;
 	}
@@ -105,9 +118,24 @@ export class ProgressesService {
 		const progresses = (await this.ProgressModel.find(
 			{ user: userId },
 			fields,
-		).populate('user', this.usersService.defaultFields)) as RProgress[];
+		)
+			.populate('user', this.usersService.defaultFields)
+			.lean()) as RProgress[];
 		if (!progresses || progresses.length == 0)
 			throw new NotFoundException('No progresses found');
+
+		// Compute current_progress
+		for (const progress of progresses) {
+			const computedProgress = await this.computeProgress(
+				requester,
+				progress._id.toString(),
+				date.toJSDate(),
+			);
+
+			progress.current_progress = computedProgress.current_progress;
+			progress.deadline = computedProgress.deadline;
+		}
+
 		return progresses;
 	}
 
@@ -132,12 +160,26 @@ export class ProgressesService {
 		const existingProgress = (await this.ProgressModel.findById(
 			progressId,
 			fields + ' user',
-		).populate('user', this.usersService.defaultFields)) as RProgress;
+		)
+			.populate('user', this.usersService.defaultFields)
+			.lean()) as RProgress;
 		if (!existingProgress)
 			throw new NotFoundException('Progress not found');
 
+		// if (typeof existingProgress.current_progress == 'function')
+		// 	existingProgress.current_progress =
+		// 		existingProgress.current_progress(date.toJSDate());
+
 		// check that creator is the owner (except for admin)
 		asProgressAccess(requester, existingProgress);
+
+		const computedProgress = await this.computeProgress(
+			requester,
+			progressId,
+			date.toJSDate(),
+		);
+		existingProgress.current_progress = computedProgress.current_progress;
+		existingProgress.deadline = computedProgress.deadline;
 
 		return existingProgress;
 	}
@@ -174,9 +216,20 @@ export class ProgressesService {
 			progressId,
 			updateProgress,
 			{ new: true, fields: fields },
-		).populate('user', this.usersService.defaultFields)) as RProgress;
+		)
+			.populate('user', this.usersService.defaultFields)
+			.lean()) as RProgress;
 		if (!existingProgress)
 			throw new NotFoundException('Progress not found');
+
+		// Compute current_progress
+		const computedProgress = await this.computeProgress(
+			requester,
+			progressId,
+			DateTime.now().toJSDate(),
+		);
+		existingProgress.current_progress = computedProgress.current_progress;
+		existingProgress.deadline = computedProgress.deadline;
 
 		return existingProgress;
 	}
@@ -243,9 +296,20 @@ export class ProgressesService {
 				$set: { [`measures.${forDate.getTime()}`]: value },
 			},
 			{ new: true, fields: fields },
-		).populate('user', this.usersService.defaultFields)) as RProgress;
+		)
+			.populate('user', this.usersService.defaultFields)
+			.lean()) as RProgress;
 		if (!existingProgress)
 			throw new NotFoundException('Progress not found');
+
+		// Compute current_progress
+		const computedProgress = await this.computeProgress(
+			requester,
+			progressId,
+			forDate,
+		);
+		existingProgress.current_progress = computedProgress.current_progress;
+		existingProgress.deadline = computedProgress.deadline;
 
 		return existingProgress;
 	}
@@ -301,10 +365,71 @@ export class ProgressesService {
 				},
 			},
 			{ new: true, fields: this.defaultFields },
-		).populate('user', this.usersService.defaultFields)) as RProgress;
+		)
+			.populate('user', this.usersService.defaultFields)
+			.lean()) as RProgress;
 		if (!existingProgress)
 			throw new NotFoundException('Progress not found');
 
+		// Compute current_progress
+		const computedProgress = await this.computeProgress(
+			requester,
+			progressId,
+			fromDate,
+		);
+		existingProgress.current_progress = computedProgress.current_progress;
+		existingProgress.deadline = computedProgress.deadline;
+
 		return existingProgress;
+	}
+
+	async computeProgress(
+		requester: UserDoc,
+		progressId: string,
+		date: Date,
+		additionalFields = '',
+	): Promise<{ current_progress: number; deadline: Date }> {
+		// Check given parameters
+		progressId = progressId.toString().trim();
+		if (!isValidObjectId(progressId))
+			throw new NotFoundException('Progress not found');
+
+		// check that requester is the owner (except for admin)
+		const existingProgress = await checkProgressAccess(
+			requester,
+			progressId,
+			this.ProgressModel,
+			'measures recurrence_unit ' + additionalFields,
+		);
+
+		const now = DateTime.fromJSDate(date);
+		// slice(0, -2) to remove 'ly' from unit => 'yearly' -> 'year', 'monthly' -> 'month'
+		const unit =
+			existingProgress.recurrence_unit == RecurrenceUnit.Daily
+				? 'day'
+				: existingProgress.recurrence_unit.slice(0, -2);
+		const start = now
+			.startOf(unit as DateTimeUnit)
+			.valueOf()
+			.toString();
+		const end = now
+			.endOf(unit as DateTimeUnit)
+			.valueOf()
+			.toString();
+
+		// Deadline
+		const deadline = now.endOf(unit as DateTimeUnit).toJSDate();
+
+		// If there is no measures
+		if (!existingProgress.measures)
+			return { current_progress: 0, deadline };
+
+		// Filter measures between start and end
+		// We take timestamp as string because the keys of the map are strings
+		const sum = Array.from(existingProgress.measures.entries())
+			.filter(([key]) => key >= start && key <= end)
+			.reduce((acc, [, value]) => acc + value, 0);
+
+		return { current_progress: sum, deadline };
 	}
 }

@@ -1,5 +1,6 @@
 header {
-	width: 100%;
+	width: calc(100% - 25px * 2);
+	padding: 0 25px;
 	box-shadow: $studydesk_shadow;
 
 	.header_wrapper {
@@ -20,11 +21,22 @@ header {
 				justify-content: flex-end;
 			}
 		}
+
+		@media (max-width: 450px) {
+			flex-direction: column;
+
+			>div {
+				&:last-child {
+					margin-bottom: 15px;
+					justify-content: center;
+				}
+			}
+		}
 	}
 }
 
 #logo {
-	margin: 0;
+	margin: 0 25px;
 	width: 13em;
 	display: block;
 }
@@ -69,4 +81,5 @@ a.register.button {
 
 a.login {
 	margin-left: 20px;
+	font-weight: bold;
 }

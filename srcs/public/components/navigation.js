@@ -26,7 +26,6 @@ export default {
 	},
 	created() {
 		this.logo_currrent = this.logo_light;
-		console.log(this.showLogout);
 	},
 	watch: {
 		theme: function (newTheme) {

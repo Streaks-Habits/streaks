@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
-import { Types, Schema as MongooseSchema, Date } from 'mongoose';
+import { Types, Schema as MongooseSchema } from 'mongoose';
 import { DateTime, DateTimeUnit } from 'luxon';
 import { RUser, User } from '../../users/schemas/user.schema';
 import { RecurrenceUnit } from '../enum/recurrence_unit.enum';
@@ -39,54 +39,54 @@ export class Progress {
 	measures?: Map<string, number>;
 
 	// Virtual property
-	@ApiProperty({ type: Date })
-	@Prop({
-		type: Date,
-		get: function () {
-			const now = DateTime.now();
-			// slice(0, -2) to remove 'ly' from unit => 'yearly' -> 'year', 'monthly' -> 'month'
-			const unit =
-				this.recurrence_unit == RecurrenceUnit.Daily
-					? 'day'
-					: this.recurrence_unit.slice(0, -2);
-			const end = now.endOf(unit as DateTimeUnit);
-			return end.toJSDate() as unknown as Date;
-		},
-	})
-	deadline?: Date;
+	// @ApiProperty({ type: MongooseSchema.Types.Date })
+	// @Prop({
+	// 	type: MongooseSchema.Types.Date,
+	// 	get: function () {
+	// 		const now = DateTime.now();
+	// 		// slice(0, -2) to remove 'ly' from unit => 'yearly' -> 'year', 'monthly' -> 'month'
+	// 		const unit =
+	// 			this.recurrence_unit == RecurrenceUnit.Daily
+	// 				? 'day'
+	// 				: this.recurrence_unit.slice(0, -2);
+	// 		const end = now.endOf(unit as DateTimeUnit);
+	// 		return end.toJSDate() as unknown as MongooseSchema.Types.Date;
+	// 	},
+	// })
+	// deadline?: MongooseSchema.Types.Date;
 
-	// Virtual property
-	@ApiProperty({ type: Number })
-	@Prop({
-		type: Number,
-		get: function () {
-			const now = DateTime.now();
-			// slice(0, -2) to remove 'ly' from unit => 'yearly' -> 'year', 'monthly' -> 'month'
-			const unit =
-				this.recurrence_unit == RecurrenceUnit.Daily
-					? 'day'
-					: this.recurrence_unit.slice(0, -2);
-			const start = now
-				.startOf(unit as DateTimeUnit)
-				.valueOf()
-				.toString();
-			const end = now
-				.endOf(unit as DateTimeUnit)
-				.valueOf()
-				.toString();
+	// // Virtual property
+	// @ApiProperty({ type: Number })
+	// @Prop({
+	// 	type: Number,
+	// 	get: function () {
+	// 		const now = DateTime.now();
+	// 		// slice(0, -2) to remove 'ly' from unit => 'yearly' -> 'year', 'monthly' -> 'month'
+	// 		const unit =
+	// 			this.recurrence_unit == RecurrenceUnit.Daily
+	// 				? 'day'
+	// 				: this.recurrence_unit.slice(0, -2);
+	// 		const start = now
+	// 			.startOf(unit as DateTimeUnit)
+	// 			.valueOf()
+	// 			.toString();
+	// 		const end = now
+	// 			.endOf(unit as DateTimeUnit)
+	// 			.valueOf()
+	// 			.toString();
 
-			// If there is no measures
-			if (!this.measures) return 0;
+	// 		// If there is no measures
+	// 		if (!this.measures) return 0;
 
-			// Filter measures between start and end
-			// We take timestamp as string because the keys of the map are strings
-			const sum = Array.from(this.measures.entries())
-				.filter(([key]) => key >= start && key <= end)
-				.reduce((acc, [, value]) => acc + value, 0);
-			return sum;
-		},
-	})
-	current_progress?: number;
+	// 		// Filter measures between start and end
+	// 		// We take timestamp as string because the keys of the map are strings
+	// 		const sum = Array.from(this.measures.entries())
+	// 			.filter(([key]) => key >= start && key <= end)
+	// 			.reduce((acc, [, value]) => acc + value, 0);
+	// 		return sum;
+	// 	},
+	// })
+	// current_progress?: number;
 }
 
 export const ProgressSchema = SchemaFactory.createForClass(Progress);

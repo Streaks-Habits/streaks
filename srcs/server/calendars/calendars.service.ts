@@ -351,6 +351,7 @@ export class CalendarsService {
 		if (!isValidObjectId(calendarId))
 			throw new NotFoundException('Calendar not found');
 
+		// TODO: check function can return the callendar and check for 404
 		// check that requester is the owner (except for admin)
 		await checkCalendarAccess(requester, calendarId, this.CalendarModel);
 
