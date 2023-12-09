@@ -32,12 +32,17 @@ function recursiveInterceptor(value: any): unknown {
 	// Check that object have been lean()ed
 	if (value.toObject) value = value.toObject();
 
-	const properties_to_remove = ['measures'];
+	const properties_to_remove = [
+		// User
+		'password_hash',
+		'api_key_hash',
+	];
 
 	// Remove properties
 	for (const property of properties_to_remove) {
 		if (value.hasOwnProperty(property)) {
 			delete value[property];
+			console.log(`Removed property ${property}`);
 		}
 	}
 

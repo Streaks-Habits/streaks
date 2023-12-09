@@ -160,6 +160,9 @@ export default {
 			this.hideAddMeasure(null);
 		},
 		showAddMeasure(e, is_negative = false) {
+			document.body.style.paddingRight = getScrollbarWidth() + 'px';
+			document.body.classList.add('no-scroll');
+
 			if (is_negative) this.addMeasure.value = -1;
 			else this.addMeasure.value = 1;
 
@@ -183,6 +186,15 @@ export default {
 			this.addMeasure.pos.y =
 				this.addMeasure.parentBox.getBoundingClientRect().y +
 				this.addMeasure.parentBox.offsetHeight / 2;
+
+			// Ensure that the box is not outside the screen (y)
+			if (
+				this.addMeasure.pos.y + 100 >
+				document.documentElement.clientHeight
+			) {
+				this.addMeasure.pos.y =
+					document.documentElement.clientHeight - 100;
+			}
 		},
 		hideAddMeasure(e) {
 			// Check that the click is outside the add measure box
@@ -191,6 +203,9 @@ export default {
 				e.target.closest('.add_measure_overlay') !== e.target
 			)
 				return;
+
+			document.body.style.paddingRight = '';
+			document.body.classList.remove('no-scroll');
 
 			this.addMeasure.parentBox = null;
 			this.addMeasure.show = false;

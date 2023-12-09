@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
-import { Types, Schema as MongooseSchema } from 'mongoose';
+import { Types, Schema as MongooseSchema, FlattenMaps } from 'mongoose';
 import { DateTime, DateTimeUnit } from 'luxon';
 import { RUser, User } from '../../users/schemas/user.schema';
 import { RecurrenceUnit } from '../enum/recurrence_unit.enum';
@@ -91,7 +91,7 @@ export class Progress {
 
 export const ProgressSchema = SchemaFactory.createForClass(Progress);
 
-export type ProgressDoc = Progress & { _id: Types.ObjectId };
+export type ProgressDoc = FlattenMaps<Progress> & { _id: Types.ObjectId };
 
 /*
  * This is the class that will be used when we return data to the client

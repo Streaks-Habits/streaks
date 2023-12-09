@@ -14,7 +14,7 @@ import { isValidObjectId } from '../utils';
 import { CreateProgressDto } from './dto/create-progress.dto';
 import { UpdateProgressDto } from './dto/update-progress.dto';
 import { asProgressAccess, checkProgressAccess } from './progresses.utils';
-import { Progress, RProgress } from './schemas/progress.schema';
+import { Progress, ProgressDoc, RProgress } from './schemas/progress.schema';
 import { RecurrenceUnit } from './enum/recurrence_unit.enum';
 
 @Injectable()
@@ -24,14 +24,14 @@ export class ProgressesService {
 		private readonly usersService: UsersService,
 	) {}
 
-	defaultFields =
-		// '_id name enabled recurrence recurrence_unit goal measures deadline current_progress';
-		'_id name enabled recurrence recurrence_unit goal deadline';
+	fieldsToFetch = '';
+	fieldsToReturn =
+		'_id name user enabled recurrence_unit goal deadline current_progress';
 
 	async create(
 		requester: UserDoc,
 		createProgressDto: CreateProgressDto,
-		fields = this.defaultFields,
+		fields = this.fieldsToReturn,
 	): Promise<RProgress> {
 		// using getUser to check if user exists (will throw NotFoundException if not)
 		const owner = await this.usersService.findOne(createProgressDto.user);
@@ -54,13 +54,12 @@ export class ProgressesService {
 			goal: createProgressDto.goal,
 		};
 
-		const newProgress = await new this.ProgressModel(createProgress).save();
-		// return findOne() instead of newProgress to apply fields selection
-		// and compute virtual properties
-		return this.findOne(
-			requester,
-			newProgress._id.toString(),
-			undefined, // dateQuery
+		const newProgress = (await new this.ProgressModel(
+			createProgress,
+		).save()) as unknown as ProgressDoc;
+
+		return this.filterProgress(
+			await this.addVirtualProps(newProgress, DateTime.now().toJSDate()),
 			fields,
 		);
 	}
@@ -68,7 +67,7 @@ export class ProgressesService {
 	async findAll(
 		requester: UserDoc,
 		dateQuery: string,
-		fields = this.defaultFields,
+		fields = this.fieldsToReturn,
 	): Promise<RProgress[]> {
 		// Check given parameters
 		let date = DateTime.now();
@@ -78,30 +77,30 @@ export class ProgressesService {
 				throw new BadRequestException(date.invalidExplanation);
 		}
 
-		const progresses = (await this.ProgressModel.find({}, fields)
+		const progresses = await this.ProgressModel.find({}, this.fieldsToFetch)
 			.populate('user', this.usersService.defaultFields)
-			.lean()) as RProgress[];
+			.lean();
 
-		// Compute current_progress
+		// Add virtual props and filter
+		const rProgresses: RProgress[] = [];
 		for (const progress of progresses) {
-			const computedProgress = await this.computeProgress(
-				requester,
-				progress._id.toString(),
-				date.toJSDate(),
+			asProgressAccess(requester, progress);
+			rProgresses.push(
+				this.filterProgress(
+					await this.addVirtualProps(progress, date.toJSDate()),
+					fields,
+				),
 			);
-
-			progress.current_progress = computedProgress.current_progress;
-			progress.deadline = computedProgress.deadline;
 		}
 
-		return progresses;
+		return rProgresses;
 	}
 
 	async findAllForUser(
 		requester: UserDoc,
 		userId: string,
 		dateQuery: string,
-		fields = this.defaultFields,
+		fields = this.fieldsToReturn,
 	): Promise<RProgress[]> {
 		// Check given parameters
 		if (!isValidObjectId(userId))
@@ -115,35 +114,36 @@ export class ProgressesService {
 		}
 
 		// Get progresses
-		const progresses = (await this.ProgressModel.find(
+		const progresses = await this.ProgressModel.find(
 			{ user: userId },
-			fields,
+			this.fieldsToFetch,
 		)
 			.populate('user', this.usersService.defaultFields)
-			.lean()) as RProgress[];
+			.lean();
+
 		if (!progresses || progresses.length == 0)
 			throw new NotFoundException('No progresses found');
 
-		// Compute current_progress
+		// Add virtual props and filter
+		const rProgresses: RProgress[] = [];
 		for (const progress of progresses) {
-			const computedProgress = await this.computeProgress(
-				requester,
-				progress._id.toString(),
-				date.toJSDate(),
+			asProgressAccess(requester, progress);
+			rProgresses.push(
+				this.filterProgress(
+					await this.addVirtualProps(progress, date.toJSDate()),
+					fields,
+				),
 			);
-
-			progress.current_progress = computedProgress.current_progress;
-			progress.deadline = computedProgress.deadline;
 		}
 
-		return progresses;
+		return rProgresses;
 	}
 
 	async findOne(
 		requester: UserDoc,
 		progressId: string,
 		dateQuery: string,
-		fields = this.defaultFields,
+		fields = this.fieldsToReturn,
 	): Promise<RProgress> {
 		// Check given parameters
 		if (!isValidObjectId(progressId))
@@ -157,38 +157,29 @@ export class ProgressesService {
 		}
 
 		// Get progress
-		const existingProgress = (await this.ProgressModel.findById(
+		const existingProgress = await this.ProgressModel.findById(
 			progressId,
-			fields + ' user',
+			this.fieldsToFetch,
 		)
 			.populate('user', this.usersService.defaultFields)
-			.lean()) as RProgress;
+			.lean();
 		if (!existingProgress)
 			throw new NotFoundException('Progress not found');
 
-		// if (typeof existingProgress.current_progress == 'function')
-		// 	existingProgress.current_progress =
-		// 		existingProgress.current_progress(date.toJSDate());
-
-		// check that creator is the owner (except for admin)
 		asProgressAccess(requester, existingProgress);
 
-		const computedProgress = await this.computeProgress(
-			requester,
-			progressId,
-			date.toJSDate(),
+		// Add virtual props and filter
+		return this.filterProgress(
+			await this.addVirtualProps(existingProgress, date.toJSDate()),
+			fields,
 		);
-		existingProgress.current_progress = computedProgress.current_progress;
-		existingProgress.deadline = computedProgress.deadline;
-
-		return existingProgress;
 	}
 
 	async update(
 		requester: UserDoc,
 		progressId: string,
 		updateProgressDto: UpdateProgressDto,
-		fields = this.defaultFields,
+		fields = this.fieldsToReturn,
 	): Promise<RProgress> {
 		// Check given parameters
 		if (!isValidObjectId(progressId))
@@ -212,32 +203,30 @@ export class ProgressesService {
 			);
 
 		// Update progress with the new object
-		const existingProgress = (await this.ProgressModel.findByIdAndUpdate(
+		const existingProgress = await this.ProgressModel.findByIdAndUpdate(
 			progressId,
 			updateProgress,
-			{ new: true, fields: fields },
+			{ new: true, fields: this.fieldsToFetch },
 		)
 			.populate('user', this.usersService.defaultFields)
-			.lean()) as RProgress;
+			.lean();
 		if (!existingProgress)
 			throw new NotFoundException('Progress not found');
 
-		// Compute current_progress
-		const computedProgress = await this.computeProgress(
-			requester,
-			progressId,
-			DateTime.now().toJSDate(),
+		// Add virtual props and filter
+		return this.filterProgress(
+			await this.addVirtualProps(
+				existingProgress,
+				DateTime.now().toJSDate(),
+			),
+			fields,
 		);
-		existingProgress.current_progress = computedProgress.current_progress;
-		existingProgress.deadline = computedProgress.deadline;
-
-		return existingProgress;
 	}
 
 	async delete(
 		requester: UserDoc,
 		progressId: string,
-		fields = this.defaultFields,
+		fields = this.fieldsToReturn,
 	): Promise<RProgress> {
 		// Check given parameters
 		if (!isValidObjectId(progressId))
@@ -247,12 +236,22 @@ export class ProgressesService {
 		await checkProgressAccess(requester, progressId, this.ProgressModel);
 
 		// Delete progress
-		const deletedProgress = (await this.ProgressModel.findByIdAndDelete(
+		const deletedProgress = await this.ProgressModel.findByIdAndDelete(
 			progressId,
-			{ fields: fields },
-		).populate('user', this.usersService.defaultFields)) as RProgress;
+			{ fields: this.fieldsToFetch },
+		)
+			.populate('user', this.usersService.defaultFields)
+			.lean();
 		if (!deletedProgress) throw new NotFoundException('Progress not found');
-		return deletedProgress;
+
+		// Add virtual props and filter
+		return this.filterProgress(
+			await this.addVirtualProps(
+				deletedProgress,
+				DateTime.now().toJSDate(),
+			),
+			fields,
+		);
 	}
 
 	async addMeasure(
@@ -260,7 +259,7 @@ export class ProgressesService {
 		progressId: string,
 		value: string,
 		forDateQuery: string,
-		fields = this.defaultFields,
+		fields = this.fieldsToReturn,
 	): Promise<RProgress> {
 		// Check given parameters
 		if (!isValidObjectId(progressId))
@@ -289,29 +288,27 @@ export class ProgressesService {
 			throw new BadRequestException('Progress is disabled');
 
 		// Add measure
-		const existingProgress = (await this.ProgressModel.findByIdAndUpdate(
+		const existingProgress = await this.ProgressModel.findByIdAndUpdate(
 			progressId,
 			{
 				// (type of measures is: Map<string, number>)
 				$set: { [`measures.${forDate.getTime()}`]: value },
 			},
-			{ new: true, fields: fields },
+			{ new: true, fields: this.fieldsToFetch },
 		)
 			.populate('user', this.usersService.defaultFields)
-			.lean()) as RProgress;
+			.lean();
 		if (!existingProgress)
 			throw new NotFoundException('Progress not found');
 
-		// Compute current_progress
-		const computedProgress = await this.computeProgress(
-			requester,
-			progressId,
-			forDate,
+		// Add virtual props and filter
+		return this.filterProgress(
+			await this.addVirtualProps(
+				existingProgress,
+				DateTime.now().toJSDate(),
+			),
+			fields,
 		);
-		existingProgress.current_progress = computedProgress.current_progress;
-		existingProgress.deadline = computedProgress.deadline;
-
-		return existingProgress;
 	}
 
 	async deleteMeasureRange(
@@ -319,6 +316,7 @@ export class ProgressesService {
 		progressId: string,
 		fromDateQuery: string,
 		toDateQuery: string,
+		fields = this.fieldsToReturn,
 	): Promise<RProgress> {
 		// Check given parameters
 		if (!isValidObjectId(progressId))
@@ -352,7 +350,7 @@ export class ProgressesService {
 			throw new BadRequestException('Progress is disabled');
 
 		// Delete measure range
-		const existingProgress = (await this.ProgressModel.findByIdAndUpdate(
+		const existingProgress = await this.ProgressModel.findByIdAndUpdate(
 			progressId,
 			{
 				$pull: {
@@ -364,72 +362,91 @@ export class ProgressesService {
 					},
 				},
 			},
-			{ new: true, fields: this.defaultFields },
+			{ new: true, fields: this.fieldsToFetch },
 		)
 			.populate('user', this.usersService.defaultFields)
-			.lean()) as RProgress;
+			.lean();
 		if (!existingProgress)
 			throw new NotFoundException('Progress not found');
 
-		// Compute current_progress
-		const computedProgress = await this.computeProgress(
-			requester,
-			progressId,
-			fromDate,
+		// Add virtual props and filter
+		return this.filterProgress(
+			await this.addVirtualProps(
+				existingProgress,
+				DateTime.now().toJSDate(),
+			),
+			fields,
 		);
-		existingProgress.current_progress = computedProgress.current_progress;
-		existingProgress.deadline = computedProgress.deadline;
-
-		return existingProgress;
 	}
 
-	async computeProgress(
-		requester: UserDoc,
-		progressId: string,
+	/**
+	 * Compute the progress for a given date (current_progress and deadline)
+	 *
+	 * @param progress The just fetched progress
+	 * @param date The date to compute the progress for
+	 * @returns The computed progress (a combination of RProgress and ProgressDoc)
+	 */
+	async addVirtualProps(
+		progress: ProgressDoc,
 		date: Date,
-		additionalFields = '',
-	): Promise<{ current_progress: number; deadline: Date }> {
-		// Check given parameters
-		progressId = progressId.toString().trim();
-		if (!isValidObjectId(progressId))
-			throw new NotFoundException('Progress not found');
-
-		// check that requester is the owner (except for admin)
-		const existingProgress = await checkProgressAccess(
-			requester,
-			progressId,
-			this.ProgressModel,
-			'measures recurrence_unit ' + additionalFields,
-		);
+	): Promise<RProgress & ProgressDoc> {
+		const computed = {} as RProgress & ProgressDoc;
 
 		const now = DateTime.fromJSDate(date);
 		// slice(0, -2) to remove 'ly' from unit => 'yearly' -> 'year', 'monthly' -> 'month'
 		const unit =
-			existingProgress.recurrence_unit == RecurrenceUnit.Daily
+			progress.recurrence_unit == RecurrenceUnit.Daily
 				? 'day'
-				: existingProgress.recurrence_unit.slice(0, -2);
-		const start = now
-			.startOf(unit as DateTimeUnit)
-			.valueOf()
-			.toString();
-		const end = now
-			.endOf(unit as DateTimeUnit)
-			.valueOf()
-			.toString();
+				: progress.recurrence_unit.slice(0, -2);
 
 		// Deadline
-		const deadline = now.endOf(unit as DateTimeUnit).toJSDate();
+		computed['deadline'] = now.endOf(unit as DateTimeUnit).toJSDate();
 
-		// If there is no measures
-		if (!existingProgress.measures)
-			return { current_progress: 0, deadline };
+		// Current progress
+		if (progress.measures) {
+			const start = now
+				.startOf(unit as DateTimeUnit)
+				.valueOf()
+				.toString();
+			const end = now
+				.endOf(unit as DateTimeUnit)
+				.valueOf()
+				.toString();
+			// Filter measures between start and end
+			// We take timestamp as string because the keys of the map are strings
+			computed['current_progress'] = Array.from(
+				Object.entries(progress.measures),
+			)
+				.filter(([key]) => key >= start && key <= end)
+				.reduce((acc, [, value]) => acc + value, 0);
+		} else {
+			computed['current_progress'] = 0;
+		}
 
-		// Filter measures between start and end
-		// We take timestamp as string because the keys of the map are strings
-		const sum = Array.from(existingProgress.measures.entries())
-			.filter(([key]) => key >= start && key <= end)
-			.reduce((acc, [, value]) => acc + value, 0);
+		return { ...progress, ...computed };
+	}
 
-		return { current_progress: sum, deadline };
+	/**
+	 * Filter an object to keep only the fileds of a RPogress
+	 *
+	 * @param progress The object to filter
+	 * @returns The filtered object
+	 * @see RPogress
+	 */
+	filterProgress(progress: any, fields = this.fieldsToReturn): RProgress {
+		// Get keys of RProgress class
+		const keys = fields.split(' ');
+
+		console.log(keys, progress);
+
+		const filtered = {} as RProgress;
+		for (const key of Object.keys(progress)) {
+			if (!keys.includes(key)) delete progress[key];
+			// if (keys.includes(key)) filtered[key] = progress[key];
+		}
+
+		console.log(progress, filtered);
+
+		return progress;
 	}
 }

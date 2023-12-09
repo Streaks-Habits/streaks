@@ -265,6 +265,7 @@ export default {
 			)
 				return;
 
+			document.body.style.paddingRight = '';
 			document.body.classList.remove('no-scroll');
 			this.setState.show = false;
 			this.setState.date = undefined;
@@ -273,6 +274,7 @@ export default {
 			this.setState.pos.y = 0;
 		},
 		async showSetState(x, y, day) {
+			document.body.style.paddingRight = getScrollbarWidth() + 'px';
 			document.body.classList.add('no-scroll');
 
 			this.setState.show = true;
